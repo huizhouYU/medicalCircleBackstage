@@ -82,3 +82,127 @@
 .el-range-separator {
   box-sizing: content-box;
 }
+/* 修改element ui中弹框字体大小颜色等 */
+.el-message-box__status .el-icon-warning {
+  color: #ffc53d;
+}
+
+.el-message-box__title {
+  font-size: 14px;
+  font-family: Microsoft YaHei-Regular, Microsoft YaHei;
+  font-weight: 400;
+  color: #333333;
+}
+
+.el-message-box__content {
+  font-size: 12px;
+  font-family: Microsoft YaHei-Regular, Microsoft YaHei;
+  font-weight: 400;
+  color: #333333;
+}
+
+.el-message-box__btns {
+  padding-top: 20px;
+}
+
+/* 修改elementui中输入框前面的下拉款的样式 */
+.el-input-group__prepend {
+  background-color: #F6F9FF;
+}
+
+/* 修改elementui中级联下拉款的文字大小 */
+.el-cascader-panel {
+  font-size: 12px;
+  font-family: Microsoft YaHei-Regular, Microsoft YaHei;
+}
+
+.el-cascader__suggestion-list {
+  font-size: 12px;
+  font-family: Microsoft YaHei-Regular, Microsoft YaHei;
+}
+
+/* 修改elementui中输入框的 */
+.el-input__inner {
+  font-size: 12px;
+  font-family: Microsoft YaHei-Regular, Microsoft YaHei;
+  height: 34px;
+  line-height: 34px;
+}
+
+/* 修改elementui中下拉款的文字大小 */
+.el-select-dropdown__item {
+  font-size: 12px;
+  font-family: Microsoft YaHei-Regular, Microsoft YaHei;
+}
+
+.el-input__icon {
+  line-height: 34px;
+}
+
+.el-input-group__prepend .el-input {
+  font-size: 12px;
+}
+
+/* 修改富文本框的高度 */
+.ql-container {
+  height: 300px !important;
+}
+
+/* 修改elementui表头文字颜色 */
+.el-table thead {
+  color: #333333;
+}
+
+// /* 修改elementui表格的默认样式 */
+// .el-table__body-wrapper &::-webkit-scrollbar {
+//   height: 7px;
+//   width: 7px;
+// }
+
+// .el-table__body-wrapper &::-webkit-scrollbar-track {
+//   /* // 轨道颜色 */
+//   background-color: #fff;
+// }
+
+// .el-table__body-wrapper &::-webkit-scrollbar-thumb {
+//   /* // 滚动块颜色 */
+//   background-color: #E6E9ED;
+// }
+
+// .el-table__body-wrapper &::-webkit-scrollbar-thumb:hover {
+//   /* // hover高亮 */
+//   background-color: #d5d8db;
+
+// }
+
+// /* 解决表格固定列问题 */
+// .el-table__fixed,
+// .el-table__fixed-right {
+//   height: calc(100% - 7px) !important;
+//   box-shadow: -5px -2px 10px rgba(0, 0, 0, .12) !important;
+// }
+
+// .el-table__fixed .el-table__fixed-body-wrapper {
+//   height: calc(100% - 36px) !important;
+// }
+
+// .el-table__fixed-right .el-table__fixed-body-wrapper {
+//   height: calc(100% - 36px) !important;
+// }
+
+// /* 当表格没有滚动条时 */
+// .el-table__body-wrapper.is-scrolling-none~.el-table__fixed-right {
+//   height: 100% !important;
+//   bottom: 0 !important;
+//   box-shadow: none !important;
+// }
+
+// /* 当表格有纵向滚动条时 */
+// .el-table--scrollable-y .el-table__fixed-right {
+//   right: 7px !important;
+// }
+
+// /* 当表格只有横向滚动条，没有纵向滚动条时 */
+// .el-table--scrollable-x:not(.el-table--scrollable-y) .el-table__fixed-right {
+//   right: 0 !important;
+// }

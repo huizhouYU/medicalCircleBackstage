@@ -723,11 +723,12 @@
 
       .el-tag {
         margin-bottom: 15px;
+        margin-right: 10px;
       }
 
-      .el-tag+.el-tag {
-        margin-left: 10px;
-      }
+      // .el-tag+.el-tag {
+      //   margin-left: 10px;
+      // }
 
       // .tags-content {
       //   border: 1px solid #D9D9D9;

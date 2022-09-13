@@ -132,7 +132,7 @@ export const constantRoutes = [{
         name: 'OrderManage',
         meta: {
           title: '订单列表',
-          icon: 'edit'
+          icon: 'setting-two'
         }
       },
       {

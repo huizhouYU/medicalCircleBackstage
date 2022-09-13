@@ -192,18 +192,9 @@ export default {
 </script>
 
 <style scoped lang="less">
-.edit-input {
-  padding-right: 100px;
-}
-.cancel-btn {
-  position: absolute;
-  right: 15px;
-  top: 10px;
-}
-
 // 模块二 搜索条件 + 添加商品
   .search-add {
-    margin-top: 15px;
+    // margin-top: 15px;
     background-color: #fff;
     box-shadow: 0px 2px 10px 1px rgba(0, 0, 0, 0.06);
     border-radius: 6px 6px 6px 6px;
