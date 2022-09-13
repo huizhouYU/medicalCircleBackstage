@@ -1,0 +1,407 @@
+{
+  "linkageData": [{
+      "value": "1",
+      "label": "联影",
+      "children": [{
+          "value": "1-1",
+          "label": "PET CT/ PET MRI",
+          "parentvalue": 1,
+          "children": [{
+              "value": "1-1-1",
+              "label": "uEXPLORER",
+              "parentvalue": "1-1"
+            },
+            {
+              "value": "1-2-2",
+              "label": "uEXPLORER",
+              "parentvalue": "1-1"
+            }
+          ]
+        },
+        {
+          "value": "1-2",
+          "label": "PET CT/ PET MRI",
+          "parentvalue": 1,
+          "children": [{
+              "value": "1-1-1",
+              "label": "uEXPLORER2",
+              "parentvalue": "1-2"
+            },
+            {
+              "value": "1-2-2",
+              "label": "uEXPLORER2",
+              "parentvalue": "1-2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "value": "2",
+      "label": "联影",
+      "children": [{
+          "value": "2-1",
+          "label": "PET CT2/ PET MRI",
+          "parentvalue": "2",
+          "children": [{
+              "value": "1-1-1",
+              "label": "uEXPLORER3",
+              "parentvalue": "2-1"
+            },
+            {
+              "value": "1-2-2",
+              "label": "uEXPLORER3",
+              "parentvalue": "2-1"
+            }
+          ]
+        },
+        {
+          "value": "2-2",
+          "label": "PET CT2/ PET MRI",
+          "parentvalue": "2"
+        }
+      ]
+    },
+    {
+      "value": "3",
+      "label": "联影",
+      "children": [{
+          "value": "3-1",
+          "label": "PET CT3/ PET MRI",
+          "parentvalue": "3"
+        },
+        {
+          "value": "3-2",
+          "label": "PET CT3/ PET MRI",
+          "parentvalue": "3"
+        }
+      ]
+    },
+    {
+      "value": "4",
+      "label": "联影",
+      "children": [{
+          "value": "4-1",
+          "label": "PET CT4/ PET MRI",
+          "parentvalue": "4"
+        },
+        {
+          "value": "4-2",
+          "label": "PET CT4/ PET MRI",
+          "parentvalue": "4"
+        }
+      ]
+    },
+    {
+      "value": "5",
+      "label": "联影",
+      "children": [{
+          "value": "5-1",
+          "label": "PET CT5/ PET MRI",
+          "parentvalue": "5"
+        },
+        {
+          "value": "5-2",
+          "label": "PET CT5/ PET MRI",
+          "parentvalue": "5"
+        }
+      ]
+    },
+    {
+      "value": "6",
+      "label": "网点",
+      "children": [{
+          "value": "6-1",
+          "label": "DEV/ 关于",
+          "parentvalue": 6,
+          "children": [{
+              "value": "6-1-1",
+              "label": "高新手术间",
+              "parentvalue": "6-1"
+            },
+            {
+              "value": "6-1-2",
+              "label": "消毒间",
+              "parentvalue": "6-1"
+            }
+          ]
+        },
+        {
+          "value": "6-2",
+          "label": "破烂渠口",
+          "parentvalue": 6,
+          "children": [{
+              "value": "6-2-1",
+              "label": "伏特加",
+              "parentvalue": "6-2"
+            },
+            {
+              "value": "6-2-2",
+              "label": "雀巢",
+              "parentvalue": "6-2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "value": "7",
+      "label": "七分",
+      "children": [{
+          "value": "7-1",
+          "label": "没想法",
+          "parentvalue": 7,
+          "children": [{
+              "value": "7-1-1",
+              "label": "故事",
+              "parentvalue": "7-1"
+            },
+            {
+              "value": "7-1-2",
+              "label": "太牛都黑",
+              "parentvalue": "7-1"
+            }
+          ]
+        },
+        {
+          "value": "7-2",
+          "label": "酒精",
+          "parentvalue": 7,
+          "children": [{
+              "value": "7-2-1",
+              "label": "伏特加",
+              "parentvalue": "7-2"
+            },
+            {
+              "value": "7-2-2",
+              "label": "雀巢",
+              "parentvalue": "7-2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "value": "8",
+      "label": "学校",
+      "children": [{
+          "value": "8-1",
+          "label": "规格",
+          "parentvalue": 8,
+          "children": [{
+              "value": "8-1-1",
+              "label": "公司",
+              "parentvalue": "8-1"
+            },
+            {
+              "value": "8-1-2",
+              "label": "人工服务",
+              "parentvalue": "8-1"
+            }
+          ]
+        },
+        {
+          "value": "8-2",
+          "label": "个人",
+          "parentvalue": 8,
+          "children": [{
+              "value": "8-2-1",
+              "label": "发货",
+              "parentvalue": "8-2"
+            },
+            {
+              "value": "8-2-2",
+              "label": "如歌",
+              "parentvalue": "8-2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "value": "9",
+      "label": "结构",
+      "children": [{
+          "value": "9-1",
+          "label": "规划局法规",
+          "parentvalue": 9,
+          "children": [{
+              "value": "9-1-1",
+              "label": "刚才发邮件",
+              "parentvalue": "9-1"
+            },
+            {
+              "value": "9-1-2",
+              "label": "的风格推荐",
+              "parentvalue": "9-1"
+            }
+          ]
+        },
+        {
+          "value": "9-2",
+          "label": "过分依靠",
+          "parentvalue": 9,
+          "children": [{
+              "value": "9-2-1",
+              "label": "刚复活",
+              "parentvalue": "9-2"
+            },
+            {
+              "value": "9-2-2",
+              "label": "的任何",
+              "parentvalue": "9-2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "value": "10",
+      "label": "后悔",
+      "children": [{
+          "value": "10-1",
+          "label": "广泛的",
+          "parentvalue": 10,
+          "children": [{
+              "value": "10-1-1",
+              "label": "的非官方",
+              "parentvalue": "10-1"
+            },
+            {
+              "value": "10-1-2",
+              "label": "八年级",
+              "parentvalue": "10-1"
+            }
+          ]
+        },
+        {
+          "value": "10-2",
+          "label": "通过会突然",
+          "parentvalue": 10,
+          "children": [{
+              "value": "10-2-1",
+              "label": "方天画戟",
+              "parentvalue": "10-2"
+            },
+            {
+              "value": "10-2-2",
+              "label": "附件",
+              "parentvalue": "10-2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "value": "11",
+      "label": "发给你答复",
+      "children": [{
+          "value": "11-1",
+          "label": "采访提纲和",
+          "parentvalue": 11,
+          "children": [{
+              "value": "11-1-1",
+              "label": "导航",
+              "parentvalue": "11-1"
+            },
+            {
+              "value": "11-1-2",
+              "label": "多方通话",
+              "parentvalue": "11-1"
+            }
+          ]
+        },
+        {
+          "value": "11-2",
+          "label": "如果",
+          "parentvalue": 11,
+          "children": [{
+              "value": "11-2-1",
+              "label": "白天",
+              "parentvalue": "11-2"
+            },
+            {
+              "value": "11-2-2",
+              "label": "黑夜",
+              "parentvalue": "11-2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "value": "12",
+      "label": "防备",
+      "children": [{
+          "value": "12-1",
+          "label": "迷醉",
+          "parentvalue": 12,
+          "children": [{
+              "value": "12-1-1",
+              "label": "力量",
+              "parentvalue": "12-1"
+            },
+            {
+              "value": "12-1-2",
+              "label": "安好",
+              "parentvalue": "12-1"
+            }
+          ]
+        },
+        {
+          "value": "12-2",
+          "label": "衣柜",
+          "parentvalue": 12,
+          "children": [{
+              "value": "12-2-1",
+              "label": "突发环境",
+              "parentvalue": "12-2"
+            },
+            {
+              "value": "12-2-2",
+              "label": "二呼唤",
+              "parentvalue": "12-2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "value": "13",
+      "label": "狐猴",
+      "children": [{
+          "value": "13-1",
+          "label": "低功耗的",
+          "parentvalue": 13,
+          "children": [{
+              "value": "13-1-1",
+              "label": "的人个人",
+              "parentvalue": "13-1"
+            },
+            {
+              "value": "13-1-2",
+              "label": "大富豪",
+              "parentvalue": "13-1"
+            }
+          ]
+        },
+        {
+          "value": "13-2",
+          "label": "个人头",
+          "parentvalue": 13,
+          "children": [{
+              "value": "13-2-1",
+              "label": "发通过会突然",
+              "parentvalue": "13-2"
+            },
+            {
+              "value": "13-2-2",
+              "label": "比哦i后",
+              "parentvalue": "13-2"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
