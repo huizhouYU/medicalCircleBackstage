@@ -198,8 +198,26 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+  //更改每个模块滚动条样式
+  // .tags-view-wrapper::-webkit-scrollbar {
+  //   width: 2px;
+  // }
+
+  // .tags-view-wrapper::-webkit-scrollbar-thumb {
+  //   border-radius: 10px;
+  //   box-shadow: inset 0 0 0px rgba(0, 0, 0, 0.2);
+  //   background: rgba(0, 0, 0, 0.2);
+  // }
+
+  // .tags-view-wrapper::-webkit-scrollbar-track {
+  //   box-shadow: inset 0 0 0px rgba(0, 0, 0, 0.2);
+  //   border-radius: 0;
+  //   background: rgba(0, 0, 0, 0);
+  // }
+
 .tags-view-container {
-  height: 34px;
+  height: 55px;
   width: 100%;
   background: #fff;
   border-bottom: 1px solid #d8dce5;
@@ -211,13 +229,14 @@ export default {
       cursor: pointer;
       height: 26px;
       line-height: 26px;
+      border-radius: 4px;
       border: 1px solid #d8dce5;
       color: #495060;
       background: #fff;
       padding: 0 8px;
       font-size: 12px;
+      margin: 10px 0px;
       margin-left: 5px;
-      margin-top: 4px;
       &:first-of-type {
         margin-left: 15px;
       }
@@ -262,6 +281,9 @@ export default {
       }
     }
   }
+}
+ .el-scrollbar__wrap{
+  height: 55px !important;
 }
 </style>
 

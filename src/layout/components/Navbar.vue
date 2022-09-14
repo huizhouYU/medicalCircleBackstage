@@ -12,9 +12,9 @@
 
         <screenfull id="screenfull" class="right-menu-item hover-effect" />
 
-        <el-tooltip content="Global Size" effect="dark" placement="bottom">
+        <!-- <el-tooltip content="Global Size" effect="dark" placement="bottom">
           <size-select id="size-select" class="right-menu-item hover-effect" />
-        </el-tooltip>
+        </el-tooltip> -->
 
       </template>
 
@@ -27,7 +27,7 @@
           <router-link to="/profile/index">
             <el-dropdown-item>修改密码</el-dropdown-item>
           </router-link>
-         <!-- <router-link to="/">
+          <!-- <router-link to="/">
             <el-dropdown-item>Dashboard</el-dropdown-item>
           </router-link> -->
           <!-- <a target="_blank" href="https://github.com/PanJiaChen/vue-element-admin/">

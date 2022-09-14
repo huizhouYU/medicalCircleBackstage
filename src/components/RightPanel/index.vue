@@ -1,5 +1,5 @@
 <template>
-  <div ref="rightPanel" :class="{show:show}" class="rightPanel-container">
+  <div v-show="isShow" ref="rightPanel" :class="{show:show}" class="rightPanel-container">
     <div class="rightPanel-background" />
     <div class="rightPanel">
       <div class="handle-button" :style="{'top':buttonTop+'px','background-color':theme}" @click="show=!show">
@@ -29,6 +29,7 @@ export default {
   },
   data() {
     return {
+      isShow: false,
       show: false
     }
   },

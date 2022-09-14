@@ -153,6 +153,17 @@
   color: #333333;
 }
 
+.el-form-item__label{
+  font-size: 12px;
+  font-family: Microsoft YaHei-Regular, Microsoft YaHei;
+  height: 34px;
+  font-weight: 400;
+}
+.el-submenu__title,
+.el-menu-item{
+  font-size: 12px;
+  font-family: Microsoft YaHei-Regular, Microsoft YaHei;
+}
 // /* 修改elementui表格的默认样式 */
 // .el-table__body-wrapper &::-webkit-scrollbar {
 //   height: 7px;

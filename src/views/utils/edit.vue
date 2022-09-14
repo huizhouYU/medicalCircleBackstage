@@ -3,8 +3,7 @@
     <div>
       <!--富文本编辑器组件-->
       <!-- bidirectional data binding（双向数据绑定） -->
-      <quill-editor v-model="formData.content" ref="QuillEditor" class="editor" :options="editorOption" @blur="onEditorBlur($event)" @focus="onEditorFocus($event)" @ready="onEditorReady($event)">
-      </quill-editor>
+      <quill-editor ref="QuillEditor" v-model="formData.content" class="editor" :options="editorOption" @blur="onEditorBlur($event)" @focus="onEditorFocus($event)" @ready="onEditorReady($event)" />
       <!-- <div v-html="formData.content" /> -->
     </div>
   </div>
@@ -12,29 +11,29 @@
 <script>
 import { quillEditor } from 'vue-quill-editor'
 import Delta from 'quill-delta'
-import 'quill/dist/quill.core.css';
-import 'quill/dist/quill.snow.css';
-import 'quill/dist/quill.bubble.css';
+import 'quill/dist/quill.core.css'
+import 'quill/dist/quill.snow.css'
+import 'quill/dist/quill.bubble.css'
 
-//引入Qill插件
-import Quill from "quill";
+// 引入Qill插件
+import Quill from 'quill'
 
 const toolbarOptions = [
   // ['insertMetric'],
-  ['bold', 'italic', 'underline', 'strike'],        // 加粗，斜体，下划线，删除线
-  ['blockquote', 'code-block'],                     //引用，代码块
-  [{ 'header': 1 }, { 'header': 2 }],               // 几级标题
-  [{ 'list': 'ordered' }, { 'list': 'bullet' }],    // 有序列表，无序列表
-  [{ 'script': 'sub' }, { 'script': 'super' }],     // 下角标，上角标
-  [{ 'indent': '-1' }, { 'indent': '+1' }],         // 缩进
-  [{ 'direction': 'rtl' }],                         // 文字输入方向
-  [{ 'size': ['small', false, 'large', 'huge'] }],  // 字体大小
-  [{ 'header': [1, 2, 3, 4, 5, 6, false] }],        // 标题
-  [{ 'color': [] }, { 'background': [] }],          // 颜色选择
+  ['bold', 'italic', 'underline', 'strike'], // 加粗，斜体，下划线，删除线
+  ['blockquote', 'code-block'], // 引用，代码块
+  [{ 'header': 1 }, { 'header': 2 }], // 几级标题
+  [{ 'list': 'ordered' }, { 'list': 'bullet' }], // 有序列表，无序列表
+  [{ 'script': 'sub' }, { 'script': 'super' }], // 下角标，上角标
+  [{ 'indent': '-1' }, { 'indent': '+1' }], // 缩进
+  [{ 'direction': 'rtl' }], // 文字输入方向
+  [{ 'size': ['small', false, 'large', 'huge'] }], // 字体大小
+  [{ 'header': [1, 2, 3, 4, 5, 6, false] }], // 标题
+  [{ 'color': [] }, { 'background': [] }], // 颜色选择
   [{ 'font': ['SimSun', 'SimHei', 'Microsoft-YaHei', 'KaiTi', 'FangSong', 'Arial'] }], // 字体
-  [{ 'align': [] }],    // 居中
-  ['clean'],            // 清除样式,
-  ['link', 'image','video']   // 上传图片、上传视频
+  [{ 'align': [] }], // 居中
+  ['clean'], // 清除样式,
+  ['link', 'image', 'video'] // 上传图片、上传视频
 ]
 
 // toolbar标题
@@ -85,18 +84,20 @@ const titleConfig = [
   { Choice: '.ql-align .ql-picker-item[data-value="justify"]', title: '两端对齐' }
 ]
 export default {
-  name: 'addarticle',
+  name: 'Addarticle',
   components: {
     quillEditor
   },
-  data () {
+  props: {
+  },
+  data() {
     return {
       formData: {
         content: '' // `<h1 style="text-align: center;">Welcome to the TinyMCE demo!</h1>`
       },
       editorOption: {
         placeholder: '请在这里输入',
-        theme: 'snow', //主题 snow/bubble
+        theme: 'snow', // 主题 snow/bubble
         modules: {
           history: {
             delay: 1000,
@@ -113,47 +114,45 @@ export default {
       }
     }
   },
-  props: {
-  },
   watch: {
   },
-  created () {
+  created() {
   },
-  mounted () {
+  mounted() {
     this.initButton()
     this.initTitle()
   },
   methods: {
-    initTitle () {
+    initTitle() {
       document.getElementsByClassName('ql-editor')[0].dataset.placeholder = ''
-      for (let item of titleConfig) {
-        let tip = document.querySelector('.quill-editor ' + item.Choice)
+      for (const item of titleConfig) {
+        const tip = document.querySelector('.quill-editor ' + item.Choice)
         if (!tip) continue
         tip.setAttribute('title', item.title)
       }
     },
-    showHandle () {
+    showHandle() {
       this.$message.error('这是自定义工具栏的方法！')
     },
     // 自定义按钮内容初始化
-    initButton () {
-      const editorButton = document.querySelector('.ql-insertMetric')
-      editorButton.innerHTML = '<i class="el-icon-link" style="font-size: 18px;color:black"></i>'
+    initButton() {
+      // const editorButton = document.querySelector('.ql-insertMetric')
+      // editorButton.innerHTML = '<i class="el-icon-link" style="font-size: 18px;color:black"></i>'
     },
     // 失去焦点
-    onEditorBlur (editor) {
+    onEditorBlur(editor) {
       // console.log(this.formData.content)
-      this.$emit("getContent",this.formData.content)
+      this.$emit('getContent', this.formData.content)
     },
     // 获得焦点
-    onEditorFocus (editor) { },
+    onEditorFocus(editor) { },
     // 开始
-    onEditorReady (editor) { },
+    onEditorReady(editor) { },
     // 值发生变化
-    onEditorChange (editor) {
+    onEditorChange(editor) {
       // 如果需要手动控制数据同步，父组件需要显式地处理changed事件
       // this.content = editor.html;
-      console.log(editor);
+      console.log(editor)
     }
   }
 }

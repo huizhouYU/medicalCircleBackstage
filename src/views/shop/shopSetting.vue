@@ -6,8 +6,7 @@
       <el-form-item label="店铺店标：">
         <div label="图片可拖曳排序：" prop="trialImgs" class="content-images">
           <div class="row">
-          <!--  <DragUpload :allList="ruleForm.trialImgs" v-on:allList="trialImgs" :limit="limit">
-            </DragUpload> -->
+            <DragUpload :all-list="ruleForm.trialImgs" :limit="limit" @allList="trialImgs" />
             <div class="gray-tip">请上传300*300的图片，大小不超过2m</div>
           </div>
         </div>
@@ -22,37 +21,37 @@
       <!-- 店铺名称 + 联系电话 -->
       <div class="div-item-both">
         <el-form-item label="店铺名称：">
-          <el-input placeholder="请输入店铺名称" v-model="shopInfo.address" autocomplete="off" size="medium" type="text">
-          </el-input>
+          <el-input v-model="shopInfo.address" placeholder="请输入店铺名称" autocomplete="off" size="medium" type="text" />
         </el-form-item>
         <el-form-item label="联系电话：">
-          <el-input placeholder="请输入联系电话" v-model="shopInfo.address" autocomplete="off" size="medium" type="text">
-          </el-input>
+          <el-input v-model="shopInfo.address" placeholder="请输入联系电话" autocomplete="off" size="medium" type="text" />
         </el-form-item>
       </div>
       <!-- 店铺地址 -->
       <el-form-item label="店铺地址：">
-        <el-input placeholder="请输入店铺地址" v-model="shopInfo.address" autocomplete="off" size="medium" type="text">
-        </el-input>
+        <el-input v-model="shopInfo.address" placeholder="请输入店铺地址" autocomplete="off" size="medium" type="text" />
       </el-form-item>
       <!-- 服务内容 -->
       <el-form-item label="服务内容：">
-        <el-input placeholder="可以描述一下您提供的服务" v-model="shopInfo.address" autocomplete="off" size="medium"
-          type="textarea">
-        </el-input>
+        <el-input
+          v-model="shopInfo.address"
+          placeholder="可以描述一下您提供的服务"
+          autocomplete="off"
+          size="medium"
+          type="textarea"
+        />
       </el-form-item>
       <el-form-item label="资质证书：">
         <div label="图片可拖曳排序：" prop="certificates" class="content-images">
           <div class="row">
-            <!-- <DragUpload :allList="ruleForm.certificates" v-on:allList="certificates" :limit="5">
-            </DragUpload> -->
+            <DragUpload :all-list="ruleForm.certificates" :limit="5" @allList="certificates" />
             <div class="gray-tip">请：图片上传不超过5张，图片支持jpg/png格式，不超过500kb，尺寸为800*800</div>
           </div>
         </div>
       </el-form-item>
       <!-- 店铺简介： -->
       <el-form-item label="店铺简介：">
-        <!-- <edit class="edit"></edit> -->
+        <edit class="edit" />
       </el-form-item>
       <el-form-item class="submmit-form-item">
         <el-button type="primary">提交</el-button>
@@ -62,64 +61,64 @@
 </template>
 
 <script>
-  // import edit from '../../components/unit/edit.vue'
-  // import DragUpload from '../../components/unit/DragUpload'; // 引入vue-draggable
-  export default {
-    // components: {
-    //   DragUpload,
-    //   edit
-    // },
-    data() {
-      return {
-        limit: 1, //上传限制图片数量
-        shopInfo: {
-          logoUrl: '', //店铺logo
-          bannerUrl: '', //店铺横幅
-          name: '', //店铺名称
-          tel: '', //联系电话
-          address: '', //店铺地址
-        },
-        // 发布信息
-        demandInfo: {
-          infoType: '', //信息类型
-          infoBrand: '', //设备品牌
-          infoModel: '', //设备型号
-          infoTitle: '', //信息标题
-        },
-        //信息类型
-        infoTypeOptions: [{
-          value: '1',
-          label: '类型一'
-        }, {
-          value: '2',
-          label: '类型二'
-        }],
-        infoModelOptions: [{
-          value: '1',
-          label: '型号一'
-        }, {
-          value: '2',
-          label: '型号二'
-        }],
-        ruleForm: {
-          imgUrl: '',
-          trialImgs: [],
-          certificates: []
-        },
+import edit from '../utils/edit.vue'
+import DragUpload from '../utils/DragUpload' // 引入vue-draggable
+export default {
+  components: {
+    DragUpload,
+    edit
+  },
+  data() {
+    return {
+      limit: 1, // 上传限制图片数量
+      shopInfo: {
+        logoUrl: '', // 店铺logo
+        bannerUrl: '', // 店铺横幅
+        name: '', // 店铺名称
+        tel: '', // 联系电话
+        address: '' // 店铺地址
+      },
+      // 发布信息
+      demandInfo: {
+        infoType: '', // 信息类型
+        infoBrand: '', // 设备品牌
+        infoModel: '', // 设备型号
+        infoTitle: '' // 信息标题
+      },
+      // 信息类型
+      infoTypeOptions: [{
+        value: '1',
+        label: '类型一'
+      }, {
+        value: '2',
+        label: '类型二'
+      }],
+      infoModelOptions: [{
+        value: '1',
+        label: '型号一'
+      }, {
+        value: '2',
+        label: '型号二'
+      }],
+      ruleForm: {
+        imgUrl: '',
+        trialImgs: [],
+        certificates: []
       }
-    },
-    mounted() {},
-    methods: {
-      back() {
-        this.$router.back()
-      },
-      // 图片可拖曳排序
-      trialImgs(allList) {
-        this.ruleForm.trialImgs = allList
-      },
-
     }
+  },
+  mounted() {},
+  methods: {
+    back() {
+      this.$router.back()
+    },
+    // 图片可拖曳排序
+    trialImgs(allList) {
+      this.ruleForm.trialImgs = allList
+    }
+
   }
+}
 </script>
 
 <style scoped lang="less">
