@@ -1,7 +1,7 @@
 <template>
-  <el-card style="margin-bottom:20px;">
+  <el-card style="margin-bottom:20px;height:100%;" >
     <div slot="header" class="clearfix">
-      <span>About me</span>
+      <span>个人中心</span>
     </div>
 
     <div class="user-profile">
@@ -19,15 +19,18 @@
 
     <div class="user-bio">
       <div class="user-education user-bio-section">
-        <div class="user-bio-section-header"><svg-icon icon-class="education" /><span>Education</span></div>
+        <div class="user-bio-section-header"><svg-icon icon-class="education" /><span>信息</span></div>
         <div class="user-bio-section-body">
           <div class="text-muted">
-            JS in Computer Science from the University of Technology
+            手机号：16354285642
+          </div>
+          <div class="text-muted">
+            邮箱：admin@test.com
           </div>
         </div>
       </div>
 
-      <div class="user-skills user-bio-section">
+      <!-- <div class="user-skills user-bio-section">
         <div class="user-bio-section-header"><svg-icon icon-class="skill" /><span>Skills</span></div>
         <div class="user-bio-section-body">
           <div class="progress-item">
@@ -47,7 +50,7 @@
             <el-progress :percentage="100" status="success" />
           </div>
         </div>
-      </div>
+      </div> -->
     </div>
   </el-card>
 </template>
@@ -74,6 +77,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  span{
+    font-size: 14px;
+  }
 .box-center {
   margin: 0 auto;
   display: table;
@@ -81,6 +87,8 @@ export default {
 
 .text-muted {
   color: #777;
+  font-size: 12px;
+  margin:10px 0 ;
 }
 
 .user-profile {

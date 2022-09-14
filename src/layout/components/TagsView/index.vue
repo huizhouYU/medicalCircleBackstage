@@ -17,10 +17,10 @@
       </router-link>
     </scroll-pane>
     <ul v-show="visible" :style="{left:left+'px',top:top+'px'}" class="contextmenu">
-      <li @click="refreshSelectedTag(selectedTag)">Refresh</li>
-      <li v-if="!isAffix(selectedTag)" @click="closeSelectedTag(selectedTag)">Close</li>
-      <li @click="closeOthersTags">Close Others</li>
-      <li @click="closeAllTags(selectedTag)">Close All</li>
+      <li @click="refreshSelectedTag(selectedTag)">刷新</li>
+      <li v-if="!isAffix(selectedTag)" @click="closeSelectedTag(selectedTag)">关闭当前</li>
+      <li @click="closeOthersTags">关闭其他</li>
+      <li @click="closeAllTags(selectedTag)">关闭所有</li>
     </ul>
   </div>
 </template>
@@ -215,9 +215,13 @@ export default {
   //   border-radius: 0;
   //   background: rgba(0, 0, 0, 0);
   // }
+  .scroll-container{
+    height: 50px;
+  }
+  // .scroll-container[data-v-be6b7bae] .el-scrollbar__wrap
 
 .tags-view-container {
-  height: 55px;
+  height: 50px;
   width: 100%;
   background: #fff;
   border-bottom: 1px solid #d8dce5;
@@ -227,29 +231,40 @@ export default {
       display: inline-block;
       position: relative;
       cursor: pointer;
-      height: 26px;
-      line-height: 26px;
-      border-radius: 4px;
-      border: 1px solid #d8dce5;
+      height: 34px;
+      line-height: 36px;
+      // border-radius: 4px;
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+      // border: 1px solid #d8dce5;
       color: #495060;
       background: #fff;
-      padding: 0 8px;
+      padding: 0px 10px 0 10px;
       font-size: 12px;
-      margin: 10px 0px;
-      margin-left: 5px;
+      margin: 15px 0px 5px 5px;
       &:first-of-type {
         margin-left: 15px;
       }
       &:last-of-type {
         margin-right: 15px;
       }
-      &.active {
-        background-color: #42b983;
+      &:hover{
+        background-color: #bbb;
         color: #fff;
-        border-color: #42b983;
+      }
+      &.active {
+        // -webkit-transition: padding 1.2s linear;
+        // transition: all .3s cubic-bezier(.645,.045,.355,1),border 0s,color .1s,font-size 0s;
+        transition: padding .3s cubic-bezier(.645,.045,.355,1)  0s;
+        // background-color: #42b983;
+        // color: #fff;
+        background-color: #e8f4ff;
+        color: #1890ff;
+        padding: 0px 30px 0 30px;
+        // border-color: #42b983;
         &::before {
           content: '';
-          background: #fff;
+          background: #1890ff;
           display: inline-block;
           width: 8px;
           height: 8px;
@@ -281,9 +296,6 @@ export default {
       }
     }
   }
-}
- .el-scrollbar__wrap{
-  height: 55px !important;
 }
 </style>
 

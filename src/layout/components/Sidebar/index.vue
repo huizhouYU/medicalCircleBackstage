@@ -17,6 +17,7 @@
         :default-active="activeMenu"
         :collapse="isCollapse"
         :unique-opened="false"
+        :background-color="variables.menuBg"
         :collapse-transition="false"
         mode="vertical"
       >

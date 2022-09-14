@@ -21,7 +21,12 @@
       <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
         <div class="avatar-wrapper">
           <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">
-          <i class="el-icon-caret-bottom" />
+          <div class="user-name">
+            {{ name }}
+            <i class="el-icon-caret-bottom"></i>
+          </div>
+
+          <!-- <i class="el-icon-caret-bottom" /> -->
         </div>
         <el-dropdown-menu slot="dropdown">
           <router-link to="/profile/index">
@@ -67,7 +72,8 @@ export default {
     ...mapGetters([
       'sidebar',
       'avatar',
-      'device'
+      'device',
+      'name'
     ])
   },
   methods: {
@@ -125,7 +131,7 @@ export default {
       display: inline-block;
       padding: 0 8px;
       height: 100%;
-      font-size: 18px;
+      font-size: 14px;
       color: #5a5e66;
       vertical-align: text-bottom;
 
@@ -143,23 +149,37 @@ export default {
       margin-right: 30px;
 
       .avatar-wrapper {
-        margin-top: 5px;
+        // margin-top: 5px;
         position: relative;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        font-size: 12px;
 
         .user-avatar {
           cursor: pointer;
-          width: 40px;
-          height: 40px;
-          border-radius: 10px;
+          width: 30px;
+          height: 30px;
+          border-radius: 50%;
+          margin-right: 10px;
         }
 
-        .el-icon-caret-bottom {
-          cursor: pointer;
-          position: absolute;
-          right: -20px;
-          top: 25px;
-          font-size: 12px;
+        .user-name{
+          display: flex;
+          justify-content: space-around;
+          align-items: center;
+          .el-icon-caret-bottom{
+            margin-left: 5px;
+          }
         }
+
+        // .el-icon-caret-bottom {
+        //   cursor: pointer;
+        //   position: absolute;
+        //   right: -20px;
+        //   top: 25px;
+        //   font-size: 12px;
+        // }
       }
     }
   }

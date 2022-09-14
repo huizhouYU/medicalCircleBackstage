@@ -38,7 +38,7 @@
   .hasTagsView {
     .app-main {
       /* 84 = navbar + tags-view = 50 + 34 */
-      min-height: calc(100vh - 84px);
+      min-height: calc(100vh - 100px);
       padding: 20px;        
       background-color: #f5f7fa;
     }
