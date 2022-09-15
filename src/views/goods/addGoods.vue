@@ -342,7 +342,6 @@
 <style scoped lang="less">
   // 第二模块 类目搜索
   .searchSort {
-    margin-top: 15px;
     height: 74px;
     background-color: #fff;
     padding: 20px 15px;

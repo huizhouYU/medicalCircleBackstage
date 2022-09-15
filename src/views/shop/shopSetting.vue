@@ -132,7 +132,6 @@ export default {
     box-shadow: 0px 2px 10px 1px rgba(0, 0, 0, 0.06);
     border-radius: 6px 6px 6px 6px;
     padding: 20px 35px 30px 15px;
-    margin-top: 15px;
 
     /deep/ .el-form-item__label {
       font-size: 12px;

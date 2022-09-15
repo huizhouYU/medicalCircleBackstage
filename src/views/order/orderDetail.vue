@@ -35,45 +35,20 @@
         <!-- 具体操作 -->
         <div class="operatipn-content">
           <template v-if="orderInfo.OrderStatus==1">
-            <el-button
-              plain
-              size="mini"
-              icon="el-icon-edit"
-              class="info-span-interval"
-              @click="openExamineDialog(orderInfo.number)"
-            >审核</el-button>
-            <el-button
-              plain
-              size="mini"
-              icon="el-icon-delete"
-              class="info-span-interval"
-              @click="cancelOrder(orderInfo.number)"
-            >取消订单</el-button>
+            <el-button plain size="mini" icon="el-icon-edit" class="info-span-interval"
+              @click="openExamineDialog(orderInfo.number)">审核</el-button>
+            <el-button plain size="mini" icon="el-icon-delete" class="info-span-interval"
+              @click="cancelOrder(orderInfo.number)">取消订单</el-button>
           </template>
           <template v-else-if="orderInfo.OrderStatus==2">
-            <el-button
-              plain
-              size="mini"
-              icon="el-icon-edit"
-              class="info-span-interval"
-              @click="openPirceDialog(orderInfo.number)"
-            >修改价格</el-button>
-            <el-button
-              plain
-              size="mini"
-              icon="el-icon-delete"
-              class="info-span-interval"
-              @click="cancelOrder(orderInfo.number)"
-            >取消订单</el-button>
+            <el-button plain size="mini" icon="el-icon-edit" class="info-span-interval"
+              @click="openPirceDialog(orderInfo.number)">修改价格</el-button>
+            <el-button plain size="mini" icon="el-icon-delete" class="info-span-interval"
+              @click="cancelOrder(orderInfo.number)">取消订单</el-button>
           </template>
           <template v-else-if="orderInfo.OrderStatus==3">
-            <el-button
-              plain
-              size="mini"
-              icon="el-icon-edit"
-              class="info-span-interval"
-              @click="openDeliverDialog(orderInfo.number)"
-            >发货</el-button>
+            <el-button plain size="mini" icon="el-icon-edit" class="info-span-interval"
+              @click="openDeliverDialog(orderInfo.number)">发货</el-button>
           </template>
         </div>
       </div>
@@ -107,16 +82,9 @@
         <!-- 物流信息 -->
         <div class="detail-module-item">
           <el-timeline>
-            <el-timeline-item
-              v-for="(activity, index) in orderInfo.activities"
-              :key="index"
-              :icon="activity.icon"
-              :type="activity.type"
-              :color="activity.color"
-              :size="activity.size"
-              :timestamp="activity.timestamp"
-              class="last-timeline"
-            >
+            <el-timeline-item v-for="(activity, index) in orderInfo.activities" :key="index" :icon="activity.icon"
+              :type="activity.type" :color="activity.color" :size="activity.size" :timestamp="activity.timestamp"
+              class="last-timeline">
               <!--   :class="{'last-timeline':index == 0}"> -->
               {{ activity.content }}
             </el-timeline-item>
@@ -155,20 +123,12 @@
         <div class="payWay">
           支付方式：<span>支付宝</span>
         </div>
-
       </div>
-
     </div>
 
     <!-- 修改价格 或者 审核 -->
-    <el-dialog
-      :title="pirceDialogTitle"
-      :close-on-click-modal="false"
-      :visible.sync="pirceDialogVisible"
-      width="500px"
-      center
-      class="el-dialog-box"
-    >
+    <el-dialog :title="pirceDialogTitle" :close-on-click-modal="false" :visible.sync="pirceDialogVisible" width="500px"
+      center class="el-dialog-box">
       <el-form :model="orderPirceForm" label-position="left">
         <el-form-item label="订单价格:" :label-width="formLabelWidth">
           <el-input v-model="orderPirceForm.oldPrice" placeholder="--" :disabled="true" />
@@ -184,33 +144,20 @@
       </span>
     </el-dialog>
     <!-- 发货 弹框 -->
-    <el-dialog
-      title="发货信息"
-      :close-on-click-modal="false"
-      :visible.sync="deliverDialogVisible"
-      width="500px"
-      center
-      class="el-dialog-box el-dialog-deliver"
-    >
+    <el-dialog title="发货信息" :close-on-click-modal="false" :visible.sync="deliverDialogVisible" width="500px"
+      class="el-dialog-box el-dialog-deliver">
       <el-form :model="orderDeliverForm" label-position="left">
         <el-radio-group v-model="orderDeliverForm.deliverWay" @change="clearDeliverForm">
           <el-radio :label="1">物流发货</el-radio>
           <el-radio :label="2">商家自配</el-radio>
         </el-radio-group>
         <el-form-item label="物流公司:" :label-width="formLabelWidth">
-          <el-input
-            v-model="orderDeliverForm.logisticsCompany"
-            placeholder=""
-            :disabled="orderDeliverForm.deliverWay == 2"
-          />
+          <el-input v-model="orderDeliverForm.logisticsCompany" placeholder=""
+            :disabled="orderDeliverForm.deliverWay == 2" />
         </el-form-item>
         <el-form-item label="快递单号:" :label-width="formLabelWidth">
-          <el-input
-            v-model="orderDeliverForm.expressNo"
-            autocomplete="off"
-            size="medium"
-            :disabled="orderDeliverForm.deliverWay == 2"
-          />
+          <el-input v-model="orderDeliverForm.expressNo" autocomplete="off" size="medium"
+            :disabled="orderDeliverForm.deliverWay == 2" />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -219,14 +166,8 @@
       </span>
     </el-dialog>
     <!-- 备注 弹框 -->
-    <el-dialog
-      title="备注信息"
-      :close-on-click-modal="false"
-      :visible.sync="notesDialogVisible"
-      width="500px"
-      center
-      class="el-dialog-box"
-    >
+    <el-dialog title="备注信息" :close-on-click-modal="false" :visible.sync="notesDialogVisible" width="500px"
+      class="el-dialog-box">
       <el-form :model="orderNotesForm" label-position="left">
         <el-form-item label="买家备注:" :label-width="formLabelWidth">
           <el-input v-model="orderNotesForm.mNotes" placeholder="" type="textarea" :disabled="true" />
@@ -245,167 +186,167 @@
 </template>
 
 <script>
-export default {
-  data() {
-    return {
-      formLabelWidth: '100px',
-      notes: '', // 修改价格弹框备注
-      pirceDialogTitle: '', // 审核和修改价格是同一个弹框，用标题区分是什么操作
-      pirceDialogVisible: false, // 修改价格弹框
-      deliverDialogVisible: false, // 发货弹框
-      notesDialogVisible: false, // 备注弹框
-      // 要修改价格的订单信息
-      orderPirceForm: {
-        id: '', // 订单唯一标识
-        oldPrice: '100', // 订单原来的价格
-        newPrice: '' // 新的价格
-      },
-      // 要发货的订单信息
-      orderDeliverForm: {
-        id: '', // 订单唯一标识
-        deliverWay: 1, // 发货方式
-        logisticsCompany: '', // 物流公司
-        expressNo: '' // 快递单号
-      },
-      orderNotesForm: {
-        id: '', // 订单唯一标识
-        mNotes: '买家备注，无法更改', // 买家备注
-        sNotes: '' // 商家备注
-      },
-
-      orderId: '', // 订单Id
-      orderInfo: {
-        // id: 1,
-        number: '45257457890123456',
-        orderTime: '2021-10-13  16:28:56',
-        payWay: '支付宝',
-        buyer: '白龙',
-        consignee: '张三',
-        phone: '15145298654',
-        OrderStatus: '1',
-        orderPrice: '1080.00',
-        evaluate: '',
-        activities: [{
-          content: '合肥市：您的包裹已送达哈哈便利店南门第二间，签收人：丁小军',
-          timestamp: '2021-12-16   12:58:26',
-          color: '#0bbd87'
-          // size: 'large',
-          // type: 'primary',
-          // icon: 'el-icon-more'
-        }, {
-          content: '合肥市：您的包裹已送达分拨交付中心',
-          timestamp: '2021-12-16   12:58:26'
-          // color: '#0bbd87'
-        }, {
-          content: '上海市：您的包裹已离开华东枢纽分拨；发往安徽省合肥市蜀山区',
-          timestamp: '2021-12-16   12:58:26',
-          size: 'large'
-        }, {
-          content: '您提交了订单，快递揽件中',
-          timestamp: '2021-12-16   12:58:26'
-        }],
-        goods: [{
-          name: '飞利浦核磁共振专业设备医用型号ur125ow飞利浦核磁共振专业设备医用型号磁共振专业设备医用型您的包裹已离开华东枢纽分拨',
-          goodNo: '123',
-          imgUrl: '../../../static/img/brand03.png',
-          num: '30',
-          price: '36.00'
+  export default {
+    data() {
+      return {
+        formLabelWidth: '100px',
+        notes: '', // 修改价格弹框备注
+        pirceDialogTitle: '', // 审核和修改价格是同一个弹框，用标题区分是什么操作
+        pirceDialogVisible: false, // 修改价格弹框
+        deliverDialogVisible: false, // 发货弹框
+        notesDialogVisible: false, // 备注弹框
+        // 要修改价格的订单信息
+        orderPirceForm: {
+          id: '', // 订单唯一标识
+          oldPrice: '100', // 订单原来的价格
+          newPrice: '' // 新的价格
         },
-        {
-          name: '飞利浦核磁共振专业设备医用型号ur125ow飞利ur125ow',
-          goodNo: '123',
-          imgUrl: '../../../static/img/brand03.png',
-          num: '30',
-          price: '36.00'
+        // 要发货的订单信息
+        orderDeliverForm: {
+          id: '', // 订单唯一标识
+          deliverWay: 1, // 发货方式
+          logisticsCompany: '', // 物流公司
+          expressNo: '' // 快递单号
+        },
+        orderNotesForm: {
+          id: '', // 订单唯一标识
+          mNotes: '买家备注，无法更改', // 买家备注
+          sNotes: '' // 商家备注
+        },
+
+        orderId: '', // 订单Id
+        orderInfo: {
+          // id: 1,
+          number: '45257457890123456',
+          orderTime: '2021-10-13  16:28:56',
+          payWay: '支付宝',
+          buyer: '白龙',
+          consignee: '张三',
+          phone: '15145298654',
+          OrderStatus: '1',
+          orderPrice: '1080.00',
+          evaluate: '',
+          activities: [{
+            content: '合肥市：您的包裹已送达哈哈便利店南门第二间，签收人：丁小军',
+            timestamp: '2021-12-16   12:58:26',
+            color: '#0bbd87'
+            // size: 'large',
+            // type: 'primary',
+            // icon: 'el-icon-more'
+          }, {
+            content: '合肥市：您的包裹已送达分拨交付中心',
+            timestamp: '2021-12-16   12:58:26'
+            // color: '#0bbd87'
+          }, {
+            content: '上海市：您的包裹已离开华东枢纽分拨；发往安徽省合肥市蜀山区',
+            timestamp: '2021-12-16   12:58:26',
+            size: 'large'
+          }, {
+            content: '您提交了订单，快递揽件中',
+            timestamp: '2021-12-16   12:58:26'
+          }],
+          goods: [{
+              name: '飞利浦核磁共振专业设备医用型号ur125ow飞利浦核磁共振专业设备医用型号磁共振专业设备医用型您的包裹已离开华东枢纽分拨',
+              goodNo: '123',
+              imgUrl: '../../../static/img/brand03.png',
+              num: '30',
+              price: '36.00'
+            },
+            {
+              name: '飞利浦核磁共振专业设备医用型号ur125ow飞利ur125ow',
+              goodNo: '123',
+              imgUrl: '../../../static/img/brand03.png',
+              num: '30',
+              price: '36.00'
+            }
+
+          ]
         }
-
-        ]
-      }
-    }
-  },
-  mounted() {
-    this.getOrderId()
-  },
-  methods: {
-    getOrderId() {
-      this.orderId = this.$route.query.id
-    },
-    back() {
-      this.$router.replace('/orderManage')
-    },
-    // 取消订单
-    cancelOrder(val) {
-      console.log('取消订单')
-      // 根据传值给的订单唯一标识，请求后端接口
-      this.$confirm('是否取消该订单?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.$message({
-          type: 'success',
-          message: '模拟数据取消成功!'
-        })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: ''
-        })
-      })
-    },
-
-    clearDeliverForm() {
-      if (this.orderDeliverForm.deliverWay == 2) {
-        this.orderDeliverForm.logisticsCompany = ''
-        this.orderDeliverForm.expressNo = ''
       }
     },
-    openExamineDialog(val) {
-      // 传过来的值应该是订单编号，根据订单编号，请求后端接口，获取改订单的价格，放到弹框对应的位置中
-      this.pirceDialogTitle = '审核'
-      this.notes = '注：默认修改价格成功后，审核通过！'
-      this.pirceDialogVisible = true
+    mounted() {
+      this.getOrderId()
     },
-    openPirceDialog(val) {
-      // 传过来的值应该是订单编号，根据订单编号，请求后端接口，获取改订单的价格，放到弹框对应的位置中
-      this.pirceDialogTitle = '修改价格'
-      this.notes = ''
-      this.pirceDialogVisible = true
-    },
-    closePirceDialog() {
-      this.pirceDialogTitle = ''
-      this.notes = ''
-      this.pirceDialogVisible = false
-    },
-    surePirceDialog() {
-      // 请求后端接口数据，保存信息
-      this.closePirceDialog()
-    },
-    openDeliverDialog(val) {
-      // 传过来的值应该是订单编号，根据订单编号，请求后端接口，获取改订单的信息，放到弹框对应的位置中
-      this.deliverDialogVisible = true
-    },
-    closeDeliverDialog() {
-      this.deliverDialogVisible = false
-    },
-    sureDeliverDialog() {
-      // 请求后端接口数据，保存信息
-      this.closeDeliverDialog()
-    },
-    openNotesDialog(val) {
-      // 传过来的值应该是订单编号，根据订单编号，请求后端接口，获取改订单的信息，放到弹框对应的位置中
-      this.notesDialogVisible = true
-    },
-    closeNotesDialog() {
-      this.notesDialogVisible = false
-    },
-    sureNotesDialog() {
-      // 请求后端接口数据，保存信息
-      this.closeNotesDialog()
+    methods: {
+      getOrderId() {
+        this.orderId = this.$route.query.id
+      },
+      back() {
+        this.$router.replace('/orderManage')
+      },
+      // 取消订单
+      cancelOrder(val) {
+        console.log('取消订单')
+        // 根据传值给的订单唯一标识，请求后端接口
+        this.$confirm('是否取消该订单?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$message({
+            type: 'success',
+            message: '模拟数据取消成功!'
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: ''
+          })
+        })
+      },
+
+      clearDeliverForm() {
+        if (this.orderDeliverForm.deliverWay == 2) {
+          this.orderDeliverForm.logisticsCompany = ''
+          this.orderDeliverForm.expressNo = ''
+        }
+      },
+      openExamineDialog(val) {
+        // 传过来的值应该是订单编号，根据订单编号，请求后端接口，获取改订单的价格，放到弹框对应的位置中
+        this.pirceDialogTitle = '审核'
+        this.notes = '注：默认修改价格成功后，审核通过！'
+        this.pirceDialogVisible = true
+      },
+      openPirceDialog(val) {
+        // 传过来的值应该是订单编号，根据订单编号，请求后端接口，获取改订单的价格，放到弹框对应的位置中
+        this.pirceDialogTitle = '修改价格'
+        this.notes = ''
+        this.pirceDialogVisible = true
+      },
+      closePirceDialog() {
+        this.pirceDialogTitle = ''
+        this.notes = ''
+        this.pirceDialogVisible = false
+      },
+      surePirceDialog() {
+        // 请求后端接口数据，保存信息
+        this.closePirceDialog()
+      },
+      openDeliverDialog(val) {
+        // 传过来的值应该是订单编号，根据订单编号，请求后端接口，获取改订单的信息，放到弹框对应的位置中
+        this.deliverDialogVisible = true
+      },
+      closeDeliverDialog() {
+        this.deliverDialogVisible = false
+      },
+      sureDeliverDialog() {
+        // 请求后端接口数据，保存信息
+        this.closeDeliverDialog()
+      },
+      openNotesDialog(val) {
+        // 传过来的值应该是订单编号，根据订单编号，请求后端接口，获取改订单的信息，放到弹框对应的位置中
+        this.notesDialogVisible = true
+      },
+      closeNotesDialog() {
+        this.notesDialogVisible = false
+      },
+      sureNotesDialog() {
+        // 请求后端接口数据，保存信息
+        this.closeNotesDialog()
+      }
     }
+
   }
-
-}
 </script>
 
 <style lang="less" scoped>
@@ -417,7 +358,6 @@ export default {
 
     //订单状态一栏和订单详情一栏 共用的样式
     .order-item {
-      margin-top: 15px;
       background-color: #fff;
       box-shadow: 0px 2px 10px 1px rgba(0, 0, 0, 0.06);
       border-radius: 6px 6px 6px 6px;
@@ -681,34 +621,11 @@ export default {
           font-weight: bold;
           color: #333333;
         }
+
         .payWay {
           margin-top: 8px;
         }
 
-      }
-    }
-
-    .el-dialog-box {
-      font-size: 14px;
-    }
-
-    /deep/ .el-dialog__header {
-      font-size: 14px;
-      letter-spacing: 4px;
-      font-weight: 700;
-      color: #333;
-      background-color: rgba(0, 0, 0, 0.06);
-    }
-
-    .dialog-notes {
-      display: inline-block;
-      font-size: 12px;
-      color: #999;
-    }
-
-    .el-dialog-deliver {
-      /deep/ .el-form-item {
-        margin-top: 20px;
       }
     }
   }

@@ -9,23 +9,12 @@
       <!-- 下单时间 -->
       <div class="order-time public-interval">
         <span>下单时间：</span>
-        <el-date-picker
-          v-model="orderTime"
-          class="el-date-editor-div"
-          type="daterange"
-          align="right"
-          unlink-panels
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          :picker-options="pickerOptions"
-        />
+        <el-date-picker v-model="orderTime" class="el-date-editor-div" type="daterange" align="right" unlink-panels
+          start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions" />
       </div>
       <!-- 输入关键字 -->
-      <el-input
-        v-model="inputKey"
-        placeholder="请输入订单编号/收货人"
-        class="input-with-select search-select-input public-interval"
-      >
+      <el-input v-model="inputKey" placeholder="请输入订单编号/收货人"
+        class="input-with-select search-select-input public-interval">
         <el-select slot="prepend" v-model="inputKeyType" placeholder="请选择">
           <el-option v-for="item in inputKeyOptions" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
@@ -102,42 +91,25 @@
         </tbody>
       </table>
       <div class="bottoms-box">
-        <el-pagination
-          background
-          :page-sizes="[1,5,10, 15, 20, 25]"
-          :page-size="pageSize"
-          :current-page.sync="currentPage"
-          :pager-count="5"
-          :background="false"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="totalNum"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-        />
+        <el-pagination background :page-sizes="[1,5,10, 15, 20, 25]" :page-size="pageSize"
+          :current-page.sync="currentPage" :pager-count="5" :background="false"
+          layout="total, sizes, prev, pager, next, jumper" :total="totalNum" @size-change="handleSizeChange"
+          @current-change="handleCurrentChange" />
 
       </div>
     </div>
 
     <!-- 发货 弹框 -->
-    <el-dialog
-      title="退款审核"
-      :close-on-click-modal="false"
-      :visible.sync="refundDialogVisible"
-      width="500px"
-      center
-      class="el-dialog-box el-dialog-deliver"
-    >
+    <el-dialog title="退款审核" :close-on-click-modal="false" :visible.sync="refundDialogVisible" width="500px"
+      class="el-dialog-box el-dialog-deliver">
       <el-form :model="refundDeliverForm" label-position="left">
         <el-radio-group v-model="refundDeliverForm.decision" @change="clearRefundForm">
           <el-radio :label="1">同意</el-radio>
           <el-radio :label="2">拒绝</el-radio>
         </el-radio-group>
         <el-form-item label="拒绝原因:" :label-width="formLabelWidth">
-          <el-input
-            v-model="refundDeliverForm.refuseReason"
-            placeholder=""
-            :disabled="refundDeliverForm.decision == 1"
-          />
+          <el-input v-model="refundDeliverForm.refuseReason" placeholder=""
+            :disabled="refundDeliverForm.decision == 1" />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -146,14 +118,8 @@
       </span>
     </el-dialog>
     <!-- 备注 弹框 -->
-    <el-dialog
-      title="备注信息"
-      :close-on-click-modal="false"
-      :visible.sync="notesDialogVisible"
-      width="500px"
-      center
-      class="el-dialog-box"
-    >
+    <el-dialog title="备注信息" :close-on-click-modal="false" :visible.sync="notesDialogVisible" width="500px"
+      class="el-dialog-box">
       <el-form :model="orderNotesForm" label-position="left">
         <el-form-item label="买家备注:" :label-width="formLabelWidth">
           <el-input v-model="orderNotesForm.mNotes" placeholder="" type="textarea" :disabled="true" />
@@ -172,252 +138,250 @@
 </template>
 
 <script>
-const a = require('../../../src/json/refundOrders.json')
-import axios from 'axios'
-export default {
-  data() {
-    return {
-      refundDialogVisible: false, // 退款弹框
-      notesDialogVisible: false, // 备注弹框
-      // /搜索关键字类型
-      inputKeyOptions: [{
-        value: '1',
-        label: '订单编号'
-      }, {
-        value: '2',
-        label: '收货人'
-      }],
-      inputKeyType: '', // 选择的搜索关键字类型
-      // 输入的订单编号/收货人
-      inputKey: '',
-      // 选择的订单状态
-      orderStateValue: '',
-      // 订单状态
-      orderStateOptions: [{
-        value: '0',
-        label: '全部订单'
-      },
-      {
-        value: '1',
-        label: '待处理'
-      }, {
-        value: '2',
-        label: '退款中'
-      },
-      {
-        value: '3',
-        label: '退款成功'
-      },
-      {
-        value: '4',
-        label: '退款失败'
-      }
-      ],
-      // 选择的订单时间
-      orderTime: '',
-      pickerOptions: {
-        shortcuts: [{
-          text: '最近一周',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-            picker.$emit('pick', [start, end])
-          }
+  const a = require('../../../src/json/refundOrders.json')
+  import axios from 'axios'
+  export default {
+    data() {
+      return {
+        refundDialogVisible: false, // 退款弹框
+        notesDialogVisible: false, // 备注弹框
+        // /搜索关键字类型
+        inputKeyOptions: [{
+          value: '1',
+          label: '订单编号'
         }, {
-          text: '最近一个月',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-            picker.$emit('pick', [start, end])
+          value: '2',
+          label: '收货人'
+        }],
+        inputKeyType: '', // 选择的搜索关键字类型
+        // 输入的订单编号/收货人
+        inputKey: '',
+        // 选择的订单状态
+        orderStateValue: '',
+        // 订单状态
+        orderStateOptions: [{
+            value: '0',
+            label: '全部订单'
+          },
+          {
+            value: '1',
+            label: '待处理'
+          }, {
+            value: '2',
+            label: '退款中'
+          },
+          {
+            value: '3',
+            label: '退款成功'
+          },
+          {
+            value: '4',
+            label: '退款失败'
           }
-        }, {
-          text: '最近三个月',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-            picker.$emit('pick', [start, end])
-          }
-        }]
-      },
-      // 总数据内容
-      tableData: [],
-      isAddAllTerminalStatus: false, // 是否全选订单
-      pagerCount: 4, // 设置页码显示最多的数量
-      isAddAllTerminalStatus: false,
-      currentPage: 1, // 当前页
-      totalPage: 0, // 总页数
-      totalNum: 0, // 总条数
-      pageSize: 10, // 当前显示条数
-      currentPageData: [], // 当前页显示内容
-      multipleSelection: [], // 选择的订单编号
-      formLabelWidth: '100px',
-      // 要退款的订单信息
-      refundDeliverForm: {
-        id: '', // 订单唯一标识
-        decision: 1, // 1：同意，2：拒绝
-        refuseReason: '' // 拒绝原因
-      },
-      orderNotesForm: {
-        id: '', // 订单唯一标识
-        mNotes: '买家备注，无法更改', // 买家备注
-        sNotes: '' // 商家备注
-      }
-
-    }
-  },
-  mounted() {
-    this.loadData()
-  },
-  methods: {
-    back() {
-      this.$router.replace('/orderManage')
-    },
-    // 选择某一个订单
-    clickCheckbox(val) {
-      if (this.currentPageData[val].checked) {
-        this.multipleSelection.push(this.currentPageData[val].number)
-      } else {
-        var ls_Selection = []
-        for (var i = 0; i < this.multipleSelection.length; i++) {
-          if (this.multipleSelection[i] != this.currentPageData[val].number) {
-            ls_Selection.push(this.currentPageData[val].number)
-          }
+        ],
+        // 选择的订单时间
+        orderTime: '',
+        pickerOptions: {
+          shortcuts: [{
+            text: '最近一周',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+              picker.$emit('pick', [start, end])
+            }
+          }, {
+            text: '最近一个月',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+              picker.$emit('pick', [start, end])
+            }
+          }, {
+            text: '最近三个月',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+              picker.$emit('pick', [start, end])
+            }
+          }]
+        },
+        // 总数据内容
+        tableData: [],
+        isAddAllTerminalStatus: false, // 是否全选订单
+        pagerCount: 4, // 设置页码显示最多的数量
+        isAddAllTerminalStatus: false,
+        currentPage: 1, // 当前页
+        totalPage: 0, // 总页数
+        totalNum: 0, // 总条数
+        pageSize: 10, // 当前显示条数
+        currentPageData: [], // 当前页显示内容
+        multipleSelection: [], // 选择的订单编号
+        formLabelWidth: '100px',
+        // 要退款的订单信息
+        refundDeliverForm: {
+          id: '', // 订单唯一标识
+          decision: 1, // 1：同意，2：拒绝
+          refuseReason: '' // 拒绝原因
+        },
+        orderNotesForm: {
+          id: '', // 订单唯一标识
+          mNotes: '买家备注，无法更改', // 买家备注
+          sNotes: '' // 商家备注
         }
-        this.multipleSelection = ls_Selection
+
       }
     },
-    // 全选订单
-    allSelectTerminal() {
-      for (var i = 0; i < this.currentPageData.length; i++) {
-        this.currentPageData[i].checked = this.isAddAllTerminalStatus
-        this.multipleSelection.push(this.currentPageData[i].number)
-      }
-      if (!this.isAddAllTerminalStatus) {
-        this.multipleSelection = []
-      }
-    },
-    // 删除
-    deleteChoosed() {
-      if (this.multipleSelection.length > 0) {
-        this.$confirm('数据删除后将无法找回, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          this.$message({
-            type: 'success',
-            message: '模拟数据删除成功!'
-          })
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          })
-        })
-      } else {
-        this.$message({
-          type: 'error',
-          message: '请先选择要删除的订单!'
-        })
-      }
-    },
-    // 计算页码等
-    computeSize() {
-      this.totalNum = this.tableData.length
-      this.totalPage = Math.ceil(this.totalNum / this.pageSize)
-      // 计算得0时设置为1
-      this.totalPage = this.totalPage == 0 ? 1 : this.totalPage
-      this.setCurrentPageData()
-    },
-    // 设置当前页面数据，对数组操作的截取规则为[0~10],[10~20]...,
-    setCurrentPageData() {
-      const begin = (this.currentPage - 1) * this.pageSize
-      const end = this.currentPage * this.pageSize
-      this.currentPageData = this.tableData.slice(
-        begin,
-        end
-      )
-    },
-    async loadData() {
-      this.tableData = a.ordersData
-      this.computeSize()
-      // await axios.get("../../../static/testData/refundOrders.json").then(res => {
-      //   if (res.status == 200) {
-      //     this.tableData = res.data.ordersData
-      //     // console.log(this.tableData)
-      //     // console.log(this.tableData.length)
-      //   } else {
-      //     this.$message.error("数据请求失败，请稍后再试！")
-      //   }
-      //   this.computeSize()
-      // })
-    },
-    handleSizeChange(val) {
-      this.pageSize = val
+    mounted() {
       this.loadData()
     },
-    handleCurrentChange(val) {
-      this.setCurrentPageData()
-    },
-    // 打开退款弹框
-    openRefundDialog(val) {
-      // 传过来的值应该是订单编号，根据订单编号，请求后端接口，获取改订单的信息，放到弹框对应的位置中
-      this.refundDialogVisible = true
-    },
-    clearRefundForm() {
-      if (this.refundDeliverForm.decision == 1) {
-        this.refundDeliverForm.refuseReason = ''
+    methods: {
+      back() {
+        this.$router.replace('/orderManage')
+      },
+      // 选择某一个订单
+      clickCheckbox(val) {
+        if (this.currentPageData[val].checked) {
+          this.multipleSelection.push(this.currentPageData[val].number)
+        } else {
+          var ls_Selection = []
+          for (var i = 0; i < this.multipleSelection.length; i++) {
+            if (this.multipleSelection[i] != this.currentPageData[val].number) {
+              ls_Selection.push(this.currentPageData[val].number)
+            }
+          }
+          this.multipleSelection = ls_Selection
+        }
+      },
+      // 全选订单
+      allSelectTerminal() {
+        for (var i = 0; i < this.currentPageData.length; i++) {
+          this.currentPageData[i].checked = this.isAddAllTerminalStatus
+          this.multipleSelection.push(this.currentPageData[i].number)
+        }
+        if (!this.isAddAllTerminalStatus) {
+          this.multipleSelection = []
+        }
+      },
+      // 删除
+      deleteChoosed() {
+        if (this.multipleSelection.length > 0) {
+          this.$confirm('数据删除后将无法找回, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.$message({
+              type: 'success',
+              message: '模拟数据删除成功!'
+            })
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消删除'
+            })
+          })
+        } else {
+          this.$message({
+            type: 'error',
+            message: '请先选择要删除的订单!'
+          })
+        }
+      },
+      // 计算页码等
+      computeSize() {
+        this.totalNum = this.tableData.length
+        this.totalPage = Math.ceil(this.totalNum / this.pageSize)
+        // 计算得0时设置为1
+        this.totalPage = this.totalPage == 0 ? 1 : this.totalPage
+        this.setCurrentPageData()
+      },
+      // 设置当前页面数据，对数组操作的截取规则为[0~10],[10~20]...,
+      setCurrentPageData() {
+        const begin = (this.currentPage - 1) * this.pageSize
+        const end = this.currentPage * this.pageSize
+        this.currentPageData = this.tableData.slice(
+          begin,
+          end
+        )
+      },
+      async loadData() {
+        this.tableData = a.ordersData
+        this.computeSize()
+        // await axios.get("../../../static/testData/refundOrders.json").then(res => {
+        //   if (res.status == 200) {
+        //     this.tableData = res.data.ordersData
+        //     // console.log(this.tableData)
+        //     // console.log(this.tableData.length)
+        //   } else {
+        //     this.$message.error("数据请求失败，请稍后再试！")
+        //   }
+        //   this.computeSize()
+        // })
+      },
+      handleSizeChange(val) {
+        this.pageSize = val
+        this.loadData()
+      },
+      handleCurrentChange(val) {
+        this.setCurrentPageData()
+      },
+      // 打开退款弹框
+      openRefundDialog(val) {
+        // 传过来的值应该是订单编号，根据订单编号，请求后端接口，获取改订单的信息，放到弹框对应的位置中
+        this.refundDialogVisible = true
+      },
+      clearRefundForm() {
+        if (this.refundDeliverForm.decision == 1) {
+          this.refundDeliverForm.refuseReason = ''
+        }
+      },
+      // 关闭退款弹框
+      closeRefundDialog() {
+        this.refundDialogVisible = false
+      },
+      sureDeliverDialog() {
+        // 请求后端接口数据，保存信息
+        this.closeRefundDialog()
+      },
+      closeNotesDialog() {
+        this.notesDialogVisible = false
+      },
+      sureNotesDialog() {
+        // 请求后端接口数据，保存信息
+        this.closeNotesDialog()
+      },
+
+      openNotesDialog(val) {
+        // 传过来的值应该是订单编号，根据订单编号，请求后端接口，获取改订单的信息，放到弹框对应的位置中
+        this.notesDialogVisible = true
+      },
+      toOrderDetail(val) {
+        this.$router.push({
+          path: 'orderDetail',
+          query: {
+            id: val
+          }
+        })
+      },
+      toRefundDetail(val) {
+        this.$router.push({
+          path: 'refundOrderDetail',
+          query: {
+            id: val
+          }
+        })
       }
-    },
-    // 关闭退款弹框
-    closeRefundDialog() {
-      this.refundDialogVisible = false
-    },
-    sureDeliverDialog() {
-      // 请求后端接口数据，保存信息
-      this.closeRefundDialog()
-    },
-    closeNotesDialog() {
-      this.notesDialogVisible = false
-    },
-    sureNotesDialog() {
-      // 请求后端接口数据，保存信息
-      this.closeNotesDialog()
-    },
-
-    openNotesDialog(val) {
-      // 传过来的值应该是订单编号，根据订单编号，请求后端接口，获取改订单的信息，放到弹框对应的位置中
-      this.notesDialogVisible = true
-    },
-    toOrderDetail(val) {
-      this.$router.push({
-        path: 'orderDetail',
-        query: {
-          id: val
-        }
-      })
-    },
-    toRefundDetail(val) {
-      this.$router.push({
-        path: 'refundOrderDetail',
-        query: {
-          id: val
-        }
-      })
     }
-  }
 
-}
+  }
 </script>
 
 <style lang="less" scoped>
-
   // 搜索栏
   .search-box {
-    margin-top: 15px;
     // height: 74px;
     background-color: #fff;
     box-shadow: 0px 2px 10px 1px rgba(0, 0, 0, 0.06);
@@ -766,30 +730,6 @@ export default {
       justify-content: flex-end;
       align-items: center;
 
-    }
-  }
-
-  .el-dialog-box {
-    font-size: 14px;
-  }
-
-  /deep/ .el-dialog__header {
-    font-size: 14px;
-    letter-spacing: 4px;
-    font-weight: 700;
-    color: #333;
-    background-color: rgba(0, 0, 0, 0.06);
-  }
-
-  .dialog-notes {
-    display: inline-block;
-    font-size: 12px;
-    color: #999;
-  }
-
-  .el-dialog-deliver {
-    /deep/ .el-form-item {
-      margin-top: 20px;
     }
   }
 </style>

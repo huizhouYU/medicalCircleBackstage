@@ -1,7 +1,9 @@
 <template>
   <div class="login-container">
     <div class="left">
-      <img src="../../../public/imgs/login/left-bg.png" alt="">
+      <!-- <img src="../../../public/imgs/login/left-bg.png" alt=""> -->
+      <img src="../../../public/imgs/login/left-bg.png" alt="" :class="[{loginImg:isRegister},'loginBgImg']">
+      <img src="../../../public/imgs/login/register-bg.png" alt="" :class="[{registerImg:isRegister},'registerBgImg']">
     </div>
     <div class="right">
       <!-- 登录 -->
@@ -17,20 +19,21 @@
         <!-- 登录 -->
         <div v-show="!isForgotPassword">
           <ul class="loginWay-div">
-            <li :class="loginWay==1?'chosedWay':''" @click="loginWay=1">密码登录</li>
-            <li :class="loginWay==2?'chosedWay':''" @click="loginWay=2">验证码登录</li>
+            <li :class="loginWay==1?'chosedWay':''" @click="loginWay=1">密码登录 <span></span> </li>
+            <li :class="loginWay==2?'chosedWay':''" @click="loginWay=2">验证码登录<span></span> </li>
           </ul>
           <!-- 密码登录 -->
           <div v-show="loginWay == 1">
-            <el-form label-position="top" label-width="80px" :model="loginForm" :rules="loginRules" class="modular-form">
-              <el-form-item label="">
+            <el-form label-position="top" label-width="80px" ref="loginForm" :model="loginForm" :rules="loginRules"
+              class="modular-form">
+              <el-form-item label="" prop="username">
                 <el-input v-model="loginForm.username" placeholder="请输入用户名" clearable>
                   <template #prefix>
                     <div class="prefix"><img src="../../../public/imgs/login/user.png" alt=""></div>
                   </template>
                 </el-input>
               </el-form-item>
-              <el-form-item label="">
+              <el-form-item label="" prop="password">
                 <el-input v-model="loginForm.password" placeholder="请输入密码" show-password @focus="isHide = true"
                   @blur="isHide = false">
                   <template #prefix>
@@ -38,7 +41,7 @@
                   </template>
                 </el-input>
               </el-form-item>
-              <el-form-item label="">
+              <el-form-item label="" prop="verCode">
                 <div class="login-code">
                   <el-input v-model="loginForm.verCode" placeholder="请输入验证码" class="login-code-input"></el-input>
                   <canvas id="canvas" width="100" height="40" @click="draw()" style="border-radius: 5px;"></canvas>
@@ -51,23 +54,24 @@
                   <li @click="register()">立即注册</li>
                 </ul>
               </div>
-              <el-button type="primary" round class="from-btn" @click="login">登录</el-button>
+              <el-button type="primary" round class="from-btn" @click="login('loginForm')">登录</el-button>
             </el-form>
 
           </div>
           <!-- 验证码登录 -->
           <div v-show="loginWay == 2">
-            <el-form label-position="top" label-width="80px" :model="loginForm" class="modular-form">
-              <el-form-item label="" class="form-label">
-                <el-input v-model="loginForm.phone" placeholder="请输入手机号" clearable>
+            <el-form label-position="top" label-width="80px" ref="loginCodeForm" :model="loginCodeForm"
+              class="modular-form" :rules="loginCodeRules">
+              <el-form-item label="" class="form-label" prop="phone">
+                <el-input v-model="loginCodeForm.phone" placeholder="请输入手机号" clearable>
                   <template #prefix>
                     <div class="prefix"><img src="../../../public/imgs/login/user.png" alt=""></div>
                   </template>
                 </el-input>
               </el-form-item>
               <div class="getCode-item">
-                <el-form-item label="" class="form-label">
-                  <el-input v-model="loginForm.verCode" placeholder="请输入验证码" clearable>
+                <el-form-item label="" class="form-label" prop="phoneCode">
+                  <el-input v-model="loginCodeForm.verCode" placeholder="请输入验证码" clearable>
                     <template #prefix>
                       <div class="prefix"><img src="../../../public/imgs/login/shield.png" alt=""></div>
                     </template>
@@ -80,7 +84,7 @@
                 <span @click="register()">立即注册</span>
               </div>
 
-              <button class="from-btn code-login" @click="login">登录</button>
+              <button class="from-btn code-login" @click="login('loginCodeForm')">登录</button>
             </el-form>
           </div>
           <!-- 选择一下方式登录 -->
@@ -96,15 +100,16 @@
         <!-- 忘记密码 -->
         <div class="forgot-password-content" v-show="isForgotPassword">
           <div class="form-title">忘记密码</div>
-          <el-form label-position="top" label-width="80px" :model="forgotForm" class="modular-form">
-            <el-form-item label="">
+          <el-form label-position="top" label-width="80px" :model="forgotForm" class="modular-form" ref="forgotForm"
+            :rules="forgotFormRules">
+            <el-form-item label="" prop="phone">
               <el-input v-model="forgotForm.phone" placeholder="请输入手机号" clearable>
                 <template #prefix>
                   <div class="prefix"><img src="../../../public/imgs/login/user.png" alt=""></div>
                 </template>
               </el-input>
             </el-form-item>
-            <el-form-item label="">
+            <el-form-item label="" prop="newPassword">
               <el-input v-model="forgotForm.newPassword" placeholder="请输入新密码" show-password @focus="isHide = true"
                 @blur="isHide = false">
                 <template #prefix>
@@ -112,7 +117,7 @@
                 </template>
               </el-input>
             </el-form-item>
-            <el-form-item label="">
+            <el-form-item label="" prop="againPassword">
               <el-input v-model="forgotForm.againPassword" placeholder="再次确认密码" show-password @focus="isHide = true"
                 @blur="isHide = false">
                 <template #prefix>
@@ -121,8 +126,8 @@
               </el-input>
             </el-form-item>
             <div class="getCode-item">
-              <el-form-item label="" class="">
-                <el-input v-model="forgotForm.verCode" placeholder="请输入验证码" clearable>
+              <el-form-item label="" prop="phoneCode">
+                <el-input v-model="forgotForm.phoneCode" placeholder="请输入验证码" clearable>
                   <template #prefix>
                     <div class="prefix"><img src="" alt=""></div>
                   </template>
@@ -135,8 +140,7 @@
             <div class="toLogin-item">
               <span class="login-span" @click="flipLogin">立即登录</span>
             </div>
-            <el-button type="primary" round class="from-btn" @click="immedRegister">确定</el-button>
-
+            <el-button type="primary" round class="from-btn" @click="updatePassWord('forgotForm')">确定</el-button>
           </el-form>
         </div>
       </div>
@@ -145,8 +149,9 @@
       <div :class="[{flipRegister:isRegister},'register-content','public-content']" v-show="!isForgotPassword">
         <span class="form-title">欢迎注册</span>
         <div class="checking">
-          <el-form label-position="top" label-width="80px" :model="registerForm" class="modular-form">
-            <el-form-item label="" class="form-label">
+          <el-form label-position="top" label-width="80px" :model="registerForm" class="modular-form" ref="registerForm"
+            :rules="registerRules">
+            <el-form-item label="" class="form-label" prop="phone">
               <el-input v-model="registerForm.phone" placeholder="请输入手机号" clearable>
                 <template #prefix>
                   <div class="prefix"><img src="" alt=""></div>
@@ -154,8 +159,8 @@
               </el-input>
             </el-form-item>
             <div class="getCode-item">
-              <el-form-item label="" class="form-label">
-                <el-input v-model="registerForm.verCode" placeholder="请输入验证码" clearable>
+              <el-form-item label="" class="form-label" prop="phoneCode">
+                <el-input v-model="registerForm.phoneCode" placeholder="请输入验证码" clearable>
                   <template #prefix>
                     <div class="prefix"><img src="" alt=""></div>
                   </template>
@@ -172,7 +177,8 @@
               </div>
               <span class="login-left" @click="flipLogin">立即登录</span>
             </div>
-            <el-button type="primary" round class="from-btn" @click="immedRegister">注册</el-button>
+            <!-- :class="[{loginImg:isRegister},'loginBgImg']" -->
+            <el-button type="primary" round class="from-btn" :class="[{greyBtn:!isAgree},'from-btn']" @click="immedRegister('registerForm')">注册</el-button>
           </el-form>
         </div>
       </div>
@@ -194,14 +200,39 @@
     data() {
       const validateUsername = (rule, value, callback) => {
         if (!validUsername(value)) {
-          callback(new Error('Please enter the correct user name'))
+          callback(new Error('请输入用户名'))
         } else {
           callback()
         }
       }
       const validatePassword = (rule, value, callback) => {
         if (value.length < 6) {
-          callback(new Error('The password can not be less than 6 digits'))
+          callback(new Error('请输入密码'))
+        } else {
+          callback()
+        }
+      }
+      var validatePhone = (rule, value, callback) => {
+        if (value === '') {
+          // let phoneReg = /(^1[3|4|5|6|7|8|9]\d{9}$)|(^09\d{8}$)/; if (value === '') {
+          callback(new Error('请输入手机号'))
+        } else if (!this.isCellPhone(
+            value)) { // 引入methods中封装的检查手机格式的方法 callback(new Error('请输入正确的手机号!'))          } else {
+          callback(new Error('请输入正确的手机号!'))
+        } else {
+          callback()
+        }
+      }
+      var validateVerCode = (rule, value, callback) => {
+        if (value.length < 6) {
+          callback(new Error('请输入验证码'))
+        } else {
+          callback()
+        }
+      }
+      var validatePhoneCode = (rule, value, callback) => {
+        if (value.length < 6) {
+          callback(new Error('请输入短信验证码'))
         } else {
           callback()
         }
@@ -219,29 +250,88 @@
         isRegister: false, //是否在注册页面
         isRememberPass: false, //记住密码
         isHide: false,
+        //登录
         loginForm: {
           username: 'admin',
           password: '111111',
-          verCode: '',
-          phone: '',
           verCode: ''
+        },
+        loginCodeForm: {
+          phone: '',
+          phoneCode: ''
         },
         loginRules: {
-          username: [{ required: true, trigger: 'blur', validator: validateUsername }],
-          password: [{ required: true, trigger: 'blur', validator: validatePassword }]
+          username: [{
+            required: true,
+            trigger: 'blur',
+            validator: validateUsername
+          }],
+          password: [{
+            required: true,
+            trigger: 'blur',
+            validator: validatePassword
+          }],
+          verCode: [{
+            required: true,
+            message: '请输入验证码',
+            trigger: 'change'
+          }]
         },
-        registerForm: {
-          username: '',
-          password: '',
-          surePassword: '',
-          phone: '',
-          verCode: ''
+        loginCodeRules: {
+          phone: [{
+            required: true,
+            trigger: 'blur',
+            validator: validatePhone
+          }],
+          phoneCode: [{
+            required: true,
+            message: '请输入短信验证码',
+            trigger: 'change'
+          }]
         },
         forgotForm: {
           phone: '',
           newPassword: '',
           againPassword: '',
-          verCode: ''
+          phoneCode: ''
+        },
+        forgotFormRules: {
+          phone: [{
+            required: true,
+            trigger: 'blur',
+            validator: validatePhone
+          }],
+          newPassword: [{
+            required: true,
+            message: '请输入新密码',
+            trigger: 'change'
+          }],
+          againPassword: [{
+            required: true,
+            message: '请再次确认密码',
+            trigger: 'change'
+          }],
+          phoneCode: [{
+            required: true,
+            message: '请输入短信验证码',
+            trigger: 'change'
+          }]
+        },
+        registerForm: {
+          phone: '',
+          phoneCode: ''
+        },
+        registerRules: {
+          phone: [{
+            required: true,
+            trigger: 'blur',
+            validator: validatePhone
+          }],
+          phoneCode: [{
+            required: true,
+            message: '请输入短信验证码',
+            trigger: 'change'
+          }]
         },
         verifyCode: '',
         show_num: '',
@@ -274,7 +364,13 @@
       }
     },
     methods: {
-
+      isCellPhone(val) {
+        if (!/^1(3|4|5|6|7|8)\d{9}$/.test(val)) {
+          return false
+        } else {
+          return true
+        }
+      },
       draw() {
         this.show_num = [];
         var canvas_width = document.getElementById('canvas').clientWidth;
@@ -368,6 +464,9 @@
         } else if (this.loginWay == 2) {
           //验证码登录
           if (this.loginForm.phone === '' && this.loginForm.verCode === '') {
+            if (!this.isCellPhone(this.loginForm.phone)) {
+              return false
+            }
             this.$message.error('请先填写短信验证码！')
             return false
           }
@@ -376,7 +475,23 @@
         return false
       },
       // 登录
-      login() {
+      login(formName) {
+        if (this.validityForm(formName)) {
+          if (this.checkLoginInfo()) {
+            this.loading = true
+            this.$store.dispatch('user/login', this.loginForm)
+              .then(() => {
+                this.$router.push({
+                  path: this.redirect || '/',
+                  query: this.otherQuery
+                })
+                this.loading = false
+              })
+              .catch(() => {
+                this.loading = false
+              })
+          }
+        }
         // this.$refs.loginForm.validate(valid => {
         //   if (valid) {
         //     this.loading = true
@@ -393,23 +508,6 @@
         //     return false
         //   }
         // })
-        if (this.checkLoginInfo()) {
-          this.loading = true
-          this.$store.dispatch('user/login', this.loginForm)
-            .then(() => {
-              this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
-              this.loading = false
-            })
-            .catch(() => {
-              this.loading = false
-            })
-          // 假设用户名和密码正确
-          localStorage.setItem('token', '11111') //保存一个token值
-          // 登录成功 跳转首页
-          // this.$router.push({
-          //   name: 'home'
-          // })
-        }
 
         // this.$http.post('login', this.loginForm).then(res => {
         //   console.log(res)
@@ -513,9 +611,11 @@
         //登录页获取倒计时
         if (!this.isRegister) {
           //axios请求
-          console.log(this.loginForm.phone)
-
           if (!this.isForgotPassword) {
+            if (!this.isCellPhone(this.loginCodeForm.phone)) {
+              this.$message.error('请先输入正确的手机号码！')
+              return
+            }
             // 验证码倒计时
             if (!this.timer) {
               this.loginCount = 60;
@@ -531,6 +631,10 @@
               }, 1000);
             }
           } else { //忘记密码
+            if (!this.isCellPhone(this.forgotForm.phone)) {
+              this.$message.error('请先输入正确的手机号码！')
+              return
+            }
             // 验证码倒计时
             if (!this.timer) {
               this.forgetCount = 60;
@@ -546,8 +650,6 @@
               }, 1000);
             }
           }
-
-
         } else {
           //axios请求
           // 验证码倒计时
@@ -570,8 +672,31 @@
       lookAgreement() {
         alert("看协议吗？给链接啊！！！")
       },
-      immedRegister() {
-        alert("验证码填了吗？你就要注册？？？？")
+      immedRegister(formName) {
+        if (this.isAgree && this.validityForm(formName)) {
+          this.$message.success('注册成功，请重新登录！')
+          this.flipLogin()
+        }
+      },
+      //忘记密码 提交
+      updatePassWord(formName) {
+        if (this.validityForm(formName)) {
+          this.$message.success('密码修改成功，请重新登录！')
+          this.flipLogin()
+        }
+
+      },
+      validityForm(formName) {
+        var result = false
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            result = true
+          } else {
+            console.log('validity error!!');
+            result = false
+          }
+        })
+        return result
       }
     }
   }
@@ -590,7 +715,6 @@
       color: $cursor;
     }
   }
-
 </style>
 
 <style lang="scss" scoped>
@@ -601,7 +725,7 @@
   .login-container {
     min-height: 100%;
     width: 100%;
-    background-color: $bg;
+    // background-color: $bg;
     overflow: hidden;
     display: flex;
 
@@ -609,6 +733,7 @@
       flex: 1;
       display: flex;
       justify-content: center;
+      align-items: center;
     }
 
     .left {
@@ -616,15 +741,17 @@
       overflow: hidden;
 
       img {
-        width: 100%;
-        height: 100%;
-        left: 0px;
+        width: 90%;
+        height: 90%;
         transition: 1.5s ease-in-out;
         position: absolute;
+
       }
 
       .loginBgImg {
-        top: 0px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
       }
 
       .registerBgImg {
@@ -637,7 +764,8 @@
       }
 
       .registerImg {
-        top: 0px;
+        top: 50%;
+        transform: translate(0, -50%);
         opacity: 1;
       }
     }
@@ -748,6 +876,27 @@
         font-family: Microsoft YaHei;
         font-weight: 400;
         color: #333333;
+        // -webkit-text-stroke: 1px black;
+        // -webkit-text-fill-color : transparent;
+
+        // text-shadow: 1px 1px #1890ff, -1px -1px #1890ff, 1px -1px #1890ff, -1px 1px #1890ff;
+        // font-size: 28px;
+        // color: #abdeff;
+
+        // text-shadow: 1px 1px black, -1px -1px black, 1px -1px black, -1px 1px black;
+        // font-size: 28px;
+        // color:#fff;
+
+        // color:#fefefe;
+        //  text-shadow:0px 1px 0px #c0c0c0,
+        //  0px 2px 0px #b0b0b0,
+        //  0px 3px 0px #a0a0a0,
+        //  0px 4px 0px #909090,
+        //  0px 5px 10px rgba(0, 0, 0, .9);
+
+        // color: #fefefe;
+        // text-shadow: 0 0 0.5em #1890ff, 0 0 0.2em #1890ff;
+
       }
     }
 
@@ -764,6 +913,7 @@
         align-items: center;
 
         li {
+          position: relative;
           font-size: 16px;
           font-family: Microsoft YaHei;
           font-weight: 400;
@@ -774,10 +924,20 @@
         }
 
         .chosedWay {
-          color: #06b4fd;
+          color: #1890FF;
           font-weight: 600;
-          border-bottom: 1px solid #06b4fd;
 
+          span {
+            position: absolute;
+            display: block;
+            height: 2px;
+            width: 40px;
+            background-color: #1890FF;
+            border-radius: 4px;
+            bottom: 0px;
+            left: 50%;
+            transform: translate(-50%, 0);
+          }
         }
       }
 
@@ -840,7 +1000,7 @@
         font-size: 12px;
         font-family: Microsoft YaHei;
         font-weight: 400;
-        color: #06b4fd;
+        color: #1890FF;
         display: flex;
         justify-content: flex-end;
         align-items: center;
@@ -861,7 +1021,7 @@
         font-size: 12px;
         font-family: Microsoft YaHei;
         font-weight: 400;
-        color: #06b4fd;
+        color: #1890FF;
         display: flex;
         justify-content: flex-end;
         align-items: center;
@@ -972,6 +1132,9 @@
         outline: none;
 
       }
+      .greyBtn{
+        background: #bbbbbb !important;
+      }
 
       //填写手机验证码
       .getCode-item {
@@ -992,7 +1155,7 @@
           font-size: 12px;
           font-family: Microsoft YaHei;
           font-weight: 400;
-          color: #4ebaff;
+          color: #1890FF;
         }
 
         //获取验证码倒计时

@@ -73,27 +73,36 @@
     // menu hover
     .submenu-title-noDropdown,
     .el-submenu__title {
+      border-radius: 6px;
       // margin: 0px 10px;
       &:hover {
-        // background-color: $menuHover !important;
+        background-color: $menuHover !important;
       }
     }
-
+   //选中那一个菜单的文字颜色
     .is-active{
       color: $menuActiveText !important;
-      // background-color: $subMenuBg !important;
+    }
+    //选中那一个菜单的背景色
+    //router-link-exact-active router-link-active
+    .router-link-exact-active .is-active{
+      background-color: $subMenuBg !important;
+
     }
 
+    //选中那一个菜单的父级文字颜色
     .is-active>.el-submenu__title {
       color: $subMenuActiveText !important;
     }
 
     & .nest-menu .el-submenu>.el-submenu__title,
     & .el-submenu .el-menu-item {
-      min-width: $sideBarWidth !important;
+      // min-width: $sideBarWidth !important;
+      min-width: $sideBarItemWidth !important;
+      border-radius: 6px;
 
       &:hover {
-        // background-color: $subMenuHover !important;
+        background-color: $subMenuHover !important;
       }
     }
     & .el-menu-item{

@@ -177,7 +177,7 @@ export default {
     return {
       examineResult: '-1', // 审核状态
       cities: [],
-      isLook: false, // 是否查看
+      isLook: true, // 是否查看
       show: true,
       count: '',
       cardFront: {
@@ -411,6 +411,7 @@ export default {
     border-radius: 6px 6px 6px 6px;
     box-sizing: border-box;
     padding: 10px 20px;
+    margin-bottom: 20px;
 
     .el-steps {
       width: 100%;
@@ -421,7 +422,7 @@ export default {
   .el-form-content {
     position: relative;
     width: 100%;
-    margin-top: 20px;
+    // margin-top: 20px;
     height: calc(100% - 80px);
     font-size: 12px;
     font-family: Microsoft YaHei-Bold, Microsoft YaHei;

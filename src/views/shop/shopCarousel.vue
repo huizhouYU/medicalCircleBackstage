@@ -165,11 +165,6 @@
     font-family: Microsoft YaHei-Regular, Microsoft YaHei;
     font-weight: 400;
     padding: 25px 15px;
-    margin-top: 15px;
-
-
-
-
 
     .imgs-btn {
       margin-left: 15px;

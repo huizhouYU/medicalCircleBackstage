@@ -50,7 +50,6 @@
 
   // 模块二 搜索条件
   .search {
-    margin-top: 15px;
     height: 74px;
     background-color: #fff;
     box-shadow: 0px 2px 10px 1px rgba(0, 0, 0, 0.06);
@@ -70,31 +69,6 @@
 
       /deep/.el-input-group__prepend .el-input {
         font-size: 12px;
-      }
-
-      //输入的关键字的类型
-      .key-selectType {
-        height: 34px;
-        width: 140px;
-        box-sizing: border-box;
-        font-size: 12px;
-        margin-left: -1px;
-
-        //下拉框的样式修改
-        /deep/ .el-input__inner {
-          border-radius: 6px 0px 0px 6px;
-        }
-      }
-
-      // input 输入框
-      .input-search {
-        width: 320px;
-        height: 34px;
-        margin-left: -1px;
-
-        /deep/ .el-input__inner {
-          border-radius: 0px 6px 6px 0px;
-        }
       }
 
       //搜索按钮

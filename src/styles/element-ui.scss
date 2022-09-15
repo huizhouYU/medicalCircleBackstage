@@ -164,6 +164,15 @@
   font-size: 12px;
   font-family: Microsoft YaHei-Regular, Microsoft YaHei;
 }
+//修改elementui中页码文字大小
+.el-pagination__total,
+.el-pagination__sizes .el-input .el-input__inner,
+.el-pagination button,
+.el-pager li,
+.el-pagination__jump{
+  font-size: 12px !important;
+}
+
 // /* 修改elementui表格的默认样式 */
 // .el-table__body-wrapper &::-webkit-scrollbar {
 //   height: 7px;

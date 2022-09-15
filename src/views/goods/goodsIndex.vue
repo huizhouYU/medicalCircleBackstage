@@ -25,9 +25,9 @@
       <!-- 添加商品 -->
       <button class="btn-add " @click="toAddGoods">添加商品 </button>
     </div>
-<!-- 模块三 商品列表 -->
+    <!-- 模块三 商品列表 -->
     <goods-items class="items"></goods-items>
-   <!-- <el-table v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%">
+    <!-- <el-table v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%">
       <el-table-column align="center" label="ID" width="80">
         <template slot-scope="scope">
           <span>{{ scope.row.id }}</span>
@@ -84,24 +84,29 @@
 </template>
 
 <script>
-import { fetchList } from '@/api/article'
-import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
-import GoodsItems from '../goods/goodsItems.vue'
-export default {
-  name: 'GoodsList',
-  components: { Pagination ,GoodsItems},
-  filters: {
-    statusFilter(status) {
-      const statusMap = {
-        published: 'success',
-        draft: 'info',
-        deleted: 'danger'
+  import {
+    fetchList
+  } from '@/api/article'
+  import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
+  import GoodsItems from '../goods/goodsItems.vue'
+  export default {
+    name: 'GoodsList',
+    components: {
+      Pagination,
+      GoodsItems
+    },
+    filters: {
+      statusFilter(status) {
+        const statusMap = {
+          published: 'success',
+          draft: 'info',
+          deleted: 'danger'
+        }
+        return statusMap[status]
       }
-      return statusMap[status]
-    }
-  },
-  data() {
-    return {
+    },
+    data() {
+      return {
 
         //商品分类
         options: [{
@@ -154,45 +159,45 @@ export default {
         inputKey: '', //输入商品名称/关键字
         value: '',
         sortValue: '', //选择的商品分类
-      //////////////////
-      list: null,
-      total: 0,
-      listLoading: true,
-      listQuery: {
-        page: 1,
-        limit: 20
+        //////////////////
+        list: null,
+        total: 0,
+        listLoading: true,
+        listQuery: {
+          page: 1,
+          limit: 20
+        }
+      }
+    },
+    created() {
+      this.getList()
+    },
+    methods: {
+      getList() {
+        this.listLoading = true
+        fetchList(this.listQuery).then(response => {
+          this.list = response.data.items
+          this.total = response.data.total
+          this.listLoading = false
+        })
+      },
+      //添加商品
+      toAddGoods() {
+        this.$router.push('addGoods')
+      },
+      //根据条件筛选数据
+      selectData() {
+        alert("不要点啦！后台接口数据还没做呢。。。")
+      },
+      handleChange() {
+
       }
     }
-  },
-  created() {
-    this.getList()
-  },
-  methods: {
-    getList() {
-      this.listLoading = true
-      fetchList(this.listQuery).then(response => {
-        this.list = response.data.items
-        this.total = response.data.total
-        this.listLoading = false
-      })
-    },
-    //添加商品
-    toAddGoods() {
-      this.$router.push('addGoods')
-    },
-    //根据条件筛选数据
-    selectData() {
-      alert("不要点啦！后台接口数据还没做呢。。。")
-    },
-    handleChange(){
-
-    }
   }
-}
 </script>
 
 <style scoped lang="less">
-// 模块二 搜索条件 + 添加商品
+  // 模块二 搜索条件 + 添加商品
   .search-add {
     // margin-top: 15px;
     background-color: #fff;
@@ -213,7 +218,8 @@ export default {
       display: flex;
       justify-content: flex-start;
       align-items: center;
-      /deep/.el-input--mini .el-input__inner{
+
+      /deep/.el-input--mini .el-input__inner {
         // height: 34px;
         // line-height: 34px;
       }
@@ -254,31 +260,6 @@ export default {
           width: 110px;
         }
 
-        //输入的关键字的类型
-        .key-selectType {
-          height: 34px;
-          width: 140px;
-          box-sizing: border-box;
-          font-size: 12px;
-          margin-left: -1px;
-
-          //下拉框的样式修改
-          /deep/ .el-input__inner {
-            border-radius: 6px 0px 0px 6px;
-          }
-        }
-
-        // input 输入框
-        .input-search {
-          width: 320px;
-          height: 34px;
-          margin-left: -1px;
-
-          /deep/ .el-input__inner {
-            border-radius: 0px 6px 6px 0px;
-          }
-        }
-
         //搜索按钮
         /deep/.el-input-group__append button.el-button {
           background-color: #1890FF;
@@ -313,9 +294,9 @@ export default {
       line-height: 34px;
     }
   }
+
   // 模块三 商品列表
   .items {
     margin-top: 20px;
   }
-
 </style>

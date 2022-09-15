@@ -355,51 +355,11 @@
 </script>
 
 <style scoped lang="less">
-  // 头部页面标题
-  .header-title {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-
-    // 返回按钮
-    .back {
-      width: 34px;
-      height: 34px;
-      background: #FFFFFF;
-      box-shadow: 0px 0px 32px 1px rgba(144, 145, 145, 0.15);
-      border-radius: 6px 6px 6px 6px;
-      text-align: center;
-      line-height: 34px;
-      cursor: pointer;
-    }
-
-    //标题
-    .title {
-      margin-left: 20px;
-      // width: 88px;
-      height: 34px;
-      padding: 0px 20px;
-      background: #1890FF;
-      border-radius: 6px 6px 6px 6px;
-      font-size: 12px;
-      font-family: Microsoft YaHei-Regular, Microsoft YaHei;
-      font-weight: 400;
-      color: #FFFFFF;
-      text-align: center;
-      line-height: 34px;
-
-      i {
-        padding: 0px 4px;
-        font-size: 12px;
-      }
-    }
-  }
 
   // 编辑商品区域
   .eidt-box {
     background-color: #FFFFFF;
     padding: 20px 35px 30px 15px;
-    margin-top: 15px;
     box-shadow: 0px 2px 10px 1px rgba(0, 0, 0, 0.06);
     border-radius: 6px 6px 6px 6px;
     font-size: 12px;

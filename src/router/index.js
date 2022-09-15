@@ -83,7 +83,7 @@ export const constantRoutes = [{
         name: 'GoodsIndex',
         meta: {
           title: '商品列表',
-          icon: 'edit',
+          // icon: 'edit',
           affix: true
         }
       },
@@ -91,9 +91,10 @@ export const constantRoutes = [{
         path: 'addGoods',
         component: () => import('@/views/goods/addGoods'),
         name: 'AddGoods',
+        hidden: true,
         meta: {
           title: '添加商品',
-          icon: 'edit'
+          // icon: 'edit'
         }
       },
       {
@@ -102,7 +103,7 @@ export const constantRoutes = [{
         name: 'PublishGood',
         meta: {
           title: '发布商品',
-          icon: 'edit'
+          // icon: 'edit'
         },
         hidden: true
       },
@@ -112,7 +113,7 @@ export const constantRoutes = [{
         name: 'GoodsRecovery',
         meta: {
           title: '商品回收站',
-          icon: 'list'
+          // icon: 'list'
         }
       }
     ]
@@ -132,7 +133,7 @@ export const constantRoutes = [{
         name: 'OrderManage',
         meta: {
           title: '订单列表',
-          icon: 'setting-two'
+          // icon: 'setting-two'
         }
       },
       {
@@ -141,7 +142,7 @@ export const constantRoutes = [{
         name: 'OrderDetail',
         meta: {
           title: '订单详情',
-          icon: 'edit'
+          // icon: 'edit'
         },
         hidden: true
       },
@@ -151,7 +152,7 @@ export const constantRoutes = [{
         name: 'RefundOrder',
         meta: {
           title: '退款订单',
-          icon: 'list'
+          // icon: 'list'
         }
       },
       {
@@ -160,7 +161,7 @@ export const constantRoutes = [{
         name: 'RefundOrderDetail',
         meta: {
           title: '退款详情',
-          icon: 'edit'
+          // icon: 'edit'
         },
         hidden: true
       }
@@ -181,7 +182,7 @@ export const constantRoutes = [{
         name: 'DemandManage',
         meta: {
           title: '需求列表',
-          icon: 'edit'
+          // icon: 'edit'
         }
       },
       {
@@ -190,7 +191,7 @@ export const constantRoutes = [{
         name: 'PublishDemand',
         meta: {
           title: '发布需求',
-          icon: 'edit'
+          // icon: 'edit'
         },
         hidden: true
       }
@@ -211,7 +212,7 @@ export const constantRoutes = [{
         name: 'ShopSetting',
         meta: {
           title: '店铺装修',
-          icon: 'edit'
+          // icon: 'edit'
         }
       },
       {
@@ -220,7 +221,7 @@ export const constantRoutes = [{
         name: 'ShopCarousel',
         meta: {
           title: '店铺轮播',
-          icon: 'edit'
+          // icon: 'edit'
         },
       },
       {
@@ -229,7 +230,7 @@ export const constantRoutes = [{
         name: 'StoreAuthentication',
         meta: {
           title: '商家认证',
-          icon: 'edit'
+          // icon: 'edit'
         },
       }
     ]

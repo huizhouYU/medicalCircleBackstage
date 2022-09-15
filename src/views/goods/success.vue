@@ -1,16 +1,5 @@
 <template>
   <div class="success-box">
-    <!-- 头部页面标题 -->
-    <div class="header-title">
-      <div class="back" @click="back()">
-        <i class="iconfont">&#xe610;</i>
-      </div>
-      <div class="title">
-        商品列表
-        <i class="iconfont">&#xe62b;</i>
-        添加商品
-      </div>
-    </div>
     <div class="success-content">
       <div class="title">
         <img src="../../../static/img/goods/icon_Successful launch.png" alt="">
@@ -41,45 +30,6 @@
 </script>
 
 <style scoped lang="less">
-  // 头部页面标题
-  .header-title {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-
-    // 返回按钮
-    .back {
-      width: 34px;
-      height: 34px;
-      background: #FFFFFF;
-      box-shadow: 0px 0px 32px 1px rgba(144, 145, 145, 0.15);
-      border-radius: 6px 6px 6px 6px;
-      text-align: center;
-      line-height: 34px;
-      cursor: pointer;
-    }
-
-    //标题
-    .title {
-      margin-left: 20px;
-      // width: 88px;
-      height: 34px;
-      padding: 0px 20px;
-      background: #1890FF;
-      border-radius: 6px 6px 6px 6px;
-      font-size: 12px;
-      font-family: Microsoft YaHei-Regular, Microsoft YaHei;
-      font-weight: 400;
-      color: #FFFFFF;
-      text-align: center;
-      line-height: 34px;
-
-      i {
-        padding: 0px 4px;
-        font-size: 12px;
-      }
-    }
-  }
 
   .success-box {
     height: 100%;
@@ -87,7 +37,6 @@
 
   .success-content {
     height: 90%;
-    margin-top: 15px;
     background-color: #fff;
     border-radius: 6px 6px 6px 6px;
     font-size: 12px;

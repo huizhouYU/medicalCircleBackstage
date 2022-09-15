@@ -299,7 +299,6 @@
 </script>
 
 <style lang="less" scoped>
-
   .detail-box {
     font-size: 12px;
     font-family: Microsoft YaHei-Regular, Microsoft YaHei;
@@ -308,7 +307,6 @@
 
     //订单状态一栏和订单详情一栏 共用的样式
     .order-item {
-      margin-top: 15px;
       background-color: #fff;
       box-shadow: 0px 2px 10px 1px rgba(0, 0, 0, 0.06);
       border-radius: 6px 6px 6px 6px;
@@ -572,47 +570,15 @@
         .payWay {
           margin-top: 8px;
         }
-
-
       }
     }
 
-    .el-dialog-box {
-      font-size: 14px;
-    }
-    .refund-result-form{
-      padding-left: 20px;
-      /deep/.el-form-item{
-        margin-bottom: 0px;
-      }
-
-    }
-
-    /deep/ .el-dialog__header {
-     font-size: 14px;
-     font-family: Microsoft YaHei-Regular, Microsoft YaHei;
-     font-weight: 400;
-     color: #333333;
-    }
-
-    .dialog-notes {
-      display: inline-block;
+    .refund-result-tip {
       font-size: 12px;
-      color: #999;
-    }
-
-    .el-dialog-deliver {
-      /deep/ .el-form-item {
-        // margin-top: 20px;
-      }
-
-      .refund-result-tip {
-        font-size: 12px;
-        font-family: Microsoft YaHei-Regular, Microsoft YaHei;
-        font-weight: 400;
-        color: #999999;
-        margin-left: 70px;
-      }
+      font-family: Microsoft YaHei-Regular, Microsoft YaHei;
+      font-weight: 400;
+      color: #999999;
+      margin-left: 70px;
     }
   }
 </style>

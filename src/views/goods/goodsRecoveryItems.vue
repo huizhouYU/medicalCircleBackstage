@@ -7,7 +7,7 @@
           <img src="../../assets/401_images/401.gif" alt="图片加载失败" class="item-img">
         </template>
       </el-table-column>
-      <el-table-column label="商品名称" width="300">
+      <el-table-column label="商品名称" width="350">
         <template slot-scope="scope">
           <span class="goods-name-span" :title="scope.row.name">{{scope.row.name}} </span>
         </template>
