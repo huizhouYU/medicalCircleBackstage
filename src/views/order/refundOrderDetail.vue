@@ -126,14 +126,37 @@
     <!-- 退款 弹框 -->
     <el-dialog title="退款处理" :close-on-click-modal="false" :visible.sync="refundDialogVisible" width="500px"
       class="el-dialog-box el-dialog-deliver">
-      <el-form :model="ordeRefundForm" label-position="left" class="refund-result-form">
-        <el-form-item label="退款选择:">
+      <!-- <el-form :model="refundDeliverForm" label-position="right">
+        <el-form-item label="退款选择:" :label-width="formLabelWidth">
+          <el-radio-group v-model="refundDeliverForm.decision" @change="clearRefundForm">
+            <el-radio :label="1">同意</el-radio>
+            <el-radio :label="2">拒绝</el-radio>
+          </el-radio-group>
+          <div v-show="refundDeliverForm.decision == 1" class="greySpan">
+             <span>选择“同意”，相关货款将退还给买家，是否继续</span>
+          </div>
+        </el-form-item>
+        <el-form-item label="拒绝原因:" :label-width="formLabelWidth" v-show="refundDeliverForm.decision == 2">
+          <el-input v-model="refundDeliverForm.refuseReason" placeholder=""
+            :disabled="refundDeliverForm.decision == 1" />
+        </el-form-item>
+      </el-form> -->
+
+
+      <el-form :model="ordeRefundForm" label-position="right" class="refund-result-form">
+        <el-form-item label="退款选择:" :label-width="formLabelWidth">
           <el-radio-group v-model="ordeRefundForm.result">
             <el-radio :label="1">同意</el-radio>
             <el-radio :label="2">拒绝</el-radio>
           </el-radio-group>
+          <div v-show="ordeRefundForm.result == 1" class="greySpan">
+             <span>选择“同意”，相关货款将退还给买家，是否继续</span>
+          </div>
         </el-form-item>
-        <span class="refund-result-tip">选择“同意”，相关货款将退还给买家，是否继续</span>
+        <el-form-item label="拒绝原因:" :label-width="formLabelWidth" v-show="ordeRefundForm.result == 2">
+          <el-input v-model="ordeRefundForm.refuseReason" placeholder=""
+            :disabled="ordeRefundForm.result == 1" />
+        </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button size="medium" @click="closeRefundDialog">取 消</el-button>
@@ -172,6 +195,7 @@
         ordeRefundForm: {
           id: '', //订单唯一标识
           result: 1, //发货方式
+          refuseReason:''
         },
         orderNotesForm: {
           id: '', //订单唯一标识
@@ -311,6 +335,7 @@
       box-shadow: 0px 2px 10px 1px rgba(0, 0, 0, 0.06);
       border-radius: 6px 6px 6px 6px;
       padding: 0px 15px;
+      margin-bottom: 20px;
     }
 
     //订单状态一栏样式

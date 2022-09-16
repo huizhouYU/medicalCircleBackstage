@@ -1094,9 +1094,11 @@
         font-family: Microsoft YaHei;
         font-weight: 400;
         color: #333;
-        background: rgba(230, 247, 255, 0.3);
+        // background: rgba(230, 247, 255, 0.3);
+        // border-color: #fff;
         border-radius: 10px;
-        border-color: #fff;
+        border-color: #eee;
+        background: #fff;
       }
 
       /deep/.el-input__inner:focus {

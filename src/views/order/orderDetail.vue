@@ -128,8 +128,8 @@
 
     <!-- 修改价格 或者 审核 -->
     <el-dialog :title="pirceDialogTitle" :close-on-click-modal="false" :visible.sync="pirceDialogVisible" width="500px"
-      center class="el-dialog-box">
-      <el-form :model="orderPirceForm" label-position="left">
+      class="el-dialog-box">
+      <el-form :model="orderPirceForm" label-position="right">
         <el-form-item label="订单价格:" :label-width="formLabelWidth">
           <el-input v-model="orderPirceForm.oldPrice" placeholder="--" :disabled="true" />
         </el-form-item>
@@ -146,19 +146,32 @@
     <!-- 发货 弹框 -->
     <el-dialog title="发货信息" :close-on-click-modal="false" :visible.sync="deliverDialogVisible" width="500px"
       class="el-dialog-box el-dialog-deliver">
-      <el-form :model="orderDeliverForm" label-position="left">
-        <el-radio-group v-model="orderDeliverForm.deliverWay" @change="clearDeliverForm">
-          <el-radio :label="1">物流发货</el-radio>
-          <el-radio :label="2">商家自配</el-radio>
-        </el-radio-group>
-        <el-form-item label="物流公司:" :label-width="formLabelWidth">
+      <el-form :model="orderDeliverForm" label-position="right">
+        <el-form-item label="选择类型:" :label-width="formLabelWidth">
+          <el-radio-group v-model="orderDeliverForm.deliverWay" @change="clearDeliverForm">
+            <el-radio :label="1">物流发货</el-radio>
+            <el-radio :label="2">商家自配</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="物流公司:" :label-width="formLabelWidth" v-show="orderDeliverForm.deliverWay == 1">
           <el-input v-model="orderDeliverForm.logisticsCompany" placeholder=""
             :disabled="orderDeliverForm.deliverWay == 2" />
         </el-form-item>
-        <el-form-item label="快递单号:" :label-width="formLabelWidth">
+        <el-form-item label="快递单号:" :label-width="formLabelWidth" v-show="orderDeliverForm.deliverWay == 1">
           <el-input v-model="orderDeliverForm.expressNo" autocomplete="off" size="medium"
             :disabled="orderDeliverForm.deliverWay == 2" />
         </el-form-item>
+        <div class="span-info">
+          <el-form-item label="收货人:" :label-width="formLabelWidth" v-show="orderDeliverForm.deliverWay == 2">
+            <span>张楚岚</span>
+          </el-form-item>
+          <el-form-item label="联系电话:" :label-width="formLabelWidth" v-show="orderDeliverForm.deliverWay == 2">
+            <span>123 4567 6988</span>
+          </el-form-item>
+          <el-form-item label="卖家地址:" :label-width="formLabelWidth" v-show="orderDeliverForm.deliverWay == 2">
+            <span>安徽省合肥市蜀山区蜀山区蜀山街道枫叶产业园128号999室</span>
+          </el-form-item>
+        </div>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button size="medium" @click="closeDeliverDialog">取 消</el-button>
@@ -168,7 +181,7 @@
     <!-- 备注 弹框 -->
     <el-dialog title="备注信息" :close-on-click-modal="false" :visible.sync="notesDialogVisible" width="500px"
       class="el-dialog-box">
-      <el-form :model="orderNotesForm" label-position="left">
+      <el-form :model="orderNotesForm" label-position="right">
         <el-form-item label="买家备注:" :label-width="formLabelWidth">
           <el-input v-model="orderNotesForm.mNotes" placeholder="" type="textarea" :disabled="true" />
         </el-form-item>
@@ -362,6 +375,7 @@
       box-shadow: 0px 2px 10px 1px rgba(0, 0, 0, 0.06);
       border-radius: 6px 6px 6px 6px;
       padding: 0px 15px;
+      margin-bottom: 20px;
     }
 
     //订单状态一栏样式

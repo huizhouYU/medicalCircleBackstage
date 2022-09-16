@@ -99,15 +99,20 @@
       </div>
     </div>
 
-    <!-- 发货 弹框 -->
+    <!-- 退款 弹框 -->
     <el-dialog title="退款审核" :close-on-click-modal="false" :visible.sync="refundDialogVisible" width="500px"
       class="el-dialog-box el-dialog-deliver">
-      <el-form :model="refundDeliverForm" label-position="left">
-        <el-radio-group v-model="refundDeliverForm.decision" @change="clearRefundForm">
-          <el-radio :label="1">同意</el-radio>
-          <el-radio :label="2">拒绝</el-radio>
-        </el-radio-group>
-        <el-form-item label="拒绝原因:" :label-width="formLabelWidth">
+      <el-form :model="refundDeliverForm" label-position="right">
+        <el-form-item label="退款选择:" :label-width="formLabelWidth">
+          <el-radio-group v-model="refundDeliverForm.decision" @change="clearRefundForm">
+            <el-radio :label="1">同意</el-radio>
+            <el-radio :label="2">拒绝</el-radio>
+          </el-radio-group>
+          <div v-show="refundDeliverForm.decision == 1" class="greySpan">
+             <span>选择“同意”，相关货款将退还给买家，是否继续</span>
+          </div>
+        </el-form-item>
+        <el-form-item label="拒绝原因:" :label-width="formLabelWidth" v-show="refundDeliverForm.decision == 2">
           <el-input v-model="refundDeliverForm.refuseReason" placeholder=""
             :disabled="refundDeliverForm.decision == 1" />
         </el-form-item>

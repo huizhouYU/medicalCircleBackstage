@@ -217,19 +217,59 @@ li {
 //弹框
 .el-dialog-box {
   font-size: 14px;
+  .el-input__inner{
+    height: 34px;
+    line-height: 34px;
+  }
   .dialog-notes {
     display: inline-block;
     font-size: 12px;
     color: #999;
   }
-  .el-dialog-deliver {
-    .el-form-item {
-      margin-top: 20px;
+  // .el-dialog-deliver {
+  //   .el-form-item {
+  //     // margin-top: 20px;
+  //   }
+  // }
+  .el-form-item__label{
+        padding: 0 25px 0 0;
+  }
+  .el-form-item{
+    margin-bottom: 20px;
+    span{
+      font-size: 12px;
     }
+  }
+  .span-info{
+    .el-form-item{
+      margin-bottom: 0px;
+    }
+
   }
   .el-button--medium{
     font-size: 12px;
   }
+  .greySpan{
+    font-size: 12px;
+    font-family: Microsoft YaHei-Regular, Microsoft YaHei;
+    font-weight: 400;
+    color: #999999;
+  }
+}
+.el-dialog{
+  height: 300px;
+}
+.el-dialog__header{
+  padding: 15px 20px;
+}
+.el-dialog__body{
+  padding: 10px 20px 0px 20px;
+}
+.el-dialog__footer{
+  position: absolute;
+  padding: 0px;
+  bottom: 20px;
+  right: 30px;
 }
 
 .el-dialog__header {
