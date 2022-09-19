@@ -15,17 +15,17 @@ export default {
   render(h, context) {
     const { icon, title } = context.props
     const vnodes = []
-
     if (icon) {
       if (icon.includes('el-icon')) {
         vnodes.push(<i class={[icon, 'sub-el-icon']} />)
       } else {
-        vnodes.push(<svg-icon icon-class={icon}/>)
+        // vnodes.push(<svg-icon icon-class={icon}/>)
+        vnodes.push(<icon theme='filled' size="14" class='icon-public-margin'/>)
       }
     }
 
     if (title) {
-      vnodes.push(<span slot='title'>{(title)}</span>)
+      vnodes.push(<span slot='title' class='mean-title'>{(title)}</span>)
     }
     return vnodes
   }
@@ -37,5 +37,8 @@ export default {
   color: currentColor;
   width: 1em;
   height: 1em;
+}
+.icon-public-margin{
+  margin-right: 10px;
 }
 </style>

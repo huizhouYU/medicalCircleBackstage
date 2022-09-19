@@ -3,6 +3,7 @@ import Vue from 'vue'
 import Cookies from 'js-cookie'
 
 import 'normalize.css/normalize.css' // a modern alternative to CSS resets
+import '@icon-park/vue/styles/index.css'//使用iconPark图标引入样式
 
 import Element from 'element-ui'
 import './styles/element-variables.scss'

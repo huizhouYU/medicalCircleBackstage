@@ -75,7 +75,7 @@ export const constantRoutes = [{
     name: 'Goods',
     meta: {
       title: '商品管理',
-      icon: 'el-icon-s-help'
+      icon: 'commodity'
     },
     children: [{
         path: 'goodsIndex',
@@ -125,7 +125,7 @@ export const constantRoutes = [{
     name: 'Order',
     meta: {
       title: '订单管理',
-      icon: 'el-icon-s-help'
+      icon: 'transaction-order'
     },
     children: [{
         path: 'orderManage',
@@ -174,7 +174,8 @@ export const constantRoutes = [{
     name: 'Demand',
     meta: {
       title: '需求管理',
-      icon: 'guide'
+      // icon: 'guide'
+      icon:'more-four'
     },
     children: [{
         path: 'demandManage',
@@ -204,7 +205,8 @@ export const constantRoutes = [{
     name: 'Shop',
     meta: {
       title: '店铺设置',
-      icon: 'guide'
+      // icon: 'guide'
+      icon:'setting-two'
     },
     children: [{
         path: 'shopSetting',

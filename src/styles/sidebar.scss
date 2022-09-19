@@ -138,6 +138,9 @@
 
       .el-tooltip {
         padding: 0 !important;
+        display: flex !important;
+        justify-content: center;
+        align-items: center;
 
         .svg-icon {
           margin-left: 20px;
@@ -172,7 +175,11 @@
     .el-menu--collapse {
       .el-submenu {
         &>.el-submenu__title {
-          &>span {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          // &>span {
+          &>.mean-title{
             height: 0;
             width: 0;
             overflow: hidden;

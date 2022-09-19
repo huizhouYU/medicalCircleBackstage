@@ -138,7 +138,7 @@
     <!-- 发货 弹框 -->
     <el-dialog title="发货信息" :close-on-click-modal="false" :visible.sync="deliverDialogVisible" width="500px"
       class="el-dialog-box el-dialog-deliver">
-      <el-form :model="orderDeliverForm" label-position="right">
+      <el-form :model="orderDeliverForm" label-position="right" :class="[{'span-info':orderDeliverForm.deliverWay == 2}]">
         <el-form-item label="选择类型:" :label-width="formLabelWidth">
           <el-radio-group v-model="orderDeliverForm.deliverWay" @change="clearDeliverForm" >
             <el-radio :label="1">物流发货</el-radio>
@@ -153,7 +153,7 @@
           <el-input v-model="orderDeliverForm.expressNo" autocomplete="off" size="medium"
             :disabled="orderDeliverForm.deliverWay == 2" />
         </el-form-item>
-        <div  class="span-info">
+        <!-- <div  class="span-info"> -->
           <el-form-item label="收货人:" :label-width="formLabelWidth" v-show="orderDeliverForm.deliverWay == 2">
             <span>张楚岚</span>
           </el-form-item>
@@ -163,7 +163,7 @@
           <el-form-item label="卖家地址:" :label-width="formLabelWidth" v-show="orderDeliverForm.deliverWay == 2">
             <span>安徽省合肥市蜀山区蜀山区蜀山街道枫叶产业园128号999室</span>
           </el-form-item>
-        </div>
+        <!-- </div> -->
 
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -176,10 +176,10 @@
       class="el-dialog-box">
       <el-form :model="orderNotesForm" label-position="right">
         <el-form-item label="买家备注:" :label-width="formLabelWidth">
-          <el-input v-model="orderNotesForm.mNotes" placeholder="" type="textarea" :disabled="true" />
+          <el-input v-model="orderNotesForm.mNotes" placeholder="" type="textarea" :disabled="true" resize='none' />
         </el-form-item>
         <el-form-item label="商家备注:" :label-width="formLabelWidth">
-          <el-input v-model="orderNotesForm.sNotes" autocomplete="off" size="medium" type="textarea" />
+          <el-input v-model="orderNotesForm.sNotes" autocomplete="off" size="medium" type="textarea" resize='none' />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
