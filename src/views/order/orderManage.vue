@@ -3,7 +3,7 @@
     <!-- 搜索栏 -->
     <div class="search-box">
       <!-- 订单状态下拉框 -->
-      <el-select v-model="orderStateValue" placeholder="订单状态" class="orderState-div public-interval">
+      <el-select v-model="orderStateValue" placeholder="订单状态" class="public-select-box">
         <el-option v-for="item in orderStateOptions" :key="item.value" :label="item.label" :value="item.value" />
       </el-select>
       <!-- 下单时间 -->
@@ -20,20 +20,25 @@
         </el-select>
       </el-input>
       <!-- 查询按钮 -->
-      <button class="but-search public-interval">查询</button>
+      <el-button type="primary" class="public-el-btn">查询</el-button>
+
+      <!-- <button class="but-search public-interval">查询</button> -->
     </div>
     <!-- 订单列表 -->
     <!-- 自定义表格 -->
     <div class="table-item">
       <table border="1" cellspacing="0" cellpadding="0" width="100%">
         <thead>
-          <th style="width: 25%;" colspan="2">商品名称</th>
-          <th style="width: 12%;">数量</th>
-          <th style="width: 12%;">价格</th>
-          <th style="width: 12%;">收货人</th>
-          <th style="width: 14%;">订单状态</th>
-          <th style="width: 12%;">实付金额</th>
-          <th style="width: 10%;">操作</th>
+          <tr>
+            <th style="width: 25%;" colspan="2">商品名称</th>
+            <th style="width: 12%;">数量</th>
+            <th style="width: 12%;">价格</th>
+            <th style="width: 12%;">收货人</th>
+            <th style="width: 14%;">订单状态</th>
+            <th style="width: 12%;">实付金额</th>
+            <th style="width: 10%;">操作</th>
+          </tr>
+
         </thead>
         <tbody>
           <template v-for="(item,index) in currentPageData">
@@ -55,7 +60,8 @@
             <tr class="order-detail">
               <td colspan="2" class="img-name-no-td" style="width: 25%;">
                 <div class="img-name-no">
-                  <img :src="item.imgUrl" alt="">
+                  <!-- <img :src="item.imgUrl" alt=""> -->
+                  <img :src="qqq" alt="">
                   <div class="name-no">
                     <span :title="item.name"> {{ item.name }}</span>
                     <span :title="item.goodNo">编号: {{ item.goodNo }}</span>
@@ -138,9 +144,10 @@
     <!-- 发货 弹框 -->
     <el-dialog title="发货信息" :close-on-click-modal="false" :visible.sync="deliverDialogVisible" width="500px"
       class="el-dialog-box el-dialog-deliver">
-      <el-form :model="orderDeliverForm" label-position="right" :class="[{'span-info':orderDeliverForm.deliverWay == 2}]">
+      <el-form :model="orderDeliverForm" label-position="right"
+        :class="[{'span-info':orderDeliverForm.deliverWay == 2}]">
         <el-form-item label="选择类型:" :label-width="formLabelWidth">
-          <el-radio-group v-model="orderDeliverForm.deliverWay" @change="clearDeliverForm" >
+          <el-radio-group v-model="orderDeliverForm.deliverWay" @change="clearDeliverForm">
             <el-radio :label="1">物流发货</el-radio>
             <el-radio :label="2">商家自配</el-radio>
           </el-radio-group>
@@ -154,15 +161,15 @@
             :disabled="orderDeliverForm.deliverWay == 2" />
         </el-form-item>
         <!-- <div  class="span-info"> -->
-          <el-form-item label="收货人:" :label-width="formLabelWidth" v-show="orderDeliverForm.deliverWay == 2">
-            <span>张楚岚</span>
-          </el-form-item>
-          <el-form-item label="联系电话:" :label-width="formLabelWidth" v-show="orderDeliverForm.deliverWay == 2">
-            <span>123 4567 6988</span>
-          </el-form-item>
-          <el-form-item label="卖家地址:" :label-width="formLabelWidth" v-show="orderDeliverForm.deliverWay == 2">
-            <span>安徽省合肥市蜀山区蜀山区蜀山街道枫叶产业园128号999室</span>
-          </el-form-item>
+        <el-form-item label="收货人:" :label-width="formLabelWidth" v-show="orderDeliverForm.deliverWay == 2">
+          <span>张楚岚</span>
+        </el-form-item>
+        <el-form-item label="联系电话:" :label-width="formLabelWidth" v-show="orderDeliverForm.deliverWay == 2">
+          <span>123 4567 6988</span>
+        </el-form-item>
+        <el-form-item label="卖家地址:" :label-width="formLabelWidth" v-show="orderDeliverForm.deliverWay == 2">
+          <span>安徽省合肥市蜀山区蜀山区蜀山街道枫叶产业园128号999室</span>
+        </el-form-item>
         <!-- </div> -->
 
       </el-form>
@@ -197,6 +204,7 @@
   export default {
     data() {
       return {
+        qqq:'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
         notes: '', // 修改价格弹框备注
         pirceDialogTitle: '', // 审核和修改价格是同一个弹框，用标题区分是什么操作
         pirceDialogVisible: false, // 修改价格弹框
@@ -509,7 +517,7 @@
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    padding-left: 15px;
+    // padding-left: 15px;
     box-sizing: border-box;
     flex-wrap: wrap;
     font-size: 12px;
@@ -531,21 +539,21 @@
       color: #333333;
     }
 
-    // 订单状态下拉框
-    .orderState-div {
-      width: 112px;
-      height: 34px;
-      border-radius: 6px 6px 6px 6px;
-      outline: none;
-      box-shadow: 0px;
-      box-sizing: border-box;
-      margin-right: 25px;
+    // // 订单状态下拉框
+    // .orderState-div {
+    //   width: 112px;
+    //   height: 34px;
+    //   border-radius: 6px 6px 6px 6px;
+    //   outline: none;
+    //   box-shadow: 0px;
+    //   box-sizing: border-box;
+    //   margin-right: 25px;
 
-      /deep/ .el-input__icon {
-        line-height: 34px;
-      }
+    //   /deep/ .el-input__icon {
+    //     line-height: 34px;
+    //   }
 
-    }
+    // }
 
     // 下单时间
     .order-time {
@@ -580,67 +588,65 @@
     .search-select-input {
       width: 370px;
 
-      // display: flex;
-      // justify-content: flex-start;
-      // align-items: center;
-      /deep/.el-input {
-        width: 110px;
-      }
 
-      /deep/ .el-input__icon {
-        line-height: 34px;
-      }
+      // /deep/.el-input {
+      //   width: 110px;
+      // }
+
+      // /deep/ .el-input__icon {
+      //   line-height: 34px;
+      // }
 
       //输入的关键字的类型
-      .key-selectType {
-        height: 34px;
-        width: 140px;
-        box-sizing: border-box;
-        font-size: 12px;
-        margin-left: -1px;
+      // .key-selectType {
+      //   height: 34px;
+      //   width: 140px;
+      //   box-sizing: border-box;
+      //   font-size: 12px;
+      //   margin-left: -1px;
 
-        //下拉框的样式修改
-        /deep/ .el-input__inner {
-          height: 34px;
-          line-height: 34px;
-          font-size: 12px;
-          border-radius: 6px 0px 0px 6px;
-        }
+      //   //下拉框的样式修改
+      //   /deep/ .el-input__inner {
+      //     height: 34px;
+      //     line-height: 34px;
+      //     font-size: 12px;
+      //     border-radius: 6px 0px 0px 6px;
+      //   }
 
-        //下拉框的箭头修改
-        /deep/ .el-input__icon {
-          line-height: 34px;
-        }
-      }
+      //   //下拉框的箭头修改
+      //   /deep/ .el-input__icon {
+      //     line-height: 34px;
+      //   }
+      // }
 
       // input 输入框
-      .input-search {
-        width: 320px;
-        height: 34px;
-        margin-left: -1px;
+      // .input-search {
+      //   width: 320px;
+      //   height: 34px;
+      //   margin-left: -1px;
 
-        /deep/ .el-input__inner {
-          height: 34px;
-          line-height: 34px;
-          border-radius: 0px 6px 6px 0px;
-        }
+      //   /deep/ .el-input__inner {
+      //     height: 34px;
+      //     line-height: 34px;
+      //     border-radius: 0px 6px 6px 0px;
+      //   }
 
-      }
+      // }
     }
 
-    .but-search {
-      margin-left: 40px;
-      width: 64px;
-      height: 34px;
-      background: #1890FF;
-      border-radius: 6px 6px 6px 6px;
-      box-sizing: border-box;
-      color: #FFFFFF;
-      border: none;
-      font-size: 12px;
-      font-family: Microsoft YaHei-Regular, Microsoft YaHei;
-      font-weight: 400;
-    }
+    // .but-search {
+    //   margin-left: 40px;
+    //   width: 64px;
+    //   height: 34px;
+    //   background: #1890FF;
+    //   border-radius: 6px 6px 6px 6px;
+    //   box-sizing: border-box;
+    //   color: #FFFFFF;
+    //   border: none;
+    //   font-size: 12px;
+    //   font-family: Microsoft YaHei-Regular, Microsoft YaHei;
+    //   font-weight: 400;
+    // }
   }
 
   //自定义表格
@@ -668,7 +674,6 @@
 
       //表头
       thead {
-        padding-left: 6px;
         border-bottom: 1px solid #EBEEF5;
         height: 55px;
         box-sizing: border-box;
@@ -679,6 +684,12 @@
         display: flex;
         align-items: center;
 
+        th {
+          // display: flex;
+          text-align: center;
+
+        }
+
         tr {
           display: table;
           width: 100%;
@@ -686,6 +697,25 @@
         }
       }
 
+      //改变滚动条样式  start
+      tbody::-webkit-scrollbar {
+        padding: 2px 0px;
+        width: 2px;
+      }
+
+      tbody::-webkit-scrollbar-thumb {
+        border-radius: 10px;
+        box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+        background: rgba(0, 0, 0, 0);
+      }
+
+      tbody::-webkit-scrollbar-track {
+        box-shadow: inset 0 0 5px rgba(0, 0, 0, 0);
+        border-radius: 0;
+        background: rgba(0, 0, 0, 0);
+      }
+
+      //改变滚动条样式  end
       tbody {
         display: block;
         height: 360px;
@@ -781,6 +811,7 @@
           img {
             width: 70px;
             height: 70px;
+            border-radius: 4px;
             box-sizing: border-box;
             float: left;
           }

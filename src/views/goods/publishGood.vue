@@ -129,7 +129,8 @@
         </div>
       </div>
       <div class="submit">
-        <button class="but-submit" @click="submit">提交</button>
+        <!-- <button class="but-submit" @click="submit">提交</button> -->
+        <el-button type="primary" class="public-el-submit-btn"  @click="submit">提交</el-button>
       </div>
     </div>
   </div>

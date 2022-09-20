@@ -122,7 +122,8 @@
       </div>
 
       <div class="submit">
-        <button class="but-submit">发布</button>
+        <!-- <button class="but-submit">发布</button> -->
+        <el-button type="primary" class="public-el-submit-btn">发布</el-button>
       </div>
 
       <!-- </div> -->
@@ -508,17 +509,17 @@ export default {
     align-items: center;
     margin-top: 30px;
 
-    .but-submit {
-      width: 92px;
-      height: 34px;
-      background: #1890FF;
-      border-radius: 6px 6px 6px 6px;
-      font-size: 12px;
-      font-family: Microsoft YaHei-Regular, Microsoft YaHei;
-      font-weight: 400;
-      color: #FFFFFF;
-      border: none;
-      outline: none;
-    }
+    // .but-submit {
+    //   width: 92px;
+    //   height: 34px;
+    //   background: #1890FF;
+    //   border-radius: 6px 6px 6px 6px;
+    //   font-size: 12px;
+    //   font-family: Microsoft YaHei-Regular, Microsoft YaHei;
+    //   font-weight: 400;
+    //   color: #FFFFFF;
+    //   border: none;
+    //   outline: none;
+    // }
   }
 </style>

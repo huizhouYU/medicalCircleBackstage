@@ -71,7 +71,7 @@
         </div>
         <!-- 下一步 -->
         <div v-show="!isLook" class="item-btn">
-          <el-button class="next-but" type="primary" plain @click="next">下一步</el-button>
+          <el-button class="public-el-submit-btn" type="primary" plain @click="next">下一步</el-button>
         </div>
       </div>
       <!-- 证明材料 -->
@@ -125,8 +125,8 @@
         </el-form-item>
         <!-- 上一步 下一步 -->
         <div v-show="!isLook" class="item-btn zm-btn-pre-next">
-          <el-button class="pre-but" @click="pre">上一步</el-button>
-          <el-button class="next-but" type="primary" plain @click="next">下一步</el-button>
+          <el-button class="public-el-submit-btn pre-but" @click="pre">上一步</el-button>
+          <el-button class="public-el-submit-btn" type="primary" plain @click="next">下一步</el-button>
         </div>
 
       </div>
@@ -147,8 +147,8 @@
         </el-form-item>
         <!-- 上一步 下一步 -->
         <div v-show="!isLook" class="item-btn lx-btn-pre-sub">
-          <el-button class="pre-but" @click="pre">上一步</el-button>
-          <el-button class="submit-but" type="primary" plain @click="submitForm">确认提交</el-button>
+          <el-button class="public-el-submit-btn pre-but" @click="pre">上一步</el-button>
+          <el-button class="public-el-submit-btn" type="primary" plain @click="submitForm">确认提交</el-button>
         </div>
       </div>
     </el-form>
@@ -177,7 +177,7 @@ export default {
     return {
       examineResult: '-1', // 审核状态
       cities: [],
-      isLook: true, // 是否查看
+      isLook: false, // 是否查看
       show: true,
       count: '',
       cardFront: {
@@ -488,7 +488,6 @@ export default {
         margin-right: 40px;
       }
 
-      .next-but {}
     }
 
     // 认证信息

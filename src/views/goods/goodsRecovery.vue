@@ -63,29 +63,14 @@
     .search-select-input {
       width: 400px;
 
-      /deep/.el-input {
-        width: 110px;
-      }
+      // /deep/.el-input {
+      //   width: 110px;
+      // }
 
-      /deep/.el-input-group__prepend .el-input {
-        font-size: 12px;
-      }
+      // /deep/.el-input-group__prepend .el-input {
+      //   font-size: 12px;
+      // }
 
-      //搜索按钮
-      /deep/.el-input-group__append button.el-button {
-        background-color: #1890FF;
-        border-color: #1890FF;
-        color: #fff;
-      }
-
-      /deep/.el-input-group__append {
-        border-color: #1890FF;
-        overflow: hidden;
-      }
-
-      /deep/.el-button {
-        line-height: unset;
-      }
     }
   }
 

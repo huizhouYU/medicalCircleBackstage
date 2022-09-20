@@ -6,7 +6,7 @@
       <!-- 搜索部分 -->
       <div class="search">
         <!-- 本店分类 -->
-        <el-select v-model="infoValue" placeholder="信息类型" class="choose-store-sort">
+        <el-select v-model="infoValue" placeholder="信息类型" class="public-select-box">
           <el-option v-for="item in infoOptions" :key="item.value" :label="item.label" :value="item.value">
           </el-option>
         </el-select>
@@ -23,7 +23,8 @@
 
       </div>
       <!-- 添加商品 -->
-      <button class="btn-add" @click="toAddDemand">发布需求 </button>
+      <el-button type="primary" class="public-el-btn"  @click="toAddDemand">发布需求</el-button>
+      <!-- <button class="btn-add" @click="toAddDemand">发布需求 </button> -->
     </div>
     <!-- 模块三 需求列表 -->
     <demands-items class="items"></demands-items>
@@ -94,68 +95,67 @@
         line-height: 34px;
       }
 
-      // 本店分类
-      // 商品状态
-      .choose-store-sort {
-        width: 112px;
-        height: 34px;
-        margin: 20px 25px 20px 15px;
-        border-radius: 6px 6px 6px 6px;
-        box-sizing: border-box;
+      // // 信息类型
+      // .public-select-box {
+      //   width: 112px;
+      //   height: 34px;
+      //   margin: 20px 25px 20px 15px;
+      //   border-radius: 6px 6px 6px 6px;
+      //   box-sizing: border-box;
 
-        /deep/ .el-input__inner {
-          height: 34px;
-          line-height: 34px;
-        }
-      }
+      //   /deep/ .el-input__inner {
+      //     height: 34px;
+      //     line-height: 34px;
+      //   }
+      // }
 
       // 请输入标题/设备型号关键字
       .search-select-input {
         width: 400px;
 
-        /deep/.el-input {
-          width: 110px;
-        }
+        // /deep/.el-input {
+        //   width: 110px;
+        // }
 
-        /deep/ .el-input__icon {
-          line-height: 34px;
-        }
+        // /deep/ .el-input__icon {
+        //   line-height: 34px;
+        // }
 
         //输入的关键字的类型
-        .key-selectType {
-          height: 34px;
-          width: 140px;
-          box-sizing: border-box;
-          font-size: 12px;
-          margin-left: -1px;
+        // .key-selectType {
+        //   height: 34px;
+        //   width: 140px;
+        //   box-sizing: border-box;
+        //   font-size: 12px;
+        //   margin-left: -1px;
 
-          //下拉框的样式修改
-          /deep/ .el-input__inner {
-            height: 34px;
-            line-height: 34px;
-            font-size: 12px;
-            border-radius: 6px 0px 0px 6px;
-          }
+        //   //下拉框的样式修改
+        //   /deep/ .el-input__inner {
+        //     height: 34px;
+        //     line-height: 34px;
+        //     font-size: 12px;
+        //     border-radius: 6px 0px 0px 6px;
+        //   }
 
-          //下拉框的箭头修改
-          /deep/ .el-input__icon {
-            line-height: 34px;
-          }
-        }
+        //   //下拉框的箭头修改
+        //   /deep/ .el-input__icon {
+        //     line-height: 34px;
+        //   }
+        // }
 
         // input 输入框
-        .input-search {
-          width: 320px;
-          height: 34px;
-          margin-left: -1px;
+        // .input-search {
+        //   width: 320px;
+        //   height: 34px;
+        //   margin-left: -1px;
 
-          /deep/ .el-input__inner {
-            height: 34px;
-            line-height: 34px;
-            border-radius: 0px 6px 6px 0px;
-          }
+        //   /deep/ .el-input__inner {
+        //     height: 34px;
+        //     line-height: 34px;
+        //     border-radius: 0px 6px 6px 0px;
+        //   }
 
-        }
+        // }
       }
     }
 

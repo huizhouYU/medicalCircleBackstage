@@ -23,9 +23,10 @@
     <div class="bottoms-box">
       <div class="left">
         <el-checkbox v-model="isAddAllTerminalStatus" @change="allSelectTerminal">全选</el-checkbox>
-        <button @click="deleteChoosed" class="pl-delete-btn">
+        <!-- <button @click="deleteChoosed" class="pl-delete-btn">
           取消任务
-        </button>
+        </button> -->
+        <el-button type="danger" class="public-el-btn"  @click="deleteChoosed"> 取消任务</el-button>
       </div>
 
       <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange"

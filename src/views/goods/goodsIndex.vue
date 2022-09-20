@@ -6,15 +6,15 @@
       <div class="search">
         <!-- 商品分类 -->
         <el-cascader v-model="sortValue" placeholder="商品分类" :options="options" @change="handleChange"
-          class="choose-store-sort public-interval" clearable :filterable="true">
+          class="public-select-box" clearable :filterable="true">
         </el-cascader>
         <!-- 商品状态 -->
-        <el-select v-model="value" placeholder="商品状态" class="choose-shop-state public-interval" clearable>
+        <el-select v-model="value" placeholder="商品状态" class="public-select-box choose-shop-state" clearable>
           <el-option v-for="item in shopStateOptions" :key="item.value" :label="item.label" :value="item.value">
           </el-option>
         </el-select>
         <!-- input 输入关键字  -->
-        <el-input placeholder="请输入关键字" v-model="inputKey" class="input-with-select search-select-input public-interval">
+        <el-input placeholder="请输入关键字" v-model="inputKey" class="input-with-select search-select-input">
           <el-select v-model="inputKeyType" slot="prepend" placeholder="请选择">
             <el-option v-for="item in inputKeyOptions" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
@@ -23,7 +23,8 @@
         </el-input>
       </div>
       <!-- 添加商品 -->
-      <button class="btn-add " @click="toAddGoods">添加商品 </button>
+      <el-button type="primary" class="public-el-btn"  @click="toAddGoods">添加商品</el-button>
+      <!-- <button class="btn-add " @click="toAddGoods">添加商品</button> -->
     </div>
     <!-- 模块三 商品列表 -->
     <goods-items class="items"></goods-items>
@@ -209,9 +210,9 @@
     flex-wrap: wrap;
 
     //公共上下间距
-    .public-interval {
-      margin: 20px 0px;
-    }
+    // .public-interval {
+    //   margin: 20px 0px;
+    // }
 
     // 搜索部分
     .search {
@@ -219,80 +220,65 @@
       justify-content: flex-start;
       align-items: center;
 
-      /deep/.el-input--mini .el-input__inner {
-        // height: 34px;
-        // line-height: 34px;
-      }
+      // /deep/.el-input--mini .el-input__inner {
+      //   // height: 34px;
+      //   // line-height: 34px;
+      // }
 
-      // 本店分类
-      // 商品状态
-      .choose-store-sort,
-      .choose-shop-state {
-        width: 112px;
-        height: 34px;
-        margin: 20px 25px 20px 15px;
-        border-radius: 6px 6px 6px 6px;
-        box-sizing: border-box;
-        font-size: 12px;
+      // // 本店分类
+      // // 商品状态
+      // .choose-store-sort,
+      // .choose-shop-state {
+      //   width: 112px;
+      //   height: 34px;
+      //   margin: 20px 25px 20px 15px;
+      //   border-radius: 6px 6px 6px 6px;
+      //   box-sizing: border-box;
+      //   font-size: 12px;
 
-        /deep/.el-select-dropdown__item span {
-          font-size: 12px;
-        }
+      //   /deep/.el-select-dropdown__item span {
+      //     font-size: 12px;
+      //   }
 
-        /deep/ .el-select-dropdown__empty {
-          font-size: 12px !important;
-        }
-      }
+      //   /deep/ .el-select-dropdown__empty {
+      //     font-size: 12px !important;
+      //   }
+      // }
 
       .choose-shop-state {
         margin-left: 0px;
       }
 
-      /deep/ .el-cascader {
-        line-height: 0px !important;
-      }
+      // /deep/ .el-cascader {
+      //   line-height: 0px !important;
+      // }
 
       // 输入关键字
       .search-select-input {
         width: 400px;
 
-        /deep/.el-input {
-          width: 110px;
-        }
+        // /deep/.el-input {
+        //   width: 110px;
+        // }
 
-        //搜索按钮
-        /deep/.el-input-group__append button.el-button {
-          background-color: #1890FF;
-          border-color: #1890FF;
-          color: #fff;
-        }
-
-        /deep/.el-input-group__append {
-          border-color: #1890FF;
-          overflow: hidden;
-        }
-
-        /deep/.el-button {
-          line-height: unset;
-        }
       }
     }
 
     // 添加商品
-    .btn-add {
-      width: 88px;
-      height: 34px;
-      background: #1890FF;
-      border-radius: 6px 6px 6px 6px;
-      border: none;
-      margin: 20px 20px 20px 15px;
-      box-sizing: border-box;
-      font-size: 12px;
-      font-family: Microsoft YaHei-Regular, Microsoft YaHei;
-      color: #FFFFFF;
-      text-align: center;
-      line-height: 34px;
-    }
+    // .btn-add {
+    //   width: 88px;
+    //   height: 34px;
+    //   background: #1890FF;
+    //   border-radius: 6px 6px 6px 6px;
+    //   border: none;
+    //   margin: 20px 20px 20px 15px;
+    //   box-sizing: border-box;
+    //   font-size: 12px;
+    //   font-family: Microsoft YaHei-Regular, Microsoft YaHei;
+    //   color: #FFFFFF;
+    //   text-align: center;
+    //   line-height: 34px;
+    // }
   }
 
   // 模块三 商品列表

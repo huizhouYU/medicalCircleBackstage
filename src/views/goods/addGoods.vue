@@ -50,7 +50,8 @@
         <span class="selectedTitle">{{chooseClassify}}</span>
       </div>
       <div class="next-box">
-        <button class="next-btn" @click="nextStep()" :class="{'next-btn-t':isNextFlag}">下一步，发布商品</button>
+        <el-button type="primary" class="public-el-btn" :disabled= "!isNextFlag"  @click="nextStep">下一步，发布商品</el-button>
+        <!-- <button class="next-btn" @click="nextStep()" :class="{'next-btn-t':isNextFlag}">下一步，发布商品</button> -->
       </div>
       <!-- 协议明细 -->
       <div class="agreement-box">

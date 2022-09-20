@@ -3,9 +3,10 @@
     <div class="content">
       <span>店铺轮播图：</span>
       <div class="imgs-btn">
+        <!-- :before-upload="beforeUpload" -->
         <el-upload action="aaa" list-type="picture-card" :class="{ disabled: uploadDisabled }" :auto-upload="false"
           :multiple="true" :limit="3" ref="upload" :on-change="handleChange" :on-preview="handlePictureCardPreview"
-          :on-remove="handleRemove" :file-list="fileList" :on-exceed="limitNum">
+          :on-remove="handleRemove" :file-list="fileList" :on-exceed="limitNum" >
           <i class="el-icon-plus"></i>
           <div class="el-upload__tip" slot="tip">请上传950*425的图片，大小不超过2m，最多可上传3张</div>
         </el-upload>
@@ -14,7 +15,9 @@
           <img width="100%" :src="dialogImageUrl" alt="" />
         </el-dialog>
 
-        <button class="btn-save">保存设置</button>
+        <!-- <button class="btn-save">保存设置</button> -->
+        <el-button type="primary" class="btn-save public-el-submit-btn">保存设置</el-button>
+
       </div>
     </div>
   </div>
@@ -36,6 +39,33 @@
       };
     },
     methods: {
+      // 图片上传尺寸大小检验
+            beforeUpload (file) {
+              let _this = this
+              const is1M = file.size / 1024 / 1024 < 1; // 限制小于1M
+              const isSize = new Promise(function (resolve, reject) {
+                let width = 654; // 限制图片尺寸为654X270
+                let height = 270;
+                let _URL = window.URL || window.webkitURL;
+                let img = new Image();
+                console.log("上传图片:",new Image())
+                console.log(_URL)
+                img.onload = function () {
+                  let valid = img.width === width && img.height === height;
+                  valid ? resolve() : reject();
+                }
+                img.src = _URL.createObjectURL(file);
+              }).then(() => {
+                return file;
+              }, () => {
+                _this.$message.error('图片尺寸限制为654 x 270，大小不可超过1MB')
+                return Promise.reject();
+              });
+              if (!is1M) {
+                _this.$message.error('图片尺寸限制为654 x 270，大小不可超过1MB')
+              }
+              return isSize&is1M
+            },
       //判断宽高是否满足要求
       isSize(file){
         return true
@@ -76,6 +106,33 @@
           fileList.splice(-1, 1); //移除错误文件
           return false;
         }
+        ////////////////////////
+        const isSize = new Promise(function(resolve, reject){
+            // let width = 750;
+            // let height = 1642;
+            let _URL = window.URL || window.webkitURL;
+            let img = new Image();
+            img.onload = function(){
+              let valid = img.width / img.height === 1.67;
+              valid ? resolve() : reject();
+            }
+            img.src = _URL.createObjectURL(file);
+          }).then(()=>{
+            return file;
+          }, ()=>{
+            // this.$message({
+            //   message:'上传图片比例建议为5：3!请重新选择!'
+            // });
+            this.isLoad = true
+            this.errText = '上传图片比例只能为5:3, 请重新选择上传!'
+            return Promise.reject()
+            return false;//必须加上return false; 才能阻止
+          })
+
+        ////////////////////////
+
+
+
         if (!this.isSize(file)) {
           fileList.splice(-1, 1);
           return false;
@@ -202,12 +259,6 @@
 
     .btn-save {
       margin-top: 20px;
-      width: 88px;
-      height: 34px;
-      background: #1890FF;
-      border-radius: 4px;
-      color: #FFFFFF;
-      border: none;
     }
   }
 </style>

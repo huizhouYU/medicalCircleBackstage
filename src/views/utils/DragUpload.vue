@@ -1,5 +1,6 @@
 <template>
   <div v-loading="loading" class="images-content">
+    <!-- :before-upload="beforeUpload" -->
     <el-upload ref='upload' class="upload-add" list-type="picture-card"  :show-file-list="false" multiple
       action="#" :on-preview="handlePictureCardPreview" :on-remove="handleRemove" :auto-upload="false"
       :file-list="fileList" :on-success="uploadAppSuccess" :on-error="handleImageError"
@@ -60,10 +61,34 @@
       beforeAvatarUpload(file) {
         this.loading = true;
         const isLt10M = file.size / 1024 / 1024 < 10;
-        if (!isLt10M) {
-          this.$message.error('图片大小不超过10M')
-          return
-        }
+        // if (!isLt10M) {
+        //   this.$message.error('图片大小不超过10M')
+        //   return
+        // }
+        let _this = this
+          const is1M = file.size / 1024 / 1024 < 1; // 限制小于1M
+          const isSize = new Promise(function (resolve, reject) {
+            let width = 654; // 限制图片尺寸为654X270
+            let height = 270;
+            let _URL = window.URL || window.webkitURL;
+            let img = new Image();
+            console.log("上传图片:",new Image())
+            console.log(_URL)
+            img.onload = function () {
+              let valid = img.width === width && img.height === height;
+              valid ? resolve() : reject();
+            }
+            img.src = _URL.createObjectURL(file);
+          }).then(() => {
+            return file;
+          }, () => {
+            _this.$message.error('图片尺寸限制为654 x 270，大小不可超过1MB')
+            return Promise.reject();
+          });
+          if (!is1M) {
+            _this.$message.error('图片尺寸限制为654 x 270，大小不可超过1MB')
+          }
+          return isSize&is1M
         // return api.getQiniuToken().then((res) => {   // 这里需要配置自己的七牛云api接口
         //   // 配置上传的七牛token
         //   this.qiniuUploadForm = {

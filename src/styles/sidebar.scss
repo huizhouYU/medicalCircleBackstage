@@ -21,7 +21,6 @@
     z-index: 1001;
     overflow: hidden;
 
-
     // reset element-ui css
     .horizontal-collapse-transition {
       transition: 0s width ease-in-out, 0s padding-left ease-in-out, 0s padding-right ease-in-out;
@@ -69,11 +68,20 @@
       height: 100%;
       width: 100% !important;
     }
+    //二级菜单高度
+    .el-submenu .el-menu-item{
+      height: 36px;
+      line-height: 35px;
+    }
 
     // menu hover
     .submenu-title-noDropdown,
+    //一级菜单高度
     .el-submenu__title {
       border-radius: 6px;
+      height: 40px;
+      line-height: 39px;
+      font-size: 14px;
       // margin: 0px 10px;
       &:hover {
         background-color: $menuHover !important;
@@ -106,10 +114,10 @@
       }
     }
     & .el-menu-item{
-      margin: 0px 10px;
+      margin: 0px 20px;
     }
     & .el-submenu {
-      padding: 0px 10px;
+      padding: 0px 20px;
        & .el-menu-item{
          margin:0;
        }

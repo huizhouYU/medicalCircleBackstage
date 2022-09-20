@@ -3,7 +3,7 @@
     <!-- 搜索栏 -->
     <div class="search-box">
       <!-- 订单状态下拉框 -->
-      <el-select v-model="orderStateValue" placeholder="订单状态" class="orderState-div public-interval">
+      <el-select v-model="orderStateValue" placeholder="订单状态" class="public-select-box">
         <el-option v-for="item in orderStateOptions" :key="item.value" :label="item.label" :value="item.value" />
       </el-select>
       <!-- 下单时间 -->
@@ -20,20 +20,23 @@
         </el-select>
       </el-input>
       <!-- 查询按钮 -->
-      <button class="but-search public-interval">查询</button>
+      <el-button type="primary" class="public-el-btn" >查询</el-button>
+      <!-- <button class="but-search public-interval">查询</button> -->
     </div>
     <!-- 订单列表 -->
     <!-- 自定义表格 -->
     <div class="table-item">
       <table border="1" cellspacing="0" cellpadding="0" width="100%">
         <thead>
-          <th style="width: 25%;" colspan="2">商品名称</th>
-          <th style="width: 12%;">交易金额</th>
-          <th style="width: 12%;">退款金额</th>
-          <th style="width: 12%;">买家</th>
-          <th style="width: 14%;">退款原因</th>
-          <th style="width: 12%;">退款状态</th>
-          <th style="width: 10%;">售后</th>
+          <tr>
+            <th style="width: 25%;" colspan="2">商品名称</th>
+            <th style="width: 12%;">交易金额</th>
+            <th style="width: 12%;">退款金额</th>
+            <th style="width: 12%;">买家</th>
+            <th style="width: 14%;">退款原因</th>
+            <th style="width: 12%;">退款状态</th>
+            <th style="width: 10%;">售后</th>
+          </tr>
         </thead>
         <tbody>
           <template v-for="(item,index) in currentPageData">
@@ -109,7 +112,7 @@
             <el-radio :label="2">拒绝</el-radio>
           </el-radio-group>
           <div v-show="refundDeliverForm.decision == 1" class="greySpan">
-             <span>选择“同意”，相关货款将退还给买家，是否继续</span>
+            <span>选择“同意”，相关货款将退还给买家，是否继续</span>
           </div>
         </el-form-item>
         <el-form-item label="拒绝原因:" :label-width="formLabelWidth" v-show="refundDeliverForm.decision == 2">
@@ -394,7 +397,7 @@
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    padding-left: 15px;
+    // padding-left: 15px;
     box-sizing: border-box;
     flex-wrap: wrap;
     font-size: 12px;
@@ -417,20 +420,20 @@
     }
 
     // 订单状态下拉框
-    .orderState-div {
-      width: 112px;
-      height: 34px;
-      border-radius: 6px 6px 6px 6px;
-      outline: none;
-      box-shadow: 0px;
-      box-sizing: border-box;
-      margin-right: 25px;
+    // .orderState-div {
+    //   width: 112px;
+    //   height: 34px;
+    //   border-radius: 6px 6px 6px 6px;
+    //   outline: none;
+    //   box-shadow: 0px;
+    //   box-sizing: border-box;
+    //   margin-right: 25px;
 
-      /deep/ .el-input__icon {
-        line-height: 34px;
-      }
+    //   /deep/ .el-input__icon {
+    //     line-height: 34px;
+    //   }
 
-    }
+    // }
 
     // 下单时间
     .order-time {
@@ -465,52 +468,49 @@
     .search-select-input {
       width: 370px;
 
-      // display: flex;
-      // justify-content: flex-start;
-      // align-items: center;
-      /deep/.el-input {
-        width: 110px;
-      }
+      // /deep/.el-input {
+      //   width: 110px;
+      // }
 
-      /deep/ .el-input__icon {
-        line-height: 34px;
-      }
+      // /deep/ .el-input__icon {
+      //   line-height: 34px;
+      // }
 
       //输入的关键字的类型
-      .key-selectType {
-        height: 34px;
-        width: 140px;
-        box-sizing: border-box;
-        font-size: 12px;
-        margin-left: -1px;
+      // .key-selectType {
+      //   height: 34px;
+      //   width: 140px;
+      //   box-sizing: border-box;
+      //   font-size: 12px;
+      //   margin-left: -1px;
 
-        //下拉框的样式修改
-        /deep/ .el-input__inner {
-          height: 34px;
-          line-height: 34px;
-          font-size: 12px;
-          border-radius: 6px 0px 0px 6px;
-        }
+      //   //下拉框的样式修改
+      //   /deep/ .el-input__inner {
+      //     height: 34px;
+      //     line-height: 34px;
+      //     font-size: 12px;
+      //     border-radius: 6px 0px 0px 6px;
+      //   }
 
-        //下拉框的箭头修改
-        /deep/ .el-input__icon {
-          line-height: 34px;
-        }
-      }
+      //   //下拉框的箭头修改
+      //   /deep/ .el-input__icon {
+      //     line-height: 34px;
+      //   }
+      // }
 
       // input 输入框
-      .input-search {
-        width: 320px;
-        height: 34px;
-        margin-left: -1px;
+      // .input-search {
+      //   width: 320px;
+      //   height: 34px;
+      //   margin-left: -1px;
 
-        /deep/ .el-input__inner {
-          height: 34px;
-          line-height: 34px;
-          border-radius: 0px 6px 6px 0px;
-        }
+      //   /deep/ .el-input__inner {
+      //     height: 34px;
+      //     line-height: 34px;
+      //     border-radius: 0px 6px 6px 0px;
+      //   }
 
-      }
+      // }
     }
 
     .but-search {
@@ -553,7 +553,6 @@
 
       //表头
       thead {
-        padding-left: 6px;
         border-bottom: 1px solid #EBEEF5;
         height: 55px;
         box-sizing: border-box;
@@ -571,6 +570,25 @@
         }
       }
 
+      //改变滚动条样式  start
+      tbody::-webkit-scrollbar {
+        padding: 2px 0px;
+        width: 2px;
+      }
+
+      tbody::-webkit-scrollbar-thumb {
+        border-radius: 10px;
+        box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+        background: rgba(0, 0, 0, 0);
+      }
+
+      tbody::-webkit-scrollbar-track {
+        box-shadow: inset 0 0 5px rgba(0, 0, 0, 0);
+        border-radius: 0;
+        background: rgba(0, 0, 0, 0);
+      }
+
+      //改变滚动条样式  end
       tbody {
         display: block;
         height: 360px;
@@ -666,6 +684,7 @@
           img {
             width: 70px;
             height: 70px;
+            border-radius: 4px;
             box-sizing: border-box;
             float: left;
           }
