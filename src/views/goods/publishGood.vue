@@ -110,7 +110,7 @@
               @close="handleClose(tag)">
               {{tag}}
             </el-tag>
-            <input class="tags-input" placeholder="添加标签" v-model="goodTag" @keyup.enter="addTag()"
+            <input class="tags-input" placeholder="添加标签" v-model="goodTag" maxlength="4" @keyup.enter="addTag()"
               v-show="inputVisible">
           </div>
           <span>最多可填写5个商品标签,每个标签最多4个字</span>
@@ -683,7 +683,7 @@
       margin-left: 30px;
 
       .el-tag {
-        margin-bottom: 15px;
+        // margin-bottom: 15px;
         margin-right: 10px;
       }
 

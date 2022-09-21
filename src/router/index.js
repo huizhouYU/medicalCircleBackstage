@@ -77,7 +77,17 @@ export const constantRoutes = [{
       title: '商品管理',
       icon: 'commodity'
     },
-    children: [{
+    children: [
+      {
+        path: 'addGoods',
+        component: () => import('@/views/goods/addGoods'),
+        name: 'AddGoods',
+        // hidden: true,
+        meta: {
+          title: '添加商品',
+          // icon: 'edit'
+        }
+      },{
         path: 'goodsIndex',
         component: () => import('@/views/goods/goodsIndex'),
         name: 'GoodsIndex',
@@ -87,16 +97,7 @@ export const constantRoutes = [{
           affix: true
         }
       },
-      {
-        path: 'addGoods',
-        component: () => import('@/views/goods/addGoods'),
-        name: 'AddGoods',
-        hidden: true,
-        meta: {
-          title: '添加商品',
-          // icon: 'edit'
-        }
-      },
+
       {
         path: 'publishGood',
         component: () => import('@/views/goods/publishGood'),
@@ -177,15 +178,7 @@ export const constantRoutes = [{
       // icon: 'guide'
       icon:'more-four'
     },
-    children: [{
-        path: 'demandManage',
-        component: () => import('@/views/demand/demandManage'),
-        name: 'DemandManage',
-        meta: {
-          title: '需求列表',
-          // icon: 'edit'
-        }
-      },
+    children: [
       {
         path: 'publishDemand',
         component: () => import('@/views/demand/publishDemand'),
@@ -194,8 +187,17 @@ export const constantRoutes = [{
           title: '发布需求',
           // icon: 'edit'
         },
-        hidden: true
+        // hidden: true
+      },{
+        path: 'demandManage',
+        component: () => import('@/views/demand/demandManage'),
+        name: 'DemandManage',
+        meta: {
+          title: '需求列表',
+          // icon: 'edit'
+        }
       }
+
     ]
   },
   {

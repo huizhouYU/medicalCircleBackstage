@@ -9,9 +9,9 @@
         <el-step title="联系信息" />
       </el-steps> -->
       <el-steps :active="active" finish-status="success">
-        <el-step title="步骤 1" />
-        <el-step title="步骤 2" />
-        <el-step title="步骤 3" />
+        <el-step title="认证信息" />
+        <el-step title="证明材料" />
+        <el-step title="联系信息" />
       </el-steps>
     </div>
 
@@ -415,6 +415,34 @@ export default {
 
     .el-steps {
       width: 100%;
+    }
+    /deep/ .el-step__title{
+      font-weight: bold;
+    }
+    /deep/ .el-step__line{
+      border-top:1px dashed;
+    }
+    /deep/ .el-step__head.is-process{
+      color: #ccc;
+    }
+    /deep/ .el-step__icon.is-text{
+      border: 1px solid;
+    }
+    /deep/ .el-step__title.is-process{
+      // font-weight: 700;
+      color: #999999;
+    }
+    /deep/ .el-step__head.is-success,
+    /deep/ .el-step__title.is-success{
+      color: #1890FF;
+      border-color: #1890FF;
+    }
+    /deep/ .el-step__head.is-success .is-text{
+      background-color: #1890FF;
+      .el-step__icon-inner{
+        color: #fff;
+      }
+
     }
   }
 

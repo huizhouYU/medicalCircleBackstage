@@ -94,21 +94,21 @@
       <!-- 商品列表 -->
       <div class="order-goods">
         <!-- 相当于表头 -->
-        <div class="order-goods-title">
-          <div class="order-goods-title-item order-goods-title-item-name">商品名称</div>
-          <div class="order-goods-title-item">数量</div>
-          <div class="order-goods-title-item">价格</div>
+        <div class="public-order-goods-list ">
+          <div class="public-order-goods-item public-order-goods-item-name public-center font-bold">商品名称</div>
+          <div class="public-order-goods-item public-center font-bold">数量</div>
+          <div class="public-order-goods-item public-center font-bold">价格</div>
         </div>
-        <div v-for="(item,index) in orderInfo.goods" :key="index" class="order-goods-content">
-          <div class="order-goods-content-item order-goods-content-item-name">
+        <div v-for="(item,index) in orderInfo.goods" :key="index" class="public-order-goods-list table-body">
+          <div class="public-order-goods-item public-order-goods-item-name">
             <img :src="item.imgUrl">
             <div class="item-name-title">
               <span>{{ item.name }}</span>
               <span>{{ item.goodNo }}</span>
             </div>
           </div>
-          <div class="order-goods-content-item">{{ item.num }}</div>
-          <div class="order-goods-content-item">{{ item.price }}</div>
+          <div class="public-order-goods-item public-center">{{ item.num }}</div>
+          <div class="public-order-goods-item public-center">{{ item.price }}</div>
         </div>
       </div>
       <!-- 订单价格详情 -->
@@ -242,7 +242,7 @@
           activities: [{
             content: '合肥市：您的包裹已送达哈哈便利店南门第二间，签收人：丁小军',
             timestamp: '2021-12-16   12:58:26',
-            color: '#0bbd87'
+            color: '#FF5967'
             // size: 'large',
             // type: 'primary',
             // icon: 'el-icon-more'
@@ -253,7 +253,7 @@
           }, {
             content: '上海市：您的包裹已离开华东枢纽分拨；发往安徽省合肥市蜀山区',
             timestamp: '2021-12-16   12:58:26',
-            size: 'large'
+            // size: 'large'
           }, {
             content: '您提交了订单，快递揽件中',
             timestamp: '2021-12-16   12:58:26'
@@ -528,13 +528,17 @@
           color: #777777;
         }
 
-        .last-timeline {
-          color: #e33636 !important;
-        }
-
         .detail-module-item:nth-child(2) {
           border-left: 1px solid #EBEEF5;
           border-right: 1px solid #EBEEF5;
+        }
+      }
+
+      .el-timeline:first-child {
+        .last-timeline:first-child {
+          /deep/.el-timeline-item__content {
+            color: #FF5967 !important;
+          }
         }
       }
 
@@ -546,45 +550,32 @@
         display: flex;
         flex-direction: column;
 
-        // 相当于表头
-        .order-goods-title,
-        .order-goods-content {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
+        // 表头和内容 公共样式
+        .public-order-goods-list {
           padding: 15px 15px 20px 15px;
           box-sizing: border-box;
           border-bottom: 1px solid #EBEEF5;
 
-          .order-goods-content-item,
-          .order-goods-title-item {
+          .public-center {
             display: flex;
             justify-content: center;
             align-items: center;
-            flex: 1;
-            font-weight: bold;
+          }
+
+          .public-order-goods-item {
+            float: left;
+            width: 25%;
             color: #333333;
           }
 
-          .order-goods-content-item-name,
-          .order-goods-title-item-name {
-            flex: 2;
+          .public-order-goods-item-name {
+            width: 50%;
             box-sizing: border-box;
-          }
-        }
-
-        .order-goods-content .order-goods-content-item {
-          font-weight: 400;
-        }
-
-        .order-goods-content {
-          .order-goods-content-item-name {
-            justify-content: flex-start;
-            overflow: hidden;
 
             img {
               width: 70px;
               height: 70px;
+              float: left;
             }
 
             .item-name-title {
@@ -596,6 +587,7 @@
               flex-direction: column;
 
               span {
+                font-weight: 400;
                 width: 100%;
                 white-space: nowrap;
                 overflow: hidden;
@@ -605,9 +597,19 @@
           }
         }
 
-        .order-goods-content:last-child {
+        .public-order-goods-list:last-child {
           border: none;
         }
+
+        .font-bold {
+          font-weight: bold;
+        }
+        .table-body{
+          .public-center{
+            height: 70px;
+          }
+        }
+
       }
 
       // 订单价格详情

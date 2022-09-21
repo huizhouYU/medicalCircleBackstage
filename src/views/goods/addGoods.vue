@@ -4,9 +4,10 @@
     <div class="searchSort">
       <span>类目搜索:</span>
       <div class="input-box">
-        <el-cascader v-model="inputKey" placeholder="可输入分类名称" :options="linkageData" @change="handleChange"
-          class="input-search" clearable :filterable="true">
-        </el-cascader>
+        <el-select v-model="inputKey" filterable remote reserve-keyword placeholder="请输入关键词"
+          :remote-method="remoteMethod" :loading="loading" class="input-search">
+          <el-option v-for="(item,index) in options" :key="JSON.stringify(item.id)" :label="item.title.join(' > ')" :value="item.id"></el-option>
+        </el-select>
         <button class="btn-search" @click="position()">
           <!-- <img src="../../assets/images/icon_search.png" alt=""> -->
           <img src="../../../public/imgs/icon_search.png" alt="">
@@ -50,7 +51,7 @@
         <span class="selectedTitle">{{chooseClassify}}</span>
       </div>
       <div class="next-box">
-        <el-button type="primary" class="public-el-btn" :disabled= "!isNextFlag"  @click="nextStep">下一步，发布商品</el-button>
+        <el-button type="primary" class="public-el-btn" :disabled="!isNextFlag" @click="nextStep">下一步，发布商品</el-button>
         <!-- <button class="next-btn" @click="nextStep()" :class="{'next-btn-t':isNextFlag}">下一步，发布商品</button> -->
       </div>
       <!-- 协议明细 -->
@@ -71,7 +72,7 @@
   const city = require("../../../src/json/citys.json")
   const b = require("../../../src/json/classifyData.json")
   export default {
-    name: 'ArticleList',
+    name: 'AddGoods',
     // components: {
     //   Pagination
     // },
@@ -111,6 +112,9 @@
         item3ChildData: null, //三级菜单内容
         //多级联动数据
         linkageData: [],
+        options: [],
+        list: [],
+        loading: false,
       }
     },
     created() {
@@ -118,6 +122,7 @@
     },
     mounted() {
       this.loadData()
+
     },
     methods: {
       // getList() {
@@ -128,214 +133,276 @@
       //     this.listLoading = false
       //   })
       // },
+      remoteMethod(query) {
+        if (query !== '') {
+          this.loading = true;
+          setTimeout(() => {
+            this.loading = false;
+            this.options = this.list.filter(item => {
+              return JSON.stringify(item.title).toLowerCase().indexOf(query.toLowerCase()) > -1;
+            });
+          }, 200);
+        } else {
+          this.options = [];
+        }
+      },
 
-        async loadData() {
-          console.log(b)
-          this.linkageData = b.linkageData
-          if (this.$route.query.chosedData !== undefined) {
-            this.chosedData = JSON.parse(this.$route.query.chosedData)
-            this.setData()
-            this.position1()
-          }
-          // await axios.get("../../../static/testData/classifyData.json").then(res => {
-          //   console.log(res);
-          //   if (res.status == 200) {
-          //     this.linkageData = res.data.linkageData
-          //   } else {
-          //     this.$message.error("数据请求失败，请稍后再试！")
-          //   }
-          //   console.log(this.$route.query.chosedData)
-          //   if (this.$route.query.chosedData !== undefined) {
-
-          //     this.chosedData = JSON.parse(this.$route.query.chosedData)
-          //     this.setData()
-          //     this.position1()
-          //   }
-          // })
-        },
-        back() {
-          this.$router.back()
-        },
-        // 给选择的类目赋值
-        setData() {
-          this.chooseClassify = this.chosedData[0].label
-          if (this.chosedData[1].label != '') {
-            this.chooseClassify += " > " + this.chosedData[1].label
-            this.isNextFlag = false
-            if (this.chosedData[2].label != '') {
-              this.isNextFlag = true
-              this.chooseClassify += " > " + this.chosedData[2].label
+      async loadData() {
+        console.log(b)
+        this.linkageData = b.linkageData
+        if (this.$route.query.chosedData !== undefined) {
+          this.chosedData = JSON.parse(this.$route.query.chosedData)
+          this.setData()
+          this.position1()
+        }
+        for (var i = 0; i < this.linkageData.length; i++) {
+          var item = {
+              'title': [],
+              'id': []
+            },
+            child2 = this.linkageData[i].children
+          item.id.push(this.linkageData[i].value)
+          item.title.push(this.linkageData[i].label)
+          //二级
+          if (child2 != null && child2.length > 0) {
+            for (var j = 0; j < child2.length; j++) {
+              var child3 = child2[j].children
+              item.id.push(child2[j].value)
+              item.title.push(child2[j].label)
+              //三级
+              if (child3 != null && child3.length > 0) {
+                for (var k = 0; k < child3.length; k++) {
+                  item.id.push(child3[k].value)
+                  item.title.push(child3[k].label)
+                  this.list.push(this.cloneObj(item))
+                  item.id.pop()
+                  item.title.pop()
+                }
+              } else {
+                this.list.push(this.cloneObj(item))
+              }
+              item.id.pop()
+              item.title.pop()
             }
           } else {
-            this.isNextFlag = false
+            this.list.push(this.cloneObj(item))
           }
-        },
-        position() {
-          for (var i = 0; i < this.linkageData.length; i++) {
-            //循环一级菜单
-            if (this.inputKey[0] == this.linkageData[i].value) {
-              this.chosedData[0].value = this.inputKey[0]
-              this.chosedData[0].label = this.linkageData[i].label
-              this.selectIndex.item1 = this.inputKey[0]
-              this.isShowFlag2 = "true"
-              this.item2ChildData = this.linkageData[i].children
-              if (i * 32 > 370) {
-                document.getElementById('item-a').scrollTop = i * 32
-              }
-              for (var j = 0; j < this.item2ChildData.length; j++) {
-                //循环二级菜单
-                if (this.inputKey[1] == this.item2ChildData[j].value) {
-                  this.chosedData[1].value = this.inputKey[1]
-                  this.chosedData[1].label = this.item2ChildData[j].label
-                  this.selectIndex.item2 = this.inputKey[1]
-                  this.item3ChildData = this.item2ChildData[j].children
-                  if (j * 32 > 370) {
-                    document.getElementById('item-b').scrollTop = j * 32
-                  }
-                  //判断三级菜单有无内容
-                  if (this.item3ChildData.length > 0) {
-                    this.isShowFlag3 = "true"
-                    if (this.inputKey.length == 3) {
-                      for (var x = 0; x < this.item3ChildData.length; x++) {
-                        //循环三级菜单
-                        if (this.inputKey[2] == this.item3ChildData[x].value) {
-                          this.chosedData[2].value = this.inputKey[2]
-                          this.chosedData[2].label = this.item3ChildData[x].label
-                          this.selectIndex.item3 = this.inputKey[2]
-                          if (x * 32 > 370) {
-                            document.getElementById('item-c').scrollTop = x * 32
-                          }
-                          this.setData()
-                          return
-                        }
-                      }
-                    }
-                  }
-                  this.setData()
-                  return
-                }
-              }
-              return
-            }
-          }
-        },
-        // 根据传值定位三级联动菜单
-        position1() {
-          this.selectIndex.item1 = this.chosedData[0].value
-          this.selectIndex.item2 = this.chosedData[1].value
-          this.selectIndex.item3 = this.chosedData[2].value
-          var a = document.getElementsByClassName("item-a")[0].offsetHeight
-          //循环一级菜单
-          for (var i = 0; i < this.linkageData.length; i++) {
-            if (this.linkageData[i].value == this.chosedData[0].value) {
-              console.log(i * 32)
-              if (i * 32 > 370) {
-                document.getElementById('item-a').scrollTop = i * 32
-              }
-              this.item2ChildData = this.linkageData[i].children
-              this.isShowFlag2 = true
-              //循环二级菜单
-              for (var j = 0; j < this.item2ChildData.length; j++) {
-                if (this.item2ChildData[j].value == this.chosedData[1].value) {
-                  this.item3ChildData = this.item2ChildData[j].children
-                  this.isShowFlag3 = true
-                  if (j * 32 > 370) {
-                    document.getElementById('item-b').scrollTop = j * 32
-                  }
-                  for (var x = 0; x < this.item3ChildData.length; x++) {
-                    //循环三级菜单
-                    if (this.chosedData[2].value == this.item3ChildData[x].value) {
-                      if (x * 32 > 370) {
-                        document.getElementById('item-c').scrollTop = x * 32
-                      }
-                      this.setData()
-                      return
-                    }
-                  }
-                }
-              }
-              return
-            }
-          }
-
-        },
-        //选择一级分类
-        chooseItem1(val, id) {
-          //将选中的一栏进行标记
-          this.selectIndex.item1 = id;
-          // 将二级和三级分类选中状态取消
-          this.selectIndex.item2 = "-1"
-          this.selectIndex.item3 = "-1"
-          // 将一级分类选中的数据赋值
-          this.chosedData[0].value = id
-          this.chosedData[0].label = this.linkageData[val].label
-          //清空二级和三级选中的数据
-          this.chosedData[1].value = ''
-          this.chosedData[1].label = ''
-          this.chosedData[2].value = ''
-          this.chosedData[2].label = ''
-          //调用setData方法，将选中的类目拼接成字符串
-          this.setData()
-          //根据一级分类动态赋值二级分类
-          this.item2ChildData = this.linkageData[val].children
-          //只有二级菜单有数据才会显示二级菜单
-          if (this.item2ChildData != null && this.item2ChildData.length > 0) {
-            this.isShowFlag2 = true
-          }
-          //没选择二级分类，不展示三级分类
-          this.isShowFlag3 = false
-        },
-        //选择二级分类
-        chooseItem2(val, id) {
-          console.log(this.selectIndex)
-          //将选中的一栏进行标记
-          this.selectIndex.item2 = id
-          // 将三级分类选中状态取消
-          this.selectIndex.item3 = "-1"
-          // 将二级分类选中的数据赋值
-          this.chosedData[1].value = id
-          this.chosedData[1].label = this.item2ChildData[val].label
-          //清空三级选中的数据
-          this.chosedData[2].value = ''
-          this.chosedData[2].label = ''
-          //调用setData方法，将选中的类目拼接成字符串
-          this.setData()
-          this.item3ChildData = this.item2ChildData[val].children
-          //只有三级菜单有数据才会显示三级菜单
-          if (this.item3ChildData != null && this.item3ChildData.length > 0) {
-            this.isShowFlag3 = true
-          }
-        },
-        //选择三级分类
-        chooseItem3(val, id) {
-          //将选中的一栏进行标记
-          this.selectIndex.item3 = id;
-          // 将三级分类选中的数据赋值
-          this.chosedData[2].value = id
-          this.chosedData[2].label = this.item3ChildData[val].label
-          //调用setData方法，将选中的类目拼接成字符串
-          this.setData()
-        },
-        //下一步
-        nextStep() {
-          if (this.isNextFlag) {
-            var chosedDataString = JSON.stringify(this.chosedData)
-            console.log(chosedDataString)
-            this.$router.replace({
-              path: 'publishGood',
-              query: {
-                chosedData: chosedDataString
-              }
-            })
-          }
-
-        },
-        handleChange(value) {
-          console.log(value);
-        },
-        hiddenDropdown() {
-          console.log("111")
+          item.id.pop()
+          item.title.pop()
         }
+
+
+
+        // await axios.get("../../../static/testData/classifyData.json").then(res => {
+        //   console.log(res);
+        //   if (res.status == 200) {
+        //     this.linkageData = res.data.linkageData
+        //   } else {
+        //     this.$message.error("数据请求失败，请稍后再试！")
+        //   }
+        //   console.log(this.$route.query.chosedData)
+        //   if (this.$route.query.chosedData !== undefined) {
+
+        //     this.chosedData = JSON.parse(this.$route.query.chosedData)
+        //     this.setData()
+        //     this.position1()
+        //   }
+        // })
+      },
+      cloneObj(obj) {
+        var newObj = {};
+        if (obj instanceof Array) {
+          newObj = [];
+        }
+        for (var key in obj) {
+          var val = obj[key];
+          newObj[key] = typeof val === 'object' ? this.cloneObj(val) : val;
+        }
+        return newObj;
+      },
+      back() {
+        this.$router.back()
+      },
+      // 给选择的类目赋值
+      setData() {
+        this.chooseClassify = this.chosedData[0].label
+        if (this.chosedData[1].label != '') {
+          this.chooseClassify += " > " + this.chosedData[1].label
+          this.isNextFlag = false
+          if (this.chosedData[2].label != '') {
+            this.isNextFlag = true
+            this.chooseClassify += " > " + this.chosedData[2].label
+          }
+        } else {
+          this.isNextFlag = false
+        }
+      },
+      position() {
+        for (var i = 0; i < this.linkageData.length; i++) {
+          //循环一级菜单
+          if (this.inputKey[0] == this.linkageData[i].value) {
+            this.chosedData[0].value = this.inputKey[0]
+            this.chosedData[0].label = this.linkageData[i].label
+            this.selectIndex.item1 = this.inputKey[0]
+            this.isShowFlag2 = "true"
+            this.item2ChildData = this.linkageData[i].children
+            if (i * 32 > 370) {
+              document.getElementById('item-a').scrollTop = i * 32
+            }
+            for (var j = 0; j < this.item2ChildData.length; j++) {
+              //循环二级菜单
+              if (this.inputKey[1] == this.item2ChildData[j].value) {
+                this.chosedData[1].value = this.inputKey[1]
+                this.chosedData[1].label = this.item2ChildData[j].label
+                this.selectIndex.item2 = this.inputKey[1]
+                this.item3ChildData = this.item2ChildData[j].children
+                if (j * 32 > 370) {
+                  document.getElementById('item-b').scrollTop = j * 32
+                }
+                //判断三级菜单有无内容
+                if (this.item3ChildData.length > 0) {
+                  this.isShowFlag3 = "true"
+                  if (this.inputKey.length == 3) {
+                    for (var x = 0; x < this.item3ChildData.length; x++) {
+                      //循环三级菜单
+                      if (this.inputKey[2] == this.item3ChildData[x].value) {
+                        this.chosedData[2].value = this.inputKey[2]
+                        this.chosedData[2].label = this.item3ChildData[x].label
+                        this.selectIndex.item3 = this.inputKey[2]
+                        if (x * 32 > 370) {
+                          document.getElementById('item-c').scrollTop = x * 32
+                        }
+                        this.setData()
+                        return
+                      }
+                    }
+                  }
+                }
+                this.setData()
+                return
+              }
+            }
+            return
+          }
+        }
+      },
+      // 根据传值定位三级联动菜单
+      position1() {
+        this.selectIndex.item1 = this.chosedData[0].value
+        this.selectIndex.item2 = this.chosedData[1].value
+        this.selectIndex.item3 = this.chosedData[2].value
+        var a = document.getElementsByClassName("item-a")[0].offsetHeight
+        //循环一级菜单
+        for (var i = 0; i < this.linkageData.length; i++) {
+          if (this.linkageData[i].value == this.chosedData[0].value) {
+            console.log(i * 32)
+            if (i * 32 > 370) {
+              document.getElementById('item-a').scrollTop = i * 32
+            }
+            this.item2ChildData = this.linkageData[i].children
+            this.isShowFlag2 = true
+            //循环二级菜单
+            for (var j = 0; j < this.item2ChildData.length; j++) {
+              if (this.item2ChildData[j].value == this.chosedData[1].value) {
+                this.item3ChildData = this.item2ChildData[j].children
+                this.isShowFlag3 = true
+                if (j * 32 > 370) {
+                  document.getElementById('item-b').scrollTop = j * 32
+                }
+                for (var x = 0; x < this.item3ChildData.length; x++) {
+                  //循环三级菜单
+                  if (this.chosedData[2].value == this.item3ChildData[x].value) {
+                    if (x * 32 > 370) {
+                      document.getElementById('item-c').scrollTop = x * 32
+                    }
+                    this.setData()
+                    return
+                  }
+                }
+              }
+            }
+            return
+          }
+        }
+
+      },
+      //选择一级分类
+      chooseItem1(val, id) {
+        //将选中的一栏进行标记
+        this.selectIndex.item1 = id;
+        // 将二级和三级分类选中状态取消
+        this.selectIndex.item2 = "-1"
+        this.selectIndex.item3 = "-1"
+        // 将一级分类选中的数据赋值
+        this.chosedData[0].value = id
+        this.chosedData[0].label = this.linkageData[val].label
+        //清空二级和三级选中的数据
+        this.chosedData[1].value = ''
+        this.chosedData[1].label = ''
+        this.chosedData[2].value = ''
+        this.chosedData[2].label = ''
+        //调用setData方法，将选中的类目拼接成字符串
+        this.setData()
+        //根据一级分类动态赋值二级分类
+        this.item2ChildData = this.linkageData[val].children
+        //只有二级菜单有数据才会显示二级菜单
+        if (this.item2ChildData != null && this.item2ChildData.length > 0) {
+          this.isShowFlag2 = true
+        }
+        //没选择二级分类，不展示三级分类
+        this.isShowFlag3 = false
+      },
+      //选择二级分类
+      chooseItem2(val, id) {
+        console.log(this.selectIndex)
+        //将选中的一栏进行标记
+        this.selectIndex.item2 = id
+        // 将三级分类选中状态取消
+        this.selectIndex.item3 = "-1"
+        // 将二级分类选中的数据赋值
+        this.chosedData[1].value = id
+        this.chosedData[1].label = this.item2ChildData[val].label
+        //清空三级选中的数据
+        this.chosedData[2].value = ''
+        this.chosedData[2].label = ''
+        //调用setData方法，将选中的类目拼接成字符串
+        this.setData()
+        this.item3ChildData = this.item2ChildData[val].children
+        //只有三级菜单有数据才会显示三级菜单
+        if (this.item3ChildData != null && this.item3ChildData.length > 0) {
+          this.isShowFlag3 = true
+        }
+      },
+      //选择三级分类
+      chooseItem3(val, id) {
+        //将选中的一栏进行标记
+        this.selectIndex.item3 = id;
+        // 将三级分类选中的数据赋值
+        this.chosedData[2].value = id
+        this.chosedData[2].label = this.item3ChildData[val].label
+        //调用setData方法，将选中的类目拼接成字符串
+        this.setData()
+      },
+      //下一步
+      nextStep() {
+        if (this.isNextFlag) {
+          var chosedDataString = JSON.stringify(this.chosedData)
+          console.log(chosedDataString)
+          this.$router.replace({
+            path: 'publishGood',
+            query: {
+              chosedData: chosedDataString
+            }
+          })
+        }
+
+      },
+      handleChange(value) {
+        console.log(value);
+      },
+      hiddenDropdown() {
+        console.log("111")
+      }
     }
   }
 </script>
@@ -374,7 +441,7 @@
         height: 34px;
 
         /deep/ .el-input__inner {
-          height: 34px;
+          height: 34px !important;
           line-height: 34px;
           font-size: 12px;
         }

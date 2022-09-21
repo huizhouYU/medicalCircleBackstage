@@ -484,13 +484,17 @@
           color: #777777;
         }
 
-        .last-timeline {
-          color: #e33636 !important;
-        }
 
         .detail-module-item:nth-child(2) {
           border-left: 1px solid #EBEEF5;
           border-right: 1px solid #EBEEF5;
+        }
+      }
+      .el-timeline:first-child{
+        .last-timeline:first-child{
+          /deep/.el-timeline-item__content{
+            color: #FF5967 !important;
+          }
         }
       }
 

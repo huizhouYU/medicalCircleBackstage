@@ -23,14 +23,14 @@
           </div>
           <div :class="demandInfo.infoType == 2?'typeItemChosed':'type-item'" @click="demandInfo.infoType=2">
             <span class="title">项目外包</span>
-            <span class="remarks">我有设备要维修</span>
-            <span class="eg">例：我有现场维修服务要做</span>
+            <span class="remarks">我是第三方维修公司</span>
+            <span class="eg">例：需要寻找工程师帮我去现场维修设备</span>
             <div class="statue" />
           </div>
           <div :class="demandInfo.infoType == 3?'typeItemChosed':'type-item'" @click="demandInfo.infoType=3">
             <span class="title">灵活兼职</span>
-            <span class="remarks">我有维修设备技能</span>
-            <span class="eg">例：我能到设备现场进行维修</span>
+            <span class="remarks">我是医疗设备维修工程师</span>
+            <span class="eg">例：我可以帮你去现场维修设备</span>
             <div class="statue" />
           </div>
         </div>
