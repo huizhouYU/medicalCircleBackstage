@@ -3,7 +3,8 @@
     <div>
       <!--富文本编辑器组件-->
       <!-- bidirectional data binding（双向数据绑定） -->
-      <quill-editor ref="QuillEditor" v-model="formData.content" class="editor" :options="editorOption" @blur="onEditorBlur($event)" @focus="onEditorFocus($event)" @ready="onEditorReady($event)" />
+      <quill-editor ref="QuillEditor" v-model="formData.content" class="editor" :options="editorOption" 
+      @blur="onEditorBlur($event)" @focus="onEditorFocus($event)" @ready="onEditorReady($event)" />
       <!-- <div v-html="formData.content" /> -->
     </div>
   </div>
@@ -164,6 +165,7 @@ export default {
     background-color: #F0F0EE;
   }
   .quill-editor ,.editor{
-    height: 300px;
+    /* height: 300px; */
+    height: auto;
   }
 </style>

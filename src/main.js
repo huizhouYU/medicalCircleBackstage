@@ -20,6 +20,26 @@ import './permission' // permission control
 import './utils/error-log' // error log
 
 import * as filters from './filters' // global filters
+import VueAMap from 'vue-amap'
+
+
+VueAMap.initAMapApiLoader({
+  key: '351fa1549567026aba8fb335fe01e931',
+  plugin: [
+    'AMap.Geolocation',  //定位空间，用来获取和展示用户主机所在的经纬度位置
+    ' AMap.Autocomplete ',  //输入提示插件
+    ' AMap.PlaceSearch ', //POI搜索插件
+    ' AMap.Scale ',   //右下角缩略图插件，比例尺
+    ' AMap.OverView ', //地图鹰眼插件
+    ' AMap.ToolBar ',  //地图工具条
+    ' AMap.MapType ',  //类别切换空间，实现默认图层与卫星图，实施交通层之间切换的控制
+    ' AMap.PolyEditor ', //编辑 折线多边形
+    ' AMap.CircleEditor ',
+    ' AMap.Geocoder'      //地图编码
+  ],
+  v: '1.4.4'
+})
+Vue.use(VueAMap)
 
 /**
  * If you don't want to use mock-server

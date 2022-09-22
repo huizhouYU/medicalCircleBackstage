@@ -359,7 +359,7 @@
       document.onkeydown = (e) => {
         var e = event || window.event;
         if (e && e.keyCode == 13) {
-          this.login();
+          this.login('loginForm');
         }
       }
     },
@@ -476,9 +476,11 @@
       },
       // 登录
       login(formName) {
+        console.log("登录")
         if (this.validityForm(formName)) {
           if (this.checkLoginInfo()) {
             this.loading = true
+            console.log("登录前验证成功")
             this.$store.dispatch('user/login', this.loginForm)
               .then(() => {
                 this.$router.push({
@@ -486,10 +488,14 @@
                   query: this.otherQuery
                 })
                 this.loading = false
+                console.log("成功")
               })
               .catch(() => {
                 this.loading = false
+                console.log("失败")
               })
+          }else{
+            console.log("登录前验证失败")
           }
         }
         // this.$refs.loginForm.validate(valid => {
@@ -1094,8 +1100,6 @@
         font-family: Microsoft YaHei;
         font-weight: 400;
         color: #333;
-        // background: rgba(230, 247, 255, 0.3);
-        // border-color: #fff;
         border-radius: 10px;
         border-color: #eee;
         background: #fff;

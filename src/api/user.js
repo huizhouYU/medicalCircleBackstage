@@ -1,6 +1,7 @@
 import request from '@/utils/request'
 
 export function login(data) {
+  console.log("切换到api中请求login")
   return request({
     url: '/vue-element-admin/user/login',
     method: 'post',

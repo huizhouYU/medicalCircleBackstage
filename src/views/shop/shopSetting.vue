@@ -44,7 +44,8 @@
       <el-form-item label="资质证书：">
         <div label="图片可拖曳排序：" prop="certificates" class="content-images">
           <div class="row">
-            <DragUpload :all-list="ruleForm.certificates" :limit="5" @allList="certificates" />
+            <!-- <DragUpload :all-list="ruleForm.certificates" :limit="5" @allList="certificates" /> -->
+             <DragUpload :all-list="ruleForm.certificates" :limit="5"  />
             <div class="gray-tip">请：图片上传不超过5张，图片支持jpg/png格式，不超过500kb，尺寸为800*800</div>
           </div>
         </div>
@@ -52,6 +53,25 @@
       <!-- 店铺简介： -->
       <el-form-item label="店铺简介：">
         <edit class="edit" />
+      </el-form-item>
+      <el-form-item label="店铺地址：" >
+        <!-- <amap :Nowlnglat="Nowlnglat"></amap> -->
+      <el-amap
+            ref="map"
+            :vid="'amapDemo'"
+            :center="center"
+            :zoom="zoom"
+            :plugin="plugin"
+            :events="events"
+            class="amap-demo"
+            style="height: 500px;width: 800px"
+            >
+           <el-amap-marker v-for="(u,i) in markers" :position="u.position" :key="i">
+           </el-amap-marker>
+           <!-- <el-amap-marker :position="[121.5273285, 31.21515044]" :icon="icon"> -->
+          <!-- <el-amap-marker :position="[117.240349, 31.773662]" >
+           </el-amap-marker> -->
+        </el-amap>
       </el-form-item>
       <el-form-item class="submmit-form-item">
         <el-button type="primary" class="public-el-submit-btn">提交</el-button>
@@ -63,10 +83,12 @@
 <script>
 import edit from '../utils/edit.vue'
 import DragUpload from '../utils/DragUpload' // 引入vue-draggable
+import amap from '../utils/amap.vue'
 export default {
   components: {
     DragUpload,
-    edit
+    edit,
+    amap
   },
   data() {
     return {
@@ -104,7 +126,38 @@ export default {
         imgUrl: '',
         trialImgs: [],
         certificates: []
-      }
+      },
+      //地图组件数据
+      center: [117.240349, 31.773662],
+      zoom: 14,
+      position: [117.240349, 31.773662],
+      // icon: require('../../assets/icon/pika.jpg'),//自定义地图标记点图片
+      icon: '',//自定义地图标记点图片
+      events: {
+        init(o){
+          console.log(o.getCenter());
+        },
+        zoomchange: (e) => {
+          console.log(e);
+        },
+        zoomend: (e) => {
+          //获取当前缩放zoom值
+          console.log(this.$refs.map.$$getInstance().getZoom());
+          console.log(e);
+        },
+        click: e => {
+          alert('map clicked')
+        }
+      },
+      markers: [
+        { position: [117.240349, 31.773662] }
+      ],
+      //使用其他组件
+      plugin: [
+        { pName: 'Scale', events: { init(instance) { console.log(instance)  } } },
+        { pName: 'ToolBar', events: { init(instance) { console.log(instance) } } }
+      ],
+       Nowlnglat:[],
     }
   },
   mounted() {},

@@ -436,6 +436,9 @@
           .module-item {
             margin-bottom: 20px;
           }
+          .module-item:last-child{
+            margin-bottom: 0px;
+          }
 
           .module-item-address {
             display: flex;
@@ -458,6 +461,9 @@
 
           .module-item {
             margin-bottom: 20px;
+          }
+          .module-item:last-child{
+            margin-bottom: 0px;
           }
 
           .refundDetail-time {
@@ -486,6 +492,9 @@
               margin-bottom: 20px;
               display: flex;
               justify-content: flex-start;
+            }
+            .module-item:last-child{
+              margin-bottom: 0px;
             }
 
             span {
@@ -536,10 +545,14 @@
 
       .el-timeline:first-child {
         .last-timeline:first-child {
-          /deep/.el-timeline-item__content {
+          /deep/.el-timeline-item__content,
+          /deep/.el-timeline-item__timestamp{
             color: #FF5967 !important;
           }
         }
+      }
+      .el-timeline-item:last-child{
+        padding-bottom: 0px;
       }
 
       // 商品列表

@@ -1,144 +1,113 @@
 <template>
   <div>
     <!-- 编辑商品区域 -->
-    <div class="eidt-box">
+    <el-form ref="goodInfo" :model="goodInfo" label-width="100px" class="eidt-box" label-position="right">
       <!-- 产品类目 -->
-      <div class="classifyTitle">
-        <span class="title-span">产品类目：</span>
+      <el-form-item label="产品类目：">
         <span @click="preStep()" class="chooseClassify-span">{{goodInfo.chooseClassify}}</span>
-      </div>
+      </el-form-item>
       <!-- 产品名称+所属品牌 -->
       <div class="item-name-brand">
-        <div class="item">
-          <span class="title-span">产品名称：</span>
-          <input type="text" placeholder="请输入商品名称" v-model="goodInfo.name" maxlength="40">
-        </div>
-        <div class="item2 item-brand">
-          <span class="title-span">所属品牌：</span>
+        <el-form-item label="产品名称：" class="item-name">
+          <el-input v-model="goodInfo.name" placeholder="请输入商品名称" maxlength="40" show-word-limit></el-input>
+        </el-form-item>
+        <el-form-item label="所属品牌：" class="item-brand">
           <el-select v-model="goodInfo.brand" class="select-brand" v-show="!customBrand">
             <el-option v-for="item in brandsOptions" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
-          <input type="text" placeholder="请输入商品品牌" v-model="goodInfo.brand" maxlength="40" v-show="customBrand">
+          <el-input v-model="goodInfo.name" placeholder="请输入商品品牌" maxlength="40" show-word-limit v-show="customBrand">
+          </el-input>
           <el-checkbox v-model="customBrand" @change='goodInfo.brand= ""'>自定义品牌</el-checkbox>
-        </div>
-
+        </el-form-item>
       </div>
       <!-- 产品规格： -->
-      <div class="product-specs">
-        <span class="title-span">产品规格：</span>
-        <div class="choose-item">
-          <div class="item">
-            <div class="title">销售类型</div>
-            <div class="content">
-              <el-select v-model="goodInfo.chosedXS" class="select-item" @change="isEditPrice()">
-                <el-option v-for="item in xsOptions" :key="item.value" :label="item.label" :value="item.value">
-                </el-option>
-              </el-select>
-            </div>
-          </div>
-          <div class="item">
-            <div class="title">价格</div>
-            <div class="content">
-              <input type="number" name="" id="" placeholder="请输入价格" :disabled="!isEditPriceFlag">
-            </div>
-          </div>
-          <div class="item">
-            <div class="title">商品编码</div>
-            <div class="content">
-              <input type="text" name="" id="" placeholder="产品P/N码或识别码">
-            </div>
-          </div>
-          <div class="item">
-            <div class="title">库存</div>
-            <div class="content">
-              <input type="number" name="" id="" placeholder="请输入商品库存">
-            </div>
-          </div>
-          <div class="item">
-            <div class="title">新旧程度</div>
-            <div class="content">
-              <el-select v-model="goodInfo.chosedDegree" class="select-item" placeholder="请选择">
-                <el-option v-for="item in newOrOrdDegreeOptions" :key="item.value" :label="item.label"
-                  :value="item.value">
-                </el-option>
-              </el-select>
-            </div>
-          </div>
-          <div class="item">
-            <div class="title">保质期限</div>
-            <div class="content shelf-life">
-              <input type="number" name="" id="" placeholder="请输入">
-              <el-select v-model="goodInfo.chosedShelfLife" class="select-item" placeholder="请选择">
-                <el-option v-for="item in shelfLifeOptions" :key="item.value" :label="item.label" :value="item.value">
-                </el-option>
-              </el-select>
-            </div>
-          </div>
-        </div>
-      </div>
+      <el-form-item label="产品规格：" class="product-specs">
+        <el-form-item label="销售类型" class="product-specs-item">
+          <el-select v-model="goodInfo.chosedXS" class="select-item" @change="isEditPrice()">
+            <el-option v-for="item in xsOptions" :key="item.value" :label="item.label" :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="价格" class="product-specs-item">
+          <el-input type="number" v-model="goodInfo.price" placeholder="请输入价格" :disabled="!isEditPriceFlag"></el-input>
+        </el-form-item>
+        <el-form-item label="商品编码" class="product-specs-item">
+          <el-input v-model="goodInfo.PN" placeholder="产品P/N码或识别码"></el-input>
+        </el-form-item>
+        <el-form-item label="库存" class="product-specs-item">
+          <el-input type="number" v-model="goodInfo.kc" placeholder="请输入商品库存"></el-input>
+        </el-form-item>
+        <el-form-item label="新旧程度" class="product-specs-item">
+          <el-select v-model="goodInfo.chosedDegree" class="select-item" placeholder="请选择">
+            <el-option v-for="item in newOrOrdDegreeOptions" :key="item.value" :label="item.label" :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="保质期限" class="product-specs-item shelf-life">
+          <el-input type="number" v-model="goodInfo.bzq" placeholder=""></el-input>
+          <el-select v-model="goodInfo.chosedShelfLife" class="select-item" placeholder="请选择">
+            <el-option v-for="item in shelfLifeOptions" :key="item.value" :label="item.label" :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
+      </el-form-item>
       <!-- 产品主图 -->
-      <div class="product-images">
-        <span class="title-span">产品主图：</span>
-        <div label="图片可拖曳排序：" prop="trialImgs" class="content-images">
-          <div class="row">
+      <el-form-item label="产品主图：" class="">
+        <div label="图片可拖曳排序：" prop="trialImgs" class="">
+          <div class="">
             <DragUpload :allList="ruleForm.trialImgs" v-on:allList="trialImgs" :limit="limit">
             </DragUpload>
-            <div class="el-upload__tip gray-tip">请：主图按照图片上传顺序展示，图片支持jpg/png格式，不超过10M，尺寸为800*800，拖拽图片可调整排序</div>
+            <div class="gray-tip">请：主图按照图片上传顺序展示，图片支持jpg/png格式，不超过10M，尺寸为800*800，拖拽图片可调整排序</div>
           </div>
         </div>
-      </div>
+      </el-form-item>
       <!-- 产品详情 -->
-      <div class="product-detail">
-        <span class="title-span">产品详情：</span>
+      <el-form-item label="产品详情：" class="product-detail">
         <edit class="edit" @getContent="getContentData"></edit>
-      </div>
+      </el-form-item>
       <!-- 交易方式 -->
-      <div class="prodect-fare">
-        <span class="title-span">交易方式：</span>
+      <el-form-item label="交易方式：">
         <el-select v-model="goodInfo.chosedFare" class="select-item">
           <el-option v-for="item in fareOptions" :key="item.value" :label="item.label" :value="item.value">
           </el-option>
         </el-select>
-      </div>
+      </el-form-item>
       <!-- 商品标签 -->
-      <div class="prodect-tag">
-        <span class="title-span">商品标签：</span>
+      <el-form-item label="商品标签：" class="prodect-tag">
         <div class="content">
           <div class="tags-content">
             <el-tag :key="tag" v-for="tag in goodInfo.tagList" closable :disable-transitions="false"
               @close="handleClose(tag)">
               {{tag}}
             </el-tag>
-            <input class="tags-input" placeholder="添加标签" v-model="goodTag" maxlength="4" @keyup.enter="addTag()"
-              v-show="inputVisible">
+            <el-input v-model="goodTag" placeholder="添加标签" maxlength="4" @keyup.enter.native="addTag()"
+              v-show="inputVisible"></el-input>
           </div>
-          <span>最多可填写5个商品标签,每个标签最多4个字</span>
+          <span class="gray-tip">最多可填写5个商品标签,每个标签最多4个字</span>
         </div>
-      </div>
+      </el-form-item>
       <!-- 立即上架 -->
       <div class="prodect-grounding">
-        <span class="title-span">立即上架：</span>
-        <div class="content">
+        <el-form-item label="立即上架：" class="prodect-grounding-item">
           <el-switch v-model="goodInfo.groundingValue" active-color="#1890FF">
           </el-switch>
-          <span class="isRecommend">是否推荐：</span>
-          <el-switch v-model="goodInfo.recommendValue" active-color="#13ce66">
+        </el-form-item>
+        <el-form-item label="是否推荐：" class="">
+          <el-switch v-model="goodInfo.groundingValue" active-color="#13ce66">
           </el-switch>
-          <span class="remarks">被推荐的商品会显示在店铺首页</span>
-        </div>
+          <span class="gray-tip">被推荐的商品会显示在店铺首页</span>
+        </el-form-item>
       </div>
       <div class="submit">
-        <!-- <button class="but-submit" @click="submit">提交</button> -->
-        <el-button type="primary" class="public-el-submit-btn"  @click="submit">提交</el-button>
+        <el-button type="primary" class="public-el-submit-btn" @click="submit">提交</el-button>
       </div>
-    </div>
+    </el-form>
   </div>
   </div>
 </template>
 
 <script>
-  // import vabQuill from '@/plugins/vabQuill'
   import edit from '../utils/edit.vue'
   import DragUpload from '../utils/DragUpload.vue'; // 引入vue-draggable
   export default {
@@ -162,6 +131,10 @@
           chosedData: [], //选择的类目
           chosedDegree: '', //选择的新旧程度
           chosedXS: '1', //选择的销售方式
+          price: '', //价格
+          PN: '', //商品编码
+          kc: '', //库存
+          bzq: '', //保质期
           chosedShelfLife: '1', //选择的保质期【年、月、日】
           content: '', //产品详情
           chosedFare: "1", //选择的交易方式
@@ -356,7 +329,6 @@
 </script>
 
 <style scoped lang="less">
-
   // 编辑商品区域
   .eidt-box {
     background-color: #FFFFFF;
@@ -368,101 +340,49 @@
     font-weight: 400;
     color: #333333;
 
-    /deep/ .el-input {
-      width: auto;
+    /deep/ .el-form-item {
+      margin-bottom: 30px;
     }
 
-    .title-span {
-      width: 65px;
+    /deep/ .el-form-item__label {
+      padding-right: 30px;
+    }
+
+    /deep/ .el-input {
+      width: 250px;
+    }
+
+    /deep/ .el-input--medium .el-input__inner {
+      height: 34px;
+      line-height: 34px;
     }
 
     // 产品类目
-    .classifyTitle {
-      margin-right: 30px;
-
-      .chooseClassify-span {
-        margin-left: 30px;
-        color: #1890FF;
-      }
+    .chooseClassify-span {
+      color: #1890FF;
+      font-size: 12px;
+      font-family: Microsoft YaHei-Regular, Microsoft YaHei;
+      font-weight: 400;
     }
 
     .item-name-brand {
-
       display: flex;
       justify-content: flex-start;
       flex-wrap: wrap;
 
-      .item,
-      .item2 {
-        margin-top: 30px;
-        display: flex;
-        justify-content: flex-start;
-        align-items: center;
-      }
-
-      .item2 {
-        margin-right: 10px;
-
-        //所属品牌的下拉款
-        .select-brand {
-          margin-left: 30px;
-
-          /deep/ .el-input__inner {
-            height: 34px;
-            width: 250px;
-            font-size: 12px;
-          }
-
-          /deep/ .el-input__icon {
-            line-height: 34px;
-          }
-        }
+      .item-name {
+        margin-right: 60px;
       }
 
       .item-brand {
-        display: flex;
-        justify-content: flex-start;
-        align-items: center;
-      }
+        margin: 0px 10px 0px 0px;
 
-      /* WebKit browsers */
-      input::-webkit-input-placeholder {
-        color: #BBBBBB;
-      }
+        /deep/.el-form-item__content {
+          display: flex;
+          justify-content: flex-start;
+          align-items: center;
+        }
 
-      /* Mozilla Firefox 4 to 18 */
-      input:-moz-placeholder {
-        color: #BBBBBB;
-      }
-
-      /* Mozilla Firefox 19+ */
-      input::-moz-placeholder {
-        color: #BBBBBB;
-      }
-
-      /* Internet Explorer 10+ */
-      input:-ms-input-placeholder {
-        color: #BBBBBB;
-      }
-
-      input {
-        margin-left: 30px;
-        width: 250px;
-        height: 34px;
-        background: #FFFFFF;
-        border-radius: 4px 4px 4px 4px;
-        border: 1px solid #EBEEF5;
-        outline: none;
-        box-sizing: border-box;
-        font-size: 12px;
-        font-family: Microsoft YaHei-Regular, Microsoft YaHei;
-        font-weight: 400;
-        color: #333;
-        padding-left: 15px;
-      }
-
-      .item {
-        margin-right: 100px;
       }
 
       //自定义品牌
@@ -481,287 +401,97 @@
 
   // 产品规格
   .product-specs {
-    margin-top: 30px;
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    box-sizing: border-box;
-    font-size: 12px;
-    font-family: Microsoft YaHei-Regular, Microsoft YaHei;
-    font-weight: 400;
-    color: #333333;
+    /deep/ .el-form-item__content {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      flex-wrap: wrap;
+    }
 
-    .choose-item {
-      flex: 1;
-      margin-left: 30px;
-      display: grid;
-      grid-template-columns: repeat(auto-fill, 160px);
+    /deep/ .el-input {
+      width: 160px;
+    }
 
-      .item {
-        width: 160px;
-        height: 100px;
+    /deep/ .el-form-item {
+      margin-bottom: 0px;
+    }
+
+    .product-specs-item {
+      border: 1px solid #EBEEF5;
+      height: 100px;
+      width: 215px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      flex-direction: column;
+      margin-left: -1px;
+
+      /deep/.el-form-item__label {
+        flex: 1;
+      }
+
+      /deep/.el-form-item__content {
+        width: 100%;
+        border-top: 1px solid #EBEEF5;
+        flex: 2;
+        margin-left: 0px !important;
         display: flex;
-        flex-direction: column;
         justify-content: center;
         align-items: center;
-        border: 1px solid #EBEEF5;
-        box-sizing: border-box;
-
-        .title {
-          height: 35px;
-          width: 100%;
-          box-sizing: border-box;
-          border-bottom: 1px solid #EBEEF5;
-        }
-
-        .content {
-          flex: 1;
-        }
-
-        .title,
-        .content {
-          height: ;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-
-        input {
-          height: 32px;
-          width: 100px;
-          box-sizing: border-box;
-          border-radius: 4px 4px 4px 4px;
-          border: 1px solid #EBEEF5;
-          outline: none;
-          text-align: center;
-          font-size: 12px;
-          font-family: Microsoft YaHei-Regular, Microsoft YaHei;
-          font-weight: 400;
-          color: #333333;
-
-        }
-
-        .el-select {
-          width: 100px;
-          height: 32px;
-          box-sizing: border-box;
-        }
-
-        /deep/ .el-input__icon {
-          line-height: 32px;
-        }
-
-        /deep/ .el-input__inner {
-          border-radius: 4px 4px 4px 4px;
-          border: 1px solid #EBEEF5;
-          font-size: 12px;
-          font-family: Microsoft YaHei-Regular, Microsoft YaHei;
-          font-weight: 400;
-          color: #333333;
-          height: 32px;
-          line-height: 32px;
-        }
-
-        // 保质期
-        .shelf-life {
-          input {
-            height: 32px;
-            width: 70px;
-            margin-right: 10px;
-            box-sizing: border-box;
-          }
-
-          .el-select {
-            width: 60px;
-            height: 32px;
-            box-sizing: border-box;
-          }
-        }
       }
-
-      .item:first-child {
-        border-radius: 4px 0px 0px 4px;
-      }
-
-      .item:last-child {
-        border-radius: 0px 4px 4px 0px;
-      }
-
     }
+
+    .shelf-life {
+      /deep/ .el-input {
+        width: 80px;
+      }
+    }
+
   }
 
-  // 产品主图
-  .product-images {
-    margin-top: 30px;
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
+  //下标 注释
+  .gray-tip {
     font-size: 12px;
     font-family: Microsoft YaHei-Regular, Microsoft YaHei;
     font-weight: 400;
-    color: #333333;
-
-    .content-images {
-      margin-left: 30px;
-    }
-
-    .gray-tip {
-      font-size: 12px;
-      font-family: Microsoft YaHei-Regular, Microsoft YaHei;
-      font-weight: 400;
-      color: #BBBBBB;
-      margin-top: 5px;
-    }
+    color: #BBBBBB;
+    margin-top: 5px;
   }
+
 
   // 产品详情
   .product-detail {
-    margin-top: 30px;
-    display: flex;
-    justify-content: flex-start;
-    align-items: flex-start;
-    font-size: 12px;
-    font-family: Microsoft YaHei-Regular, Microsoft YaHei;
-    font-weight: 400;
-    color: #333333;
-
-    span {
-      margin-top: 15px;
-    }
-
     .edit {
       flex: 1;
-      margin-left: 30px;
       height: 366px;
     }
   }
 
-  // 交易方式
-  .prodect-fare {
-    margin-top: 30px;
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    font-size: 12px;
-    font-family: Microsoft YaHei-Regular, Microsoft YaHei;
-    font-weight: 400;
-    color: #333333;
-
-    .el-select {
-      margin-left: 30px;
-      width: 250px;
-      height: 34px;
-      box-sizing: border-box;
-
-      /deep/ .el-input__inner {
-        height: 32px;
-        line-height: 32px;
-      }
-
-      /deep/ .el-input__icon {
-        line-height: 32px;
-      }
-    }
-
-  }
-
   // 商品标签
   .prodect-tag {
-    margin-top: 30px;
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    font-size: 12px;
-    font-family: Microsoft YaHei-Regular, Microsoft YaHei;
-    font-weight: 400;
-    color: #333333;
-
     .content {
       display: flex;
       align-items: flex-start;
       flex-direction: column;
-      margin-left: 30px;
 
       .el-tag {
-        // margin-bottom: 15px;
         margin-right: 10px;
-      }
-
-      // .el-tag+.el-tag {
-      //   margin-left: 10px;
-      // }
-
-      // .tags-content {
-      //   border: 1px solid #D9D9D9;
-      //   border-radius: 4px;
-      //   font-size: 14px;
-      //   color: #333;
-
-      //   ul {
-      //     display: flex;
-      //     justify-content: flex-start;
-      //     align-items: center;
-      //     padding: 5px;
-
-      //     li {
-      //       padding: 2px;
-      //       background-color: #F5F5F5;
-      //       margin-right: 20px;
-
-      //       i {
-      //         font-size: 10px;
-      //         transform: scale(0.83);
-      //         cursor: pointer;
-      //       }
-      //     }
-      //   }
-      // }
-
-      input {
-        width: 424px;
-        height: 34px;
-        background: #FFFFFF;
-        border-radius: 4px 4px 4px 4px;
-        border: 1px solid #D9D9D9;
-        outline: none;
-        box-sizing: border-box;
-        font-size: 12px;
-        font-family: Microsoft YaHei-Regular, Microsoft YaHei;
-        font-weight: 400;
-        color: #333;
-        padding-left: 15px;
-      }
-
-      span {
-        color: #BBBBBB;
-        margin-top: 5px;
       }
     }
   }
 
   // 立即上架
   .prodect-grounding {
-    margin-top: 30px;
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    font-size: 12px;
-    font-family: Microsoft YaHei-Regular, Microsoft YaHei;
-    font-weight: 400;
-    color: #333333;
 
-    .content {
-      margin-left: 30px;
+    .prodect-grounding-item {
+      margin-right: 200px;
+    }
 
-      .isRecommend {
-        margin-left: 280px;
-        margin-right: 30px;
-      }
-
-      .remarks {
-        margin-left: 12px;
-        color: #BBBBBB;
-      }
+    .gray-tip {
+      margin-left: 10px;
     }
   }
 
