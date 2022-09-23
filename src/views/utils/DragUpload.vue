@@ -148,8 +148,8 @@
         this.isShow()
       },
       limitNum(files, fileList){
-        console.log("files",files)
-        console.log("fileList",fileList)
+        // console.log("files",files)
+        // console.log("fileList",fileList)
       },
       // 拖动排序
       datadragEnd(evt) {

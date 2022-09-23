@@ -134,6 +134,8 @@
       }
 
       span {
+        font-size: 12px;
+        font-weight: 400;
         height: 20px;
         line-height: 20px;
       }

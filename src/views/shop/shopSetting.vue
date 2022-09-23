@@ -1,7 +1,7 @@
 <template>
   <div class="box">
     <!-- 编辑区域 -->
-    <el-form :model="shopInfo" label-width="100px" label-position="left" class="eidt-box">
+    <el-form :model="shopInfo" label-width="100px" label-position="right" class="eidt-box">
       <!-- 产品主图 -->
       <el-form-item label="店铺店标：">
         <div label="图片可拖曳排序：" prop="trialImgs" class="content-images">
@@ -18,15 +18,18 @@
           <span class="gray-tip">请上传300*300的图片，大小不超过2m</span>
         </div>
       </el-form-item>
-      <!-- 店铺名称 + 联系电话 -->
-      <div class="div-item-both">
-        <el-form-item label="店铺名称：">
-          <el-input v-model="shopInfo.address" placeholder="请输入店铺名称" autocomplete="off" size="medium" type="text" />
-        </el-form-item>
-        <el-form-item label="联系电话：">
-          <el-input v-model="shopInfo.address" placeholder="请输入联系电话" autocomplete="off" size="medium" type="text" />
-        </el-form-item>
-      </div>
+      <!-- 店铺名称 -->
+      <el-form-item label="店铺名称：">
+        <el-input v-model="shopInfo.address" placeholder="请输入店铺名称" autocomplete="off" size="medium" type="text" />
+      </el-form-item>
+      <!-- 联系人 -->
+      <el-form-item label="联系人：">
+        <el-input v-model="shopInfo.telName" placeholder="请输入联系人" autocomplete="off" size="medium" type="text" />
+      </el-form-item>
+       <!-- 联系电话 -->
+      <el-form-item label="联系电话：">
+        <el-input v-model="shopInfo.tel" placeholder="请输入联系电话" autocomplete="off" size="medium" type="text" />
+      </el-form-item>
       <!-- 店铺地址 -->
       <el-form-item label="店铺地址：">
         <el-input v-model="shopInfo.address" placeholder="请输入店铺地址" autocomplete="off" size="medium" type="text" />
@@ -55,23 +58,7 @@
         <edit class="edit" />
       </el-form-item>
       <el-form-item label="店铺地址：" >
-        <!-- <amap :Nowlnglat="Nowlnglat"></amap> -->
-      <el-amap
-            ref="map"
-            :vid="'amapDemo'"
-            :center="center"
-            :zoom="zoom"
-            :plugin="plugin"
-            :events="events"
-            class="amap-demo"
-            style="height: 500px;width: 800px"
-            >
-           <el-amap-marker v-for="(u,i) in markers" :position="u.position" :key="i">
-           </el-amap-marker>
-           <!-- <el-amap-marker :position="[121.5273285, 31.21515044]" :icon="icon"> -->
-          <!-- <el-amap-marker :position="[117.240349, 31.773662]" >
-           </el-amap-marker> -->
-        </el-amap>
+        <v-amap @mapDing="getCoordinate"></v-amap>
       </el-form-item>
       <el-form-item class="submmit-form-item">
         <el-button type="primary" class="public-el-submit-btn">提交</el-button>
@@ -84,11 +71,13 @@
 import edit from '../utils/edit.vue'
 import DragUpload from '../utils/DragUpload' // 引入vue-draggable
 import amap from '../utils/amap.vue'
+// import baiduMap from '../utils/baiduMap.vue'
 export default {
   components: {
     DragUpload,
     edit,
-    amap
+    'v-amap':amap
+    // ,baiduMap
   },
   data() {
     return {
@@ -97,6 +86,7 @@ export default {
         logoUrl: '', // 店铺logo
         bannerUrl: '', // 店铺横幅
         name: '', // 店铺名称
+        telName:'',//联系人
         tel: '', // 联系电话
         address: '' // 店铺地址
       },
@@ -127,41 +117,14 @@ export default {
         trialImgs: [],
         certificates: []
       },
-      //地图组件数据
-      center: [117.240349, 31.773662],
-      zoom: 14,
-      position: [117.240349, 31.773662],
-      // icon: require('../../assets/icon/pika.jpg'),//自定义地图标记点图片
-      icon: '',//自定义地图标记点图片
-      events: {
-        init(o){
-          console.log(o.getCenter());
-        },
-        zoomchange: (e) => {
-          console.log(e);
-        },
-        zoomend: (e) => {
-          //获取当前缩放zoom值
-          console.log(this.$refs.map.$$getInstance().getZoom());
-          console.log(e);
-        },
-        click: e => {
-          alert('map clicked')
-        }
-      },
-      markers: [
-        { position: [117.240349, 31.773662] }
-      ],
-      //使用其他组件
-      plugin: [
-        { pName: 'Scale', events: { init(instance) { console.log(instance)  } } },
-        { pName: 'ToolBar', events: { init(instance) { console.log(instance) } } }
-      ],
-       Nowlnglat:[],
     }
   },
   mounted() {},
   methods: {
+    //搜索地址 查询结果
+    getCoordinate(data){
+      console.log("getCoordinate:",data)
+    },
     back() {
       this.$router.back()
     },

@@ -88,7 +88,17 @@
         </div>
       </el-form-item>
       <!-- 立即上架 -->
-      <div class="prodect-grounding">
+      <el-form-item label="立即上架：" class="prodect-grounding-item">
+        <el-switch v-model="goodInfo.groundingValue" active-color="#1890FF">
+        </el-switch>
+      </el-form-item>
+       <!-- 是否推荐 -->
+      <el-form-item label="是否推荐：" class="prodect-recommendValue">
+        <el-switch v-model="goodInfo.recommendValue" active-color="#13ce66">
+        </el-switch>
+        <span class="gray-tip">被推荐的商品会显示在店铺首页</span>
+      </el-form-item>
+     <!-- <div class="prodect-grounding">
         <el-form-item label="立即上架：" class="prodect-grounding-item">
           <el-switch v-model="goodInfo.groundingValue" active-color="#1890FF">
           </el-switch>
@@ -98,7 +108,7 @@
           </el-switch>
           <span class="gray-tip">被推荐的商品会显示在店铺首页</span>
         </el-form-item>
-      </div>
+      </div> -->
       <div class="submit">
         <el-button type="primary" class="public-el-submit-btn" @click="submit">提交</el-button>
       </div>
@@ -480,16 +490,8 @@
     }
   }
 
-  // 立即上架
-  .prodect-grounding {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-
-    .prodect-grounding-item {
-      margin-right: 200px;
-    }
-
+  // 是否推荐
+  .prodect-recommendValue {
     .gray-tip {
       margin-left: 10px;
     }

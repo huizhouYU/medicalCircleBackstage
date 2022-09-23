@@ -177,41 +177,41 @@ export default {
     return {
       examineResult: '-1', // 审核状态
       cities: [],
-      isLook: false, // 是否查看
+      isLook: true, // 是否查看
       show: true,
       count: '',
       cardFront: {
-        cardImg: '../../../public/imgs/sjrz/pic_card_z.png',
+        cardImg: require('../../assets/images/pic_card_z.png'),
         cardTitle: '身份证正面',
         cardRemark: '请上传本人（法人）身份证原件图'
       },
       cardBack: {
-        cardImg: '../../../public/imgs/sjrz/pic_card_f.png',
+        cardImg: require('../../assets/images/pic_card_f.png'),
         cardTitle: '身份证反面',
         cardRemark: '请上传本人（法人）身份证原件图'
       },
       cardHold: {
-        cardImg: '../../../public/imgs/sjrz/pic_card_s.png',
+        cardImg: require('../../assets/images/pic_card_s.png'),
         cardTitle: '手持身份证',
         cardRemark: '请上传手持身份证'
       },
       cardOther: {
-        cardImg: '../../../public/imgs/sjrz/pic_card_other.png',
+        cardImg: require('../../assets/images/pic_card_other.png'),
         cardTitle: '其他证件',
         cardRemark: '请上传证件原件图'
       },
       businessLicense: {
-        cardImg: '../../../public/imgs/sjrz/pic_card_other.png',
+        cardImg: require('../../assets/images/pic_card_other.png'),
         cardTitle: '营业执照',
         cardRemark: '请上传企业营业执照原件图'
       },
       licenceOne: {
-        cardImg: '../../../public/imgs/sjrz/pic_card_other.png',
+        cardImg: require('../../assets/images/pic_card_other.png'),
         cardTitle: '医疗器械生产许可证',
         cardRemark: '请上传企业医疗器械生产许可证原件图，如果是医疗器械生产企业必传'
       },
       licenceTwo: {
-        cardImg: '../../../public/imgs/sjrz/pic_card_other.png',
+        cardImg: require('../../assets/images/pic_card_other.png'),
         cardTitle: '医疗器械生产许可证',
         cardRemark: '请上传企业医疗器械生产许可证原件图，如果是医疗器械生产企业必传'
       },
