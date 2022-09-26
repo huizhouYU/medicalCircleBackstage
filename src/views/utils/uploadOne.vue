@@ -4,34 +4,41 @@
       <img :src="cardImgUrl" alt="" class="card-img-info">
       <!-- 预览+删除 -->
       <div class="preview-del-div" v-show="isShowCardImgDiv">
-        <i class="el-icon-zoom-in"></i>
+        <i class="el-icon-zoom-in" @click="handlePictureCardPreview"></i>
         <i class="el-icon-delete" @click="deleteImg"></i>
       </div>
     </div>
     <label v-else>
-      <div class="upload-img">
+      <div class="upload-img upload-img-whole" v-if="isWhole">
         <img :src="mrSrc" alt="">
-        <span>上传</span>
         <input type="file" id="inputFile" accept="image/png, image/jpeg, image/gif, image/jpg" @change="previewFile()" style="display: none; " class="hiddenInput"
           multiple="multiple">
       </div>
-    </label>
+      <div class="upload-img" v-else>
+        <img :src="mrSrc" alt="">
+        <span>添加图片</span>
+        <input type="file" id="inputFile" accept="image/png, image/jpeg, image/gif, image/jpg" @change="previewFile()" style="display: none; " class="hiddenInput"
+          multiple="multiple">
+      </div>
 
-    <div class="remarks">
-      <span class="remarks-top">{{title}}</span>
-      <span class="remarks-bottom">{{remark}}</span>
-    </div>
+    </label>
+    <!-- 原图显示弹框 -->
+    <el-dialog :visible.sync="dialogVisible">
+      <img width="100%" :src="dialogImageUrl" alt="">
+    </el-dialog>
   </div>
 </template>
 
 <script>
   export default {
-    props: ["mrSrc", "title", "remark"],
+    props: ["mrSrc","isWhole"],
     data() {
       return {
         cardImgUrl: "",
         isShowCardImgDiv: false,
-        chosedImgUrl: ''
+        chosedImgUrl: '',
+        dialogVisible: false,
+        dialogImageUrl: '',
       }
     },
     methods: {
@@ -43,6 +50,11 @@
       },
       uploadImg() {
         alert("上传图片")
+      },
+      handlePictureCardPreview() {
+        console.log("hugou")
+        this.dialogImageUrl = this.cardImgUrl;
+        this.dialogVisible = true;
       },
       deleteImg(){
         this.cardImgUrl = ''
@@ -83,7 +95,7 @@
     font-weight: 400;
     color: #999999;
 
-    //展示已上传的证件照片
+    //展示已上传的照片
     .card-img {
       position: relative;
       border-radius: 4px;
@@ -125,6 +137,7 @@
       justify-content: center;
       align-items: center;
       position: relative;
+      cursor: pointer;
 
       img {
         width: 37px;
@@ -145,26 +158,10 @@
         display: none;
       }
     }
-
-    // 右边上传图片的说明
-    .remarks {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: flex-start;
-      margin-left: 15px;
-
-      span {
-        height: 20px;
-        line-height: 20px;
-      }
-
-      .remarks-top {
-        color: #333333;
-      }
-
-      .remarks-bottom {
-        color: #999999;
+    .upload-img-whole{
+      img {
+        width: 100%;
+        height: 100%;
       }
     }
   }

@@ -537,7 +537,7 @@
     box-shadow: 0px 2px 10px 1px rgba(0, 0, 0, 0.06);
     box-sizing: border-box;
     border-radius: 6px;
-    padding: 0px 15px 20px 15px;
+    padding: 0px 15px 0px 15px;
 
     table {
       width: 100%;
@@ -749,7 +749,8 @@
     }
 
     .bottoms-box {
-      height: 60px;
+      // height: 60px;
+      padding: 20px 35px 20px 0px;
       display: flex;
       justify-content: flex-end;
       align-items: center;

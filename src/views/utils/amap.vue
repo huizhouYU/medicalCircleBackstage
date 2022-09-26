@@ -153,7 +153,7 @@
 </script>
 
 
-<style>
+<style scoped>
   .amap-page-container {
     height: 400px;
     margin-top: 20px;
@@ -172,6 +172,9 @@
     margin-right: 20px;
     margin-bottom: 20px;
     margin-left: 20px;
+  }
+  .el-button--medium{
+    height: 34px;
   }
 
   .wan {

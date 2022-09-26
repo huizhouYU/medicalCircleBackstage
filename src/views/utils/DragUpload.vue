@@ -191,6 +191,9 @@
     display: flex;
     justify-content: flex-start;
     align-items: center;
+    ul{
+      margin-left: 0px !important;
+    }
 
   }
 
@@ -254,6 +257,7 @@
 
 
   .upload-add {
+    margin-right: 15px;
     /deep/ .el-upload--picture-card {
       width: 70px;
       height: 70px;

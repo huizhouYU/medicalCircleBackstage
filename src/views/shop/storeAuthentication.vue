@@ -177,7 +177,7 @@ export default {
     return {
       examineResult: '-1', // 审核状态
       cities: [],
-      isLook: true, // 是否查看
+      isLook: false, // 是否查看
       show: true,
       count: '',
       cardFront: {

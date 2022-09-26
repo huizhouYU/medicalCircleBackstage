@@ -6,8 +6,11 @@
       <el-form-item label="产品类目：">
         <span @click="preStep()" class="chooseClassify-span">{{goodInfo.chooseClassify}}</span>
       </el-form-item>
-      <!-- 产品名称+所属品牌 -->
-      <div class="item-name-brand">
+      <!-- 产品名称 -->
+      <el-form-item label="产品名称：" class="item-name">
+        <el-input v-model="goodInfo.name" placeholder="请输入商品名称" maxlength="40" show-word-limit></el-input>
+      </el-form-item>
+      <!-- <div class="item-name-brand">
         <el-form-item label="产品名称：" class="item-name">
           <el-input v-model="goodInfo.name" placeholder="请输入商品名称" maxlength="40" show-word-limit></el-input>
         </el-form-item>
@@ -20,7 +23,17 @@
           </el-input>
           <el-checkbox v-model="customBrand" @change='goodInfo.brand= ""'>自定义品牌</el-checkbox>
         </el-form-item>
-      </div>
+      </div> -->
+      <!-- 所属品牌 -->
+      <el-form-item label="所属品牌：" class="item-brand">
+        <el-select v-model="goodInfo.brand" class="select-brand" v-show="!customBrand">
+          <el-option v-for="item in brandsOptions" :key="item.value" :label="item.label" :value="item.value">
+          </el-option>
+        </el-select>
+        <el-input v-model="goodInfo.brand" placeholder="请输入商品品牌" maxlength="40" show-word-limit v-show="customBrand">
+        </el-input>
+        <el-checkbox v-model="customBrand" @change='goodInfo.brand= ""'>自定义品牌</el-checkbox>
+      </el-form-item>
       <!-- 产品规格： -->
       <el-form-item label="产品规格：" class="product-specs">
         <el-form-item label="销售类型" class="product-specs-item">
@@ -92,13 +105,13 @@
         <el-switch v-model="goodInfo.groundingValue" active-color="#1890FF">
         </el-switch>
       </el-form-item>
-       <!-- 是否推荐 -->
+      <!-- 是否推荐 -->
       <el-form-item label="是否推荐：" class="prodect-recommendValue">
         <el-switch v-model="goodInfo.recommendValue" active-color="#13ce66">
         </el-switch>
         <span class="gray-tip">被推荐的商品会显示在店铺首页</span>
       </el-form-item>
-     <!-- <div class="prodect-grounding">
+      <!-- <div class="prodect-grounding">
         <el-form-item label="立即上架：" class="prodect-grounding-item">
           <el-switch v-model="goodInfo.groundingValue" active-color="#1890FF">
           </el-switch>
@@ -375,24 +388,23 @@
       font-weight: 400;
     }
 
-    .item-name-brand {
-      display: flex;
-      justify-content: flex-start;
-      flex-wrap: wrap;
+    // .item-name-brand {
+    //   display: flex;
+    //   justify-content: flex-start;
+    //   flex-wrap: wrap;
 
-      .item-name {
-        margin-right: 60px;
-      }
+    //   .item-name {
+    //     margin-right: 60px;
+    //   }
 
-      .item-brand {
-        margin: 0px 10px 0px 0px;
+    // }
 
-        /deep/.el-form-item__content {
-          display: flex;
-          justify-content: flex-start;
-          align-items: center;
-        }
+    .item-brand {
 
+      /deep/.el-form-item__content {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
       }
 
       //自定义品牌
@@ -406,6 +418,7 @@
         font-size: 12px;
         color: #333;
       }
+
     }
   }
 
@@ -472,8 +485,8 @@
   // 产品详情
   .product-detail {
     .edit {
-      flex: 1;
-      height: 366px;
+      // flex: 1;
+      // height: 366px;
     }
   }
 

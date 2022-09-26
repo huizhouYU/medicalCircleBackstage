@@ -497,7 +497,7 @@ export default {
       }
 
       .edit {
-        height: 400px;
+        // height: 400px;
       }
     }
   }

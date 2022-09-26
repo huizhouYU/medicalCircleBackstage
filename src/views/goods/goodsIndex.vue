@@ -284,5 +284,8 @@
   // 模块三 商品列表
   .items {
     margin-top: 20px;
+    // box-shadow: 0px 2px 10px 1px rgba(0, 0, 0, 0.06);
+    // box-sizing: border-box;
+    // border-radius: 6px;
   }
 </style>

@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
-    <el-table ref="multipleTable" :data="currentPageData" tooltip-effect="dark" style="width: 100%" height="439"
-      @selection-change="handleSelectionChange">
+    <el-table ref="multipleTable" :data="currentPageData" tooltip-effect="dark" style="width: 100%"
+      :height="tableHeight" @selection-change="handleSelectionChange" class="el-table-box">
       <el-table-column type="selection" width="55">
       </el-table-column>
       <el-table-column prop="id" label="产品编码" width="120"></el-table-column>
@@ -57,7 +57,7 @@
         <!-- <button @click="deleteChoosed" class="pl-delete-btn">
           删除
         </button> -->
-        <el-button type="danger" class="public-el-btn"  @click="deleteChoosed">删除</el-button>
+        <el-button type="danger" class="public-el-btn" @click="deleteChoosed">删除</el-button>
       </div>
       <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange"
         :page-sizes="[1,5,10, 15, 20, 25]" :page-size="pageSize" :current-page.sync="currentPage" :pager-count="5"
@@ -121,67 +121,100 @@
 </template>
 
 <script>
-import axios from 'axios';
-import { fetchList } from '@/api/article'
-import { goodsList } from '@/api/goods'
-// import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
-// import goodsList from '../../../src/json/goods.json'
-const a = require("../../../src/json/goods.json")
-export default {
-  name: 'GoodsLtem',
-  // components: { Pagination },
-  filters: {
-    statusFilter(status) {
-      const statusMap = {
-        published: 'success',
-        draft: 'info',
-        deleted: 'danger'
+  import {
+    getDynamicHeight,
+    debounce
+  } from "../utils/elTableAutoHeight.js";
+  import axios from 'axios';
+  import {
+    fetchList
+  } from '@/api/article'
+  import {
+    goodsList
+  } from '@/api/goods'
+  // import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
+  // import goodsList from '../../../src/json/goods.json'
+  const a = require("../../../src/json/goods.json")
+  export default {
+    name: 'GoodsLtem',
+    // components: { Pagination },
+    filters: {
+      statusFilter(status) {
+        const statusMap = {
+          published: 'success',
+          draft: 'info',
+          deleted: 'danger'
+        }
+        return statusMap[status]
       }
-      return statusMap[status]
-    }
-  },
-  data() {
-    return {
-      pagerCount: 4, //设置页码显示最多的数量
-      isAddAllTerminalStatus: false,
-      currentPage: 1, //当前页
-      totalPage: 0, //总页数
-      totalNum: 0, //总条数
-      pageSize: 10, //当前显示条数
-      tableData: [], //总数据内容
-      currentPageData: [], //当前页显示内容
-      multipleSelection: [],
-      /////
-      list: null,
-      total: 0,
-      listLoading: true,
-      listQuery: {
-        page: 1,
-        limit: 20
-      }
-    }
-  },
-  created() {
-    this.getList()
-  },
-  mounted() {
-    this.loadData()
-  },
-  methods: {
-    getList() {
-      this.listLoading = true
-      fetchList(this.listQuery).then(response => {
-        this.list = response.data.items
-        this.total = response.data.total
-        this.listLoading = false
-      })
-      // goodsList(this.listQuery).then(response => {
-      //   this.list = response.data.items
-      //   this.total = response.data.total
-      //   this.listLoading = false
-      // })
     },
-  // 计算页码等
+    data() {
+      return {
+        tableHeight: 0,
+        pagerCount: 4, //设置页码显示最多的数量
+        isAddAllTerminalStatus: false,
+        currentPage: 1, //当前页
+        totalPage: 0, //总页数
+        totalNum: 0, //总条数
+        pageSize: 10, //当前显示条数
+        tableData: [], //总数据内容
+        currentPageData: [], //当前页显示内容
+        multipleSelection: [],
+        /////
+        list: null,
+        total: 0,
+        listLoading: true,
+        listQuery: {
+          page: 1,
+          limit: 20
+        }
+      }
+    },
+    created() {
+      this.getList()
+    },
+    mounted() {
+      // 初始化给table高度赋值
+      this.getHeight();
+      // 屏幕resize监听方法
+      this.screenMonitor();
+      this.loadData()
+    },
+    methods: {
+      screenMonitor() {
+        let resize = debounce(() => {
+          this.getHeight();
+        }, 100);
+        // 屏幕resize监听事件：一旦屏幕宽高发生变化，就会执行resize
+        window.addEventListener("resize", resize, true);
+        // 将屏幕监听事件移除
+        // 这步是必须的。离开页面时不移除，再返回，或者进入到别的有相同元素的页面会报错
+        // 或者将这里的方法直接写在beforeDestroy函数中也可，不过我感觉这样写更明了些
+        this.$once("hook:beforeDestroy", () => {
+          window.removeEventListener("resize", resize, true);
+        });
+      },
+      getHeight() {
+        // 为什么设置了一个定时器我忘却了。。。。大概因为在获取元素时还没有元素吧哈哈哈哈我真的讲不明白但是得有这个定时器
+        setTimeout(() => {
+          // this.tableHeight = getDynamicHeight(this.$refs.searchContainer).height;
+          this.tableHeight = getDynamicHeight(200).height;
+        }, 400);
+      },
+      getList() {
+        this.listLoading = true
+        fetchList(this.listQuery).then(response => {
+          this.list = response.data.items
+          this.total = response.data.total
+          this.listLoading = false
+        })
+        // goodsList(this.listQuery).then(response => {
+        //   this.list = response.data.items
+        //   this.total = response.data.total
+        //   this.listLoading = false
+        // })
+      },
+      // 计算页码等
       computeSize() {
         this.totalNum = this.tableData.length
         this.totalPage = Math.ceil(this.totalNum / this.pageSize);
@@ -306,10 +339,21 @@ export default {
   }
 </script>
 
-<style scoped lang="less" >
+<style scoped lang="less">
+  // .el-table-box {
+  //   width: 100%;
+  //   height: calc(100% - 500px);
+  // }
+  .app-container {
+    box-shadow: 0px 2px 10px 1px rgba(0, 0, 0, 0.06);
+  }
+
   .el-table {
     font-size: 12px;
     color: #333333;
+    // box-shadow: 0px 2px 10px 1px rgba(0, 0, 0, 0.06);
+    box-sizing: border-box;
+    border-radius: 6px 6px 0px 0px;
   }
 
   // ----------修改elementui开关的默认样式-----------
@@ -429,6 +473,9 @@ export default {
     background-color: #fff;
     display: flex;
     justify-content: space-between;
+    // box-shadow: 0px 2px 10px 1px rgba(0, 0, 0, 0.06);
+    box-sizing: border-box;
+    border-radius: 0px 0px 6px 6px;
 
     .left {
       /deep/ .el-checkbox__label {
