@@ -23,64 +23,10 @@
         </el-input>
       </div>
       <!-- 添加商品 -->
-      <el-button type="primary" class="public-el-btn"  @click="toAddGoods">添加商品</el-button>
-      <!-- <button class="btn-add " @click="toAddGoods">添加商品</button> -->
+      <el-button type="primary" class="public-el-btn" @click="toAddGoods">添加商品</el-button>
     </div>
     <!-- 模块三 商品列表 -->
     <goods-items class="items"></goods-items>
-    <!-- <el-table v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%">
-      <el-table-column align="center" label="ID" width="80">
-        <template slot-scope="scope">
-          <span>{{ scope.row.id }}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column width="180px" align="center" label="Date">
-        <template slot-scope="scope">
-          <span>{{ scope.row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column width="120px" align="center" label="Author">
-        <template slot-scope="scope">
-          <span>{{ scope.row.author }}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column width="100px" label="Importance">
-        <template slot-scope="scope">
-          <svg-icon v-for="n in +scope.row.importance" :key="n" icon-class="star" class="meta-item__icon" />
-        </template>
-      </el-table-column>
-
-      <el-table-column class-name="status-col" label="Status" width="110">
-        <template slot-scope="{row}">
-          <el-tag :type="row.status | statusFilter">
-            {{ row.status }}
-          </el-tag>
-        </template>
-      </el-table-column>
-
-      <el-table-column min-width="300px" label="Title">
-        <template slot-scope="{row}">
-          <router-link :to="'/example/edit/'+row.id" class="link-type">
-            <span>{{ row.title }}</span>
-          </router-link>
-        </template>
-      </el-table-column>
-
-      <el-table-column align="center" label="Actions" width="120">
-        <template slot-scope="scope">
-          <router-link :to="'/example/edit/'+scope.row.id">
-            <el-button type="primary" size="small" icon="el-icon-edit">
-              Edit
-            </el-button>
-          </router-link>
-        </template>
-      </el-table-column>
-    </el-table>
-
-    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" /> -->
   </div>
 </template>
 
@@ -108,7 +54,6 @@
     },
     data() {
       return {
-
         //商品分类
         options: [{
             value: 'zhinan',
@@ -200,7 +145,6 @@
 <style scoped lang="less">
   // 模块二 搜索条件 + 添加商品
   .search-add {
-    // margin-top: 15px;
     background-color: #fff;
     box-shadow: 0px 2px 10px 1px rgba(0, 0, 0, 0.06);
     border-radius: 6px 6px 6px 6px;
@@ -209,83 +153,26 @@
     align-items: center;
     flex-wrap: wrap;
 
-    //公共上下间距
-    // .public-interval {
-    //   margin: 20px 0px;
-    // }
-
     // 搜索部分
     .search {
       display: flex;
       justify-content: flex-start;
       align-items: center;
 
-      // /deep/.el-input--mini .el-input__inner {
-      //   // height: 34px;
-      //   // line-height: 34px;
-      // }
-
-      // // 本店分类
-      // // 商品状态
-      // .choose-store-sort,
-      // .choose-shop-state {
-      //   width: 112px;
-      //   height: 34px;
-      //   margin: 20px 25px 20px 15px;
-      //   border-radius: 6px 6px 6px 6px;
-      //   box-sizing: border-box;
-      //   font-size: 12px;
-
-      //   /deep/.el-select-dropdown__item span {
-      //     font-size: 12px;
-      //   }
-
-      //   /deep/ .el-select-dropdown__empty {
-      //     font-size: 12px !important;
-      //   }
-      // }
-
       .choose-shop-state {
         margin-left: 0px;
       }
-
-      // /deep/ .el-cascader {
-      //   line-height: 0px !important;
-      // }
 
       // 输入关键字
       .search-select-input {
         width: 400px;
 
-        // /deep/.el-input {
-        //   width: 110px;
-        // }
-
       }
     }
-
-    // 添加商品
-    // .btn-add {
-    //   width: 88px;
-    //   height: 34px;
-    //   background: #1890FF;
-    //   border-radius: 6px 6px 6px 6px;
-    //   border: none;
-    //   margin: 20px 20px 20px 15px;
-    //   box-sizing: border-box;
-    //   font-size: 12px;
-    //   font-family: Microsoft YaHei-Regular, Microsoft YaHei;
-    //   color: #FFFFFF;
-    //   text-align: center;
-    //   line-height: 34px;
-    // }
   }
 
   // 模块三 商品列表
   .items {
     margin-top: 20px;
-    // box-shadow: 0px 2px 10px 1px rgba(0, 0, 0, 0.06);
-    // box-sizing: border-box;
-    // border-radius: 6px;
   }
 </style>

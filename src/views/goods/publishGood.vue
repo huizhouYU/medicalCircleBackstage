@@ -10,20 +10,6 @@
       <el-form-item label="产品名称：" class="item-name">
         <el-input v-model="goodInfo.name" placeholder="请输入商品名称" maxlength="40" show-word-limit></el-input>
       </el-form-item>
-      <!-- <div class="item-name-brand">
-        <el-form-item label="产品名称：" class="item-name">
-          <el-input v-model="goodInfo.name" placeholder="请输入商品名称" maxlength="40" show-word-limit></el-input>
-        </el-form-item>
-        <el-form-item label="所属品牌：" class="item-brand">
-          <el-select v-model="goodInfo.brand" class="select-brand" v-show="!customBrand">
-            <el-option v-for="item in brandsOptions" :key="item.value" :label="item.label" :value="item.value">
-            </el-option>
-          </el-select>
-          <el-input v-model="goodInfo.name" placeholder="请输入商品品牌" maxlength="40" show-word-limit v-show="customBrand">
-          </el-input>
-          <el-checkbox v-model="customBrand" @change='goodInfo.brand= ""'>自定义品牌</el-checkbox>
-        </el-form-item>
-      </div> -->
       <!-- 所属品牌 -->
       <el-form-item label="所属品牌：" class="item-brand">
         <el-select v-model="goodInfo.brand" class="select-brand" v-show="!customBrand">
@@ -111,17 +97,6 @@
         </el-switch>
         <span class="gray-tip">被推荐的商品会显示在店铺首页</span>
       </el-form-item>
-      <!-- <div class="prodect-grounding">
-        <el-form-item label="立即上架：" class="prodect-grounding-item">
-          <el-switch v-model="goodInfo.groundingValue" active-color="#1890FF">
-          </el-switch>
-        </el-form-item>
-        <el-form-item label="是否推荐：" class="">
-          <el-switch v-model="goodInfo.groundingValue" active-color="#13ce66">
-          </el-switch>
-          <span class="gray-tip">被推荐的商品会显示在店铺首页</span>
-        </el-form-item>
-      </div> -->
       <div class="submit">
         <el-button type="primary" class="public-el-submit-btn" @click="submit">提交</el-button>
       </div>
@@ -138,7 +113,6 @@
       DragUpload,
       edit
     },
-    // components: { vabQuill },
     data() {
       return {
         inputVisible: true,
@@ -280,9 +254,6 @@
         }
 
       },
-      back() {
-        this.$router.replace("/goodsIndex")
-      },
       //当选择“咨询议价”时，商品价格禁止输入
       isEditPrice() {
         console.log("this.isEditPriceFlag", this.isEditPriceFlag)
@@ -293,7 +264,7 @@
         }
         console.log("this.isEditPriceFlag", this.isEditPriceFlag)
       },
-      //返回上一步
+      //点击‘类目’返回上一步
       preStep() {
         if (this.isBack) {
           this.$router.replace({
@@ -388,19 +359,7 @@
       font-weight: 400;
     }
 
-    // .item-name-brand {
-    //   display: flex;
-    //   justify-content: flex-start;
-    //   flex-wrap: wrap;
-
-    //   .item-name {
-    //     margin-right: 60px;
-    //   }
-
-    // }
-
     .item-brand {
-
       /deep/.el-form-item__content {
         display: flex;
         justify-content: flex-start;
@@ -418,7 +377,6 @@
         font-size: 12px;
         color: #333;
       }
-
     }
   }
 
@@ -469,7 +427,6 @@
         width: 80px;
       }
     }
-
   }
 
   //下标 注释
@@ -479,15 +436,6 @@
     font-weight: 400;
     color: #BBBBBB;
     margin-top: 5px;
-  }
-
-
-  // 产品详情
-  .product-detail {
-    .edit {
-      // flex: 1;
-      // height: 366px;
-    }
   }
 
   // 商品标签

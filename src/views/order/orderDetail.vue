@@ -85,7 +85,6 @@
             <el-timeline-item v-for="(activity, index) in orderInfo.activities" :key="index" :icon="activity.icon"
               :type="activity.type" :color="activity.color" :size="activity.size" :timestamp="activity.timestamp"
               class="last-timeline">
-              <!--   :class="{'last-timeline':index == 0}"> -->
               {{ activity.content }}
             </el-timeline-item>
           </el-timeline>
@@ -261,14 +260,14 @@
           goods: [{
               name: '飞利浦核磁共振专业设备医用型号ur125ow飞利浦核磁共振专业设备医用型号磁共振专业设备医用型您的包裹已离开华东枢纽分拨',
               goodNo: '123',
-              imgUrl: '../../../static/img/brand03.png',
+              imgUrl: 'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fnimg.ws.126.net%2F%3Furl%3Dhttp%253A%252F%252Fdingyue.ws.126.net%252F2022%252F0125%252F510c021ej00r69k5b006xc001xo01agm.jpg%26thumbnail%3D650x2147483647%26quality%3D80%26type%3Djpg&refer=http%3A%2F%2Fnimg.ws.126.net&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1666775226&t=2ba155b04783bb684444c45f51ccfaba',
               num: '30',
               price: '36.00'
             },
             {
               name: '飞利浦核磁共振专业设备医用型号ur125ow飞利ur125ow',
               goodNo: '123',
-              imgUrl: '../../../static/img/brand03.png',
+              imgUrl: 'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fp0.itc.cn%2Fq_70%2Fimages03%2F20201128%2F2c334f4f0c28477186cd226884461cc2.jpeg&refer=http%3A%2F%2Fp0.itc.cn&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1666775226&t=a7483abd44366d8596698c72755a36a8',
               num: '30',
               price: '36.00'
             }
@@ -447,7 +446,6 @@
               flex: 1;
             }
           }
-
         }
 
         .refundDetail {
@@ -588,6 +586,7 @@
             img {
               width: 70px;
               height: 70px;
+              border-radius: 6px;
               float: left;
             }
 
@@ -654,7 +653,6 @@
         .payWay {
           margin-top: 8px;
         }
-
       }
     }
   }

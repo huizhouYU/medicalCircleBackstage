@@ -1,10 +1,11 @@
 <template>
   <div class="app-container">
-    <el-table ref="multipleTable" :data="currentPageData" tooltip-effect="dark" style="width: 100%" :height="tableHeight">
+    <el-table ref="multipleTable" :data="currentPageData" tooltip-effect="dark" style="width: 100%"
+      :height="tableHeight">
       <el-table-column prop="id" label="产品编码" width="150"></el-table-column>
       <el-table-column label="商品图" width="100">
         <template slot-scope="scope">
-          <img src="../../assets/401_images/401.gif" alt="图片加载失败" class="item-img">
+           <img :src="scope.row.imgUrl" alt="图片加载失败" class="item-img">
         </template>
       </el-table-column>
       <el-table-column label="商品名称" width="350">
@@ -18,8 +19,7 @@
       <el-table-column prop="stock" label="库存" width="100"></el-table-column>
       <el-table-column fixed="right" label="操作" width="120">
         <template slot-scope="scope">
-          <el-button @click.native.prevent="reduction(scope.$index, currentPageData)" type="text" size="small">
-            还原
+          <el-button @click.native.prevent="reduction(scope.$index, currentPageData)" type="text" size="small"> 还原
           </el-button>
         </template>
       </el-table-column>
@@ -151,6 +151,7 @@
   .app-container {
     box-shadow: 0px 2px 10px 1px rgba(0, 0, 0, 0.06);
   }
+
   .el-table {
     font-size: 12px;
     color: #333333;
@@ -172,6 +173,7 @@
   .item-img {
     width: 50px;
     height: 50px;
+    border-radius: 4px;
   }
 
   // 列表底部的部分
@@ -190,7 +192,8 @@
     background-color: #fff !important;
     border: 1px solid #f4f4f5;
   }
-  .el-pagination span{
+
+  .el-pagination span {
     font-size: 12px;
     color: #777777;
   }

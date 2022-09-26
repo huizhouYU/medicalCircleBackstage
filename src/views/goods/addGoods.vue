@@ -6,10 +6,10 @@
       <div class="input-box">
         <el-select v-model="inputKey" filterable remote reserve-keyword placeholder="请输入关键词"
           :remote-method="remoteMethod" :loading="loading" class="input-search">
-          <el-option v-for="(item,index) in options" :key="JSON.stringify(item.id)" :label="item.title.join(' > ')" :value="item.id"></el-option>
+          <el-option v-for="(item,index) in options" :key="JSON.stringify(item.id)" :label="item.title.join(' > ')"
+            :value="item.id"></el-option>
         </el-select>
         <button class="btn-search" @click="position()">
-          <!-- <img src="../../assets/images/icon_search.png" alt=""> -->
           <img src="../../../public/imgs/icon_search.png" alt="">
         </button>
       </div>
@@ -52,7 +52,6 @@
       </div>
       <div class="next-box">
         <el-button type="primary" class="public-el-btn" :disabled="!isNextFlag" @click="nextStep">下一步，发布商品</el-button>
-        <!-- <button class="next-btn" @click="nextStep()" :class="{'next-btn-t':isNextFlag}">下一步，发布商品</button> -->
       </div>
       <!-- 协议明细 -->
       <div class="agreement-box">
@@ -190,8 +189,6 @@
           item.id.pop()
           item.title.pop()
         }
-
-
 
         // await axios.get("../../../static/testData/classifyData.json").then(res => {
         //   console.log(res);
@@ -478,7 +475,6 @@
   .multistage-linkage {
     background-color: #fff;
     margin-top: 20px;
-    // height: 500px;
     padding: 15px 20px 20px 20px;
     box-sizing: border-box;
 

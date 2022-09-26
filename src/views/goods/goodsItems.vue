@@ -7,7 +7,7 @@
       <el-table-column prop="id" label="产品编码" width="120"></el-table-column>
       <el-table-column label="商品图" width="100">
         <template slot-scope="scope">
-          <img src="../../../public/imgs/brand03.png" alt="图片加载失败" class="item-img">
+          <img :src="scope.row.imgUrl" alt="图片加载失败" class="item-img">
         </template>
       </el-table-column>
       <el-table-column label="商品名称" width="200">
@@ -54,9 +54,6 @@
     <div class="bottoms-box">
       <div class="left">
         <el-checkbox v-model="isAddAllTerminalStatus" @change="allSelectTerminal">全选</el-checkbox>
-        <!-- <button @click="deleteChoosed" class="pl-delete-btn">
-          删除
-        </button> -->
         <el-button type="danger" class="public-el-btn" @click="deleteChoosed">删除</el-button>
       </div>
       <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange"
@@ -64,59 +61,6 @@
         :background="false" layout="total, sizes, prev, pager, next, jumper" :total="totalNum">
       </el-pagination>
     </div>
-    <!-- <el-table v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%">
-      <el-table-column align="center" label="ID" width="80">
-        <template slot-scope="scope">
-          <span>{{ scope.row.id }}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column width="180px" align="center" label="Date">
-        <template slot-scope="scope">
-          <span>{{ scope.row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column width="120px" align="center" label="Author">
-        <template slot-scope="scope">
-          <span>{{ scope.row.author }}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column width="100px" label="Importance">
-        <template slot-scope="scope">
-          <svg-icon v-for="n in +scope.row.importance" :key="n" icon-class="star" class="meta-item__icon" />
-        </template>
-      </el-table-column>
-
-      <el-table-column class-name="status-col" label="Status" width="110">
-        <template slot-scope="{row}">
-          <el-tag :type="row.status | statusFilter">
-            {{ row.status }}
-          </el-tag>
-        </template>
-      </el-table-column>
-
-      <el-table-column min-width="300px" label="Title">
-        <template slot-scope="{row}">
-          <router-link :to="'/example/edit/'+row.id" class="link-type">
-            <span>{{ row.title }}</span>
-          </router-link>
-        </template>
-      </el-table-column>
-
-      <el-table-column align="center" label="Actions" width="120">
-        <template slot-scope="scope">
-          <router-link :to="'/example/edit/'+scope.row.id">
-            <el-button type="primary" size="small" icon="el-icon-edit">
-              Edit
-            </el-button>
-          </router-link>
-        </template>
-      </el-table-column>
-    </el-table> -->
-
-    <!-- <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" /> -->
   </div>
 </template>
 
@@ -132,12 +76,9 @@
   import {
     goodsList
   } from '@/api/goods'
-  // import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
-  // import goodsList from '../../../src/json/goods.json'
   const a = require("../../../src/json/goods.json")
   export default {
-    name: 'GoodsLtem',
-    // components: { Pagination },
+    name: 'GoodsItem',
     filters: {
       statusFilter(status) {
         const statusMap = {
@@ -340,10 +281,6 @@
 </script>
 
 <style scoped lang="less">
-  // .el-table-box {
-  //   width: 100%;
-  //   height: calc(100% - 500px);
-  // }
   .app-container {
     box-shadow: 0px 2px 10px 1px rgba(0, 0, 0, 0.06);
   }
@@ -351,7 +288,6 @@
   .el-table {
     font-size: 12px;
     color: #333333;
-    // box-shadow: 0px 2px 10px 1px rgba(0, 0, 0, 0.06);
     box-sizing: border-box;
     border-radius: 6px 6px 0px 0px;
   }
@@ -396,8 +332,8 @@
   // ----------修改elementui表格的默认样式-----------
   /deep/.el-table__body-wrapper {
     &::-webkit-scrollbar {
-      height: 7px;
-      width: 7px;
+      height: 5px;
+      width: 5px;
     }
 
     &::-webkit-scrollbar-track {
@@ -408,7 +344,7 @@
     &::-webkit-scrollbar-thumb {
       // 滚动块颜色
       background-color: #E6E9ED;
-      // border-radius: 5px;
+      border-radius: 5px;
     }
 
     &::-webkit-scrollbar-thumb:hover {
@@ -459,6 +395,7 @@
   .item-img {
     width: 50px;
     height: 50px;
+    border-radius: 4px;
   }
 
   .check-div {
@@ -473,7 +410,6 @@
     background-color: #fff;
     display: flex;
     justify-content: space-between;
-    // box-shadow: 0px 2px 10px 1px rgba(0, 0, 0, 0.06);
     box-sizing: border-box;
     border-radius: 0px 0px 6px 6px;
 
@@ -484,22 +420,7 @@
         font-weight: 400;
         color: #555555;
       }
-
-      //批量删除按钮
-      .pl-delete-btn {
-        width: 48px;
-        height: 24px;
-        background: #FF7575;
-        border-radius: 4px 4px 4px 4px;
-        margin-left: 20px;
-        text-align: center;
-        line-height: 24px;
-        border: none;
-        color: #fff;
-        font-size: 12px;
-      }
     }
-
   }
 
   //修改页码样式

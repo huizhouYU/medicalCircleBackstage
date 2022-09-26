@@ -21,7 +21,6 @@
       </el-input>
       <!-- 查询按钮 -->
       <el-button type="primary" class="public-el-btn" >查询</el-button>
-      <!-- <button class="but-search public-interval">查询</button> -->
     </div>
     <!-- 订单列表 -->
     <!-- 自定义表格 -->
@@ -419,22 +418,6 @@
       color: #333333;
     }
 
-    // 订单状态下拉框
-    // .orderState-div {
-    //   width: 112px;
-    //   height: 34px;
-    //   border-radius: 6px 6px 6px 6px;
-    //   outline: none;
-    //   box-shadow: 0px;
-    //   box-sizing: border-box;
-    //   margin-right: 25px;
-
-    //   /deep/ .el-input__icon {
-    //     line-height: 34px;
-    //   }
-
-    // }
-
     // 下单时间
     .order-time {
       margin-right: 25px;
@@ -467,71 +450,12 @@
     // 请输入订单编号/收货人
     .search-select-input {
       width: 370px;
-
-      // /deep/.el-input {
-      //   width: 110px;
-      // }
-
-      // /deep/ .el-input__icon {
-      //   line-height: 34px;
-      // }
-
-      //输入的关键字的类型
-      // .key-selectType {
-      //   height: 34px;
-      //   width: 140px;
-      //   box-sizing: border-box;
-      //   font-size: 12px;
-      //   margin-left: -1px;
-
-      //   //下拉框的样式修改
-      //   /deep/ .el-input__inner {
-      //     height: 34px;
-      //     line-height: 34px;
-      //     font-size: 12px;
-      //     border-radius: 6px 0px 0px 6px;
-      //   }
-
-      //   //下拉框的箭头修改
-      //   /deep/ .el-input__icon {
-      //     line-height: 34px;
-      //   }
-      // }
-
-      // input 输入框
-      // .input-search {
-      //   width: 320px;
-      //   height: 34px;
-      //   margin-left: -1px;
-
-      //   /deep/ .el-input__inner {
-      //     height: 34px;
-      //     line-height: 34px;
-      //     border-radius: 0px 6px 6px 0px;
-      //   }
-
-      // }
-    }
-
-    .but-search {
-      margin-left: 40px;
-      width: 64px;
-      height: 34px;
-      background: #1890FF;
-      border-radius: 6px 6px 6px 6px;
-      box-sizing: border-box;
-      color: #FFFFFF;
-      border: none;
-      font-size: 12px;
-      font-family: Microsoft YaHei-Regular, Microsoft YaHei;
-      font-weight: 400;
     }
   }
 
   //自定义表格
   .table-item {
     min-width: 600px;
-    // height: 439px;
     margin-top: 20px;
     background-color: #fff;
     box-shadow: 0px 2px 10px 1px rgba(0, 0, 0, 0.06);
@@ -591,7 +515,7 @@
       //改变滚动条样式  end
       tbody {
         display: block;
-        height: 360px;
+        height: 400px;
         width: 100%;
         overflow-y: auto;
         overflow-x: hidden;
@@ -607,10 +531,6 @@
       td {
         border: 1px solid #fff;
         text-align: center;
-      }
-
-      tr:nth-child(odd) {
-        // background-color: #eee;
       }
 
       .order-info {
@@ -630,10 +550,6 @@
           .order-info-title-left {
             span {
               margin-right: 30px;
-            }
-
-            .payWay-span {
-              // margin-right: 10px;
             }
           }
 
@@ -675,12 +591,6 @@
         }
 
         .img-name-no {
-          // display: flex;
-          // justify-content: flex-start;
-          // white-space: nowrap;
-          // overflow: hidden;
-          // text-overflow: ellipsis;
-
           img {
             width: 70px;
             height: 70px;
@@ -749,7 +659,6 @@
     }
 
     .bottoms-box {
-      // height: 60px;
       padding: 20px 35px 20px 0px;
       display: flex;
       justify-content: flex-end;

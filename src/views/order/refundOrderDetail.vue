@@ -126,23 +126,6 @@
     <!-- 退款 弹框 -->
     <el-dialog title="退款处理" :close-on-click-modal="false" :visible.sync="refundDialogVisible" width="500px"
       class="el-dialog-box el-dialog-deliver">
-      <!-- <el-form :model="refundDeliverForm" label-position="right">
-        <el-form-item label="退款选择:" :label-width="formLabelWidth">
-          <el-radio-group v-model="refundDeliverForm.decision" @change="clearRefundForm">
-            <el-radio :label="1">同意</el-radio>
-            <el-radio :label="2">拒绝</el-radio>
-          </el-radio-group>
-          <div v-show="refundDeliverForm.decision == 1" class="greySpan">
-             <span>选择“同意”，相关货款将退还给买家，是否继续</span>
-          </div>
-        </el-form-item>
-        <el-form-item label="拒绝原因:" :label-width="formLabelWidth" v-show="refundDeliverForm.decision == 2">
-          <el-input v-model="refundDeliverForm.refuseReason" placeholder=""
-            :disabled="refundDeliverForm.decision == 1" />
-        </el-form-item>
-      </el-form> -->
-
-
       <el-form :model="ordeRefundForm" label-position="right" class="refund-result-form">
         <el-form-item label="退款选择:" :label-width="formLabelWidth">
           <el-radio-group v-model="ordeRefundForm.result">
@@ -236,7 +219,7 @@
           goods: [{
               name: '飞利浦核磁共振专业设备医用型号ur125ow飞利浦核磁共振专业设备医用型号磁共振专业设备医用型您的包裹已离开华东枢纽分拨',
               goodNo: '123',
-              imgUrl: '../../../static/img/brand03.png',
+              imgUrl: 'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fp1.itc.cn%2Fimages01%2F20211027%2Fec78bb8c5f694853af725fb062788c33.jpeg&refer=http%3A%2F%2Fp1.itc.cn&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1666775226&t=1c47421584ff962ff3d8f97189cad0bf',
               num: '1',
               unitPrice: '￥：99.99', //商品单价
               orderPrice: '￥：99.99', //订单金额
@@ -247,7 +230,7 @@
             {
               name: '飞利浦核磁共振专业设备医用型号ur125ow飞利ur125ow',
               goodNo: '123',
-              imgUrl: '../../../static/img/brand03.png',
+              imgUrl: 'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fwww.benchmark-id.com%2FupLoad%2Fimage%2F20200602%2F15910636714979078.jpg&refer=http%3A%2F%2Fwww.benchmark-id.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1666775226&t=1cb85669fbf810973cb6327f588f1726',
               num: '1',
               unitPrice: '￥：99.99', //商品单价
               orderPrice: '￥：99.99', //订单金额
@@ -546,6 +529,7 @@
               width: 70px;
               height: 70px;
               float: left;
+              border-radius: 6px;
             }
 
             .item-name-title {

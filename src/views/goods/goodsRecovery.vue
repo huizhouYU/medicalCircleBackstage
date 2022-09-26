@@ -33,11 +33,9 @@
         }],
         inputKeyType: '1', //搜索的关键字的类型
         inputKey: '', //输入商品名称/关键字
-
       }
     },
     methods: {
-
       //根据条件筛选数据
       selectData() {
         alert("不要点啦！后台接口数据还没做呢。。。")
@@ -47,7 +45,6 @@
 </script>
 
 <style scoped lang="less">
-
   // 模块二 搜索条件
   .search {
     height: 74px;
@@ -62,15 +59,6 @@
     // 输入关键字
     .search-select-input {
       width: 400px;
-
-      // /deep/.el-input {
-      //   width: 110px;
-      // }
-
-      // /deep/.el-input-group__prepend .el-input {
-      //   font-size: 12px;
-      // }
-
     }
   }
 
