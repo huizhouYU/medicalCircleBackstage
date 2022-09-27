@@ -26,7 +26,7 @@
       <el-button type="primary" class="public-el-btn" @click="toAddGoods">添加商品</el-button>
     </div>
     <!-- 模块三 商品列表 -->
-    <goods-items class="items"></goods-items>
+    <goods-items class="items" :tableData="tableData" :total="total" @getList="getNewList" v-if="tableData&&flag"></goods-items>
   </div>
 </template>
 
@@ -34,8 +34,12 @@
   import {
     fetchList
   } from '@/api/article'
+  import {
+    goodsList
+  } from '@/api/goods'
   import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
   import GoodsItems from '../goods/goodsItems.vue'
+  const a = require("../../../src/json/goods.json")
   export default {
     name: 'GoodsList',
     components: {
@@ -54,6 +58,8 @@
     },
     data() {
       return {
+        tableData:[],
+        flag:false,
         //商品分类
         options: [{
             value: 'zhinan',
@@ -107,11 +113,11 @@
         sortValue: '', //选择的商品分类
         //////////////////
         list: null,
-        total: 0,
+        total: null,
         listLoading: true,
         listQuery: {
           page: 1,
-          limit: 20
+          pageSize: 20
         }
       }
     },
@@ -121,11 +127,19 @@
     methods: {
       getList() {
         this.listLoading = true
-        fetchList(this.listQuery).then(response => {
-          this.list = response.data.items
-          this.total = response.data.total
+       goodsList(this.listQuery).then(response => {
+         console.log("response.data.count:",response.data.count)
+          this.tableData = response.data.data
+          this.total = response.data.count
           this.listLoading = false
+          this.flag = true
         })
+      },
+      getNewList(data) {
+       console.log("data:",data)
+       this.listQuery.page = data.page
+       this.listQuery.pageSize = data.pageSize
+       this.getList()
       },
       //添加商品
       toAddGoods() {

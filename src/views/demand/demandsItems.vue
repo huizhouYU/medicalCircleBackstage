@@ -165,6 +165,12 @@
       editRow(index, rows) {
         console.log("index", index)
         console.log("rows", rows)
+        this.$router.replace({
+          path: 'publishDemand',
+          query: {
+            eidtData: rows[index]
+          }
+        })
       },
       //批量删除
       deleteChoosed() {

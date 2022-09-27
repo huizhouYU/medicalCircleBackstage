@@ -1,7 +1,6 @@
 <template>
   <div>
     <!-- 编辑需求区域 -->
-    <!-- <div class="eidt-box"> -->
     <el-form
       ref="demandInfo"
       label-position="right"
@@ -122,11 +121,8 @@
       </div>
 
       <div class="submit">
-        <!-- <button class="but-submit">发布</button> -->
         <el-button type="primary" class="public-el-submit-btn">发布</el-button>
       </div>
-
-      <!-- </div> -->
     </el-form>
 
   </div>
@@ -282,7 +278,21 @@ export default {
   //   //   }
   //   // })
   // },
+  mounted() {
+    this.getParams()
+  },
   methods: {
+    getParams() {
+      //编辑商品 跳转过来 传递的数据
+      var editDemandData = this.$route.query.eidtData //要编辑需求的数据
+      if (editDemandData != undefined) {
+        this.$message({
+          type: 'info',
+          message: '此处应该根据需求ID去请求后端接口，获取需求数据，填充页面'
+        })
+      }
+
+    },
     getData() {
       this.cities = a
     },

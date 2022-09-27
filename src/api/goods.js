@@ -2,8 +2,8 @@ import request from '@/utils/request'
 
 export function goodsList(query) {
   return request({
-    url: 'vue-element-admin/goods/list',
-    method: 'get',
+    url: 'goods/list',
+    method: 'post',
     params: query
   })
 }

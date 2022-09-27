@@ -20,8 +20,8 @@
       ref="ruleForm"
       :model="ruleForm"
       :rules="rules"
-      label-position="left"
-      label-width="100px"
+      label-position="right"
+      label-width="110px"
       class="el-form-content "
     >
       <div v-show="isLook" class="sign">
@@ -34,7 +34,7 @@
         <div class="item-title">认证信息</div>
         <!-- 主体类型 -->
         <div class="item-both">
-          <el-form-item label="主体类型" prop="shopType">
+          <el-form-item label="主体类型：" prop="shopType">
             <el-select v-model="ruleForm.shopType" placeholder="请选择主体类型" @change="adjustLayout">
               <el-option v-for="item in shopTypeOption" :key="item.value" :label="item.label" :value="item.value" :disabled="isLook" />
             </el-select>
@@ -42,30 +42,30 @@
           <div class="tip">注：主体类型设置后无法更改</div>
         </div>
         <div class="inpout-content">
-          <el-form-item v-show="ruleForm.shopType == 1" label="真实姓名" prop="name" class="item-left">
+          <el-form-item v-show="ruleForm.shopType == 1" label="真实姓名：" prop="name" class="item-left">
             <el-input v-model="ruleForm.name" :disabled="isLook" />
           </el-form-item>
-          <el-form-item v-show="ruleForm.shopType == 2" label="企业名称" prop="name" class="item-left">
+          <el-form-item v-show="ruleForm.shopType == 2" label="企业名称：" prop="name" class="item-left">
             <el-input v-model="ruleForm.name" placeholder="请与营业执照的公司名称保持一致" :disabled="isLook" />
           </el-form-item>
-          <el-form-item v-show="ruleForm.shopType == 1" label="身份证号码" prop="idNo" class="item-right">
+          <el-form-item v-show="ruleForm.shopType == 1" label="身份证号码：" prop="idNo" class="item-right">
             <el-input v-model="ruleForm.engineer.idNo" :disabled="isLook" />
           </el-form-item>
-          <el-form-item label="店铺名称" prop="shopName" class="item-left">
+          <el-form-item label="店铺名称：" prop="shopName" class="item-left">
             <el-input v-model="ruleForm.shopName" :disabled="isLook" />
           </el-form-item>
-          <el-form-item label="所属分类" prop="shopSort" class="item-right">
+          <el-form-item label="所属分类：" prop="shopSort" class="item-right">
             <el-select v-model="ruleForm.shopSort" placeholder="请选择所属分类">
               <el-option v-for="item in shopSortOption" :key="item.value" :label="item.label" :value="item.value" :disabled="isLook" />
             </el-select>
           </el-form-item>
-          <el-form-item label="所属地区" prop="area" class="item-left">
+          <el-form-item label="所属地区：" prop="area" class="item-left">
             <el-cascader v-model="ruleForm.areaValue" :options="cities" :disabled="isLook" />
           </el-form-item>
-          <el-form-item label="邮政编码" prop="postalCode" class="item-right">
+          <el-form-item label="邮政编码：" prop="postalCode" class="item-right">
             <el-input v-model="ruleForm.postalCode" :disabled="isLook" />
           </el-form-item>
-          <el-form-item label="详细地址" prop="address" class="address-input">
+          <el-form-item label="详细地址：" prop="address" class="address-input">
             <el-input v-model="ruleForm.address" :disabled="isLook" />
           </el-form-item>
         </div>
@@ -78,7 +78,7 @@
       <div v-show="active == 1 || isLook" :class="[{publicStepHeight:!isLook},'zm-info','public-step']">
         <div class="item-title">证明材料</div>
         <!-- 上传证件 -->
-        <el-form-item label="上传证件" prop="name" class="">
+        <el-form-item label="上传证件：" prop="name" class="">
 
           <div class="img-list">
             <!-- 身份证正面 -->
@@ -134,11 +134,11 @@
       <div v-show="active == 2 || isLook" :class="[{publicStepHeight:!isLook},'lx-info','public-step']">
         <div class="item-title">联系信息</div>
         <!-- 联系电话 -->
-        <el-form-item label="联系电话" prop="phone" class="phone-input">
+        <el-form-item label="联系电话：" prop="phone" class="phone-input">
           <el-input v-model="ruleForm.phone" placeholder="请与身份证姓名保持一致" :disabled="isLook" />
         </el-form-item>
         <!-- 验证码 -->
-        <el-form-item v-show="!isLook" label="验证码" prop="vCode" class="vcode-input">
+        <el-form-item v-show="!isLook" label="验证码：" prop="vCode" class="vcode-input">
           <el-input v-model="ruleForm.vCode" placeholder="请填写" />
           <el-button class="getVcode-btn" type="primary" plain :disabled="!show" @click="getVcode">
             <span v-show="show">获取验证码</span>
@@ -454,6 +454,10 @@ export default {
     height: calc(100% - 80px);
     font-size: 12px;
     font-family: Microsoft YaHei-Bold, Microsoft YaHei;
+    // margin-right: 10px;
+    /deep/.el-form-item__label{
+      padding-right: 25px;
+    }
 
     //审核章
     .sign {

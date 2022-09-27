@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-table ref="multipleTable" :data="currentPageData" tooltip-effect="dark" style="width: 100%"
+    <el-table ref="multipleTable" :data="tableData" tooltip-effect="dark" style="width: 100%"
       :height="tableHeight" @selection-change="handleSelectionChange" class="el-table-box">
       <el-table-column type="selection" width="55">
       </el-table-column>
@@ -42,10 +42,10 @@
       </el-table-column>
       <el-table-column fixed="right" label="操作" width="120">
         <template slot-scope="scope">
-          <el-button @click.native.prevent="editRow(scope.$index, currentPageData)" type="text" size="small">
+          <el-button @click.native.prevent="editRow(scope.$index, tableData)" type="text" size="small">
             编辑
           </el-button>
-          <el-button @click.native.prevent="deleteRow(scope.$index, currentPageData)" type="text" size="small">
+          <el-button @click.native.prevent="deleteRow(scope.$index, tableData)" type="text" size="small">
             删除
           </el-button>
         </template>
@@ -57,9 +57,10 @@
         <el-button type="danger" class="public-el-btn" @click="deleteChoosed">删除</el-button>
       </div>
       <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange"
-        :page-sizes="[1,5,10, 15, 20, 25]" :page-size="pageSize" :current-page.sync="currentPage" :pager-count="5"
-        :background="false" layout="total, sizes, prev, pager, next, jumper" :total="totalNum">
+        :page-sizes="[1,5,10, 15, 20, 25]" :pager-count="5" :page-size="currentSize.pageSize"
+        :background="false" layout="total, sizes, prev, pager, next, jumper" :total="total">
       </el-pagination>
+      <!-- <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" /> -->
     </div>
   </div>
 </template>
@@ -76,7 +77,7 @@
   import {
     goodsList
   } from '@/api/goods'
-  const a = require("../../../src/json/goods.json")
+  // const a = require("../../../src/json/goods.json")
   export default {
     name: 'GoodsItem',
     filters: {
@@ -89,37 +90,34 @@
         return statusMap[status]
       }
     },
+    props: ['tableData','total'],
+    watch: {
+      tableData(val) {
+        this.tableData = val;
+        console.log(val);
+      }
+    },
     data() {
       return {
         tableHeight: 0,
         pagerCount: 4, //设置页码显示最多的数量
         isAddAllTerminalStatus: false,
         currentPage: 1, //当前页
-        totalPage: 0, //总页数
-        totalNum: 0, //总条数
-        pageSize: 10, //当前显示条数
-        tableData: [], //总数据内容
-        currentPageData: [], //当前页显示内容
+        pageSize: 20, //当前显示条数
         multipleSelection: [],
-        /////
-        list: null,
-        total: 0,
-        listLoading: true,
-        listQuery: {
+        currentSize: {
           page: 1,
-          limit: 20
+          pageSize: 20
         }
       }
     },
     created() {
-      this.getList()
     },
     mounted() {
       // 初始化给table高度赋值
       this.getHeight();
       // 屏幕resize监听方法
       this.screenMonitor();
-      this.loadData()
     },
     methods: {
       screenMonitor() {
@@ -142,59 +140,15 @@
           this.tableHeight = getDynamicHeight(200).height;
         }, 400);
       },
-      getList() {
-        this.listLoading = true
-        fetchList(this.listQuery).then(response => {
-          this.list = response.data.items
-          this.total = response.data.total
-          this.listLoading = false
-        })
-        // goodsList(this.listQuery).then(response => {
-        //   this.list = response.data.items
-        //   this.total = response.data.total
-        //   this.listLoading = false
-        // })
-      },
-      // 计算页码等
-      computeSize() {
-        this.totalNum = this.tableData.length
-        this.totalPage = Math.ceil(this.totalNum / this.pageSize);
-        // 计算得0时设置为1
-        this.totalPage = this.totalPage == 0 ? 1 : this.totalPage;
-        this.setCurrentPageData();
-      },
-      // 设置当前页面数据，对数组操作的截取规则为[0~10],[10~20]...,
-      setCurrentPageData() {
-        let begin = (this.currentPage - 1) * this.pageSize;
-        let end = this.currentPage * this.pageSize;
-        this.currentPageData = this.tableData.slice(
-          begin,
-          end
-        );
-      },
-      async loadData() {
-        console.log(a)
-        this.tableData = a.goodsData
-        this.computeSize()
-        // http://192.168.0.110:8080//static/testData/goods.json
-        // await axios.get("../../src/json/goods.json").then(res => {
-        //   console.log(res);
-        //   if (res.status == 200) {
-        //     this.tableData = res.data.goodsData
-        //     console.log(this.tableData)
-        //     console.log(this.tableData.length)
-        //   } else {
-        //     this.$message.error("数据请求失败，请稍后再试！")
-        //   }
-        //   this.computeSize()
-        // })
-      },
       handleSizeChange(val) {
-        this.pageSize = val
-        this.loadData();
+        console.log("handleSizeChange:",val)
+        this.currentSize.pageSize = val
+        this.$emit("getList",this.currentSize)
       },
       handleCurrentChange(val) {
-        this.setCurrentPageData();
+        this.currentSize.page = val
+        this.$emit("getList",this.currentSize)
+        console.log("handleCurrentChange:",val)
       },
       allSelectTerminal(e) {
         if (e === true) {

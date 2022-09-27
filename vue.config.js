@@ -36,7 +36,16 @@ module.exports = {
       warnings: false,
       errors: true
     },
-    before: require('./mock/mock-server.js')
+    // before: require('./mock/mock-server.js')//该配置是请求mock模拟接口数据
+    proxy:{  // 添加代理配置
+          [process.env.VUE_APP_BASE_API]:{
+            target:"https://mobile-ms.uat.homecreditcfc.cn/mock/633261554fab890028c58115/yijiequan",
+            changeOrigin:true,
+            pathRewrite:{
+              ["^" + process.env.VUE_APP_BASE_API]:""
+            }
+          }
+        }
   },
   configureWebpack: {
     // provide the app's title in webpack's name field, so that

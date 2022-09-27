@@ -6,13 +6,12 @@
       </el-input>
       <el-button type="primary" @click="searchMap()">定位</el-button>
     </div>
-
     <el-amap vid="amap" :plugin="plugin" class="amap-demo" :center="center" :zoom="zoom" :events='events'>
       <!-- 点击显示标记 -->
       <el-amap-marker v-for="(marker, index) in markers" :key="marker.index" :position="marker.position"
         :icon="marker.icon" :title="marker.title" :events="marker.events" :visible="marker.visible"
         :draggable="marker.draggable" :vid="index"></el-amap-marker>
-    </el-amap>
+      </el-amap>
     <div class="dis-tan ju-cen">
     </div>
   </div>
@@ -24,9 +23,7 @@
   };
   export default {
     name: "v-map",
-    props: {
-
-    },
+    props: {},
     data() {
       let self = this;
       return {
