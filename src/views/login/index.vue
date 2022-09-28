@@ -1,5 +1,24 @@
 <template>
   <div class="login-container">
+    <vue-particles
+    class="login-bg"
+            color="#fff"
+            :particleOpacity="0.7"
+            :particlesNumber="60"
+            shapeType="circle"
+            :particleSize="4"
+            linesColor="#cfdbe3"
+            :linesWidth="1"
+            :lineLinked="true"
+            :lineOpacity="0.4"
+            :linesDistance="150"
+            :moveSpeed="3"
+            :hoverEffect="true"
+            hoverMode="grab"
+            :clickEffect="true"
+            clickMode="push"
+          >
+    </vue-particles>
     <div class="left">
       <!-- <img src="../../../public/imgs/login/left-bg.png" alt=""> -->
       <img src="../../../public/imgs/login/left-bg.png" alt="" :class="[{loginImg:isRegister},'loginBgImg']">
@@ -734,6 +753,14 @@
     // background-color: $bg;
     overflow: hidden;
     display: flex;
+    position: relative;
+    .login-bg{
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, .02);
+      position: absolute;
+      z-index: 10;
+    }
 
     .left {
       flex: 1;
@@ -908,6 +935,7 @@
 
     //登录
     .login-content {
+      z-index: 11;
       position: absolute;
       display: flex;
       flex-direction: column;
@@ -1040,6 +1068,7 @@
 
     //注册
     .register-content {
+      z-index: 11;
       transition: 1.5s ease-in-out;
       transform: rotateY(-180deg);
       backface-visibility: hidden;

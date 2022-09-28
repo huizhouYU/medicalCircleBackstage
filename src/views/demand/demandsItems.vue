@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-table ref="multipleTable" :data="currentPageData" tooltip-effect="dark" style="width: 100%" :height="tableHeight"
+    <el-table ref="multipleTable" :data="currentPageData" tooltip-effect="dark" style="width: 100%;min-height:200px" :height="tableHeight"
       @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55">
       </el-table-column>

@@ -567,6 +567,7 @@
   //自定义表格
   .table-item {
     min-width: 600px;
+    height: 100%;
     margin-top: 20px;
     background-color: #fff;
     box-shadow: 0px 2px 10px 1px rgba(0, 0, 0, 0.06);

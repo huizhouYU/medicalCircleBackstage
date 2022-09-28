@@ -82,10 +82,13 @@
       height: 40px;
       line-height: 39px;
       font-size: 14px;
-      // margin: 0px 10px;
+      margin: 10px 0px;
       &:hover {
         background-color: $menuHover !important;
       }
+    }
+    .el-submenu__title:first-child{
+      margin-top: 0px;
     }
    //选中那一个菜单的文字颜色
     .is-active{
@@ -102,6 +105,15 @@
     .is-active>.el-submenu__title {
       color: $subMenuActiveText !important;
     }
+	& .nest-menu{
+		margin: 5px 0px;
+	}
+	& .nest-menu:first-child{
+		margin-top: 0px;
+	}
+	& .nest-menu:last-child{
+		margin-bottom: 0px;
+	}
 
     & .nest-menu .el-submenu>.el-submenu__title,
     & .el-submenu .el-menu-item {

@@ -50,7 +50,9 @@ VueAMap.initAMapApiLoader({
   uiVersion: '1.0'
 })
 Vue.use(VueAMap)
-
+//粒子背景
+import VueParticles from 'vue-particles'
+Vue.use(VueParticles)
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api
