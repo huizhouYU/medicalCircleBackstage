@@ -6,8 +6,8 @@
       <div class="input-box">
         <el-select v-model="inputKey" filterable remote reserve-keyword placeholder="请输入关键词"
           :remote-method="remoteMethod" :loading="loading" class="input-search">
-          <el-option v-for="(item,index) in options" :key="JSON.stringify(item.id)" :label="item.title.join(' > ')"
-            :value="item.id"></el-option>
+          <el-option v-for="(item,index) in options" :key="JSON.stringify(item.cateId)"
+            :label="item.cateName.join(' > ')" :value="item.cateId"></el-option>
         </el-select>
         <button class="btn-search" @click="position()">
           <img src="../../../public/imgs/icon_search.png" alt="">
@@ -20,9 +20,9 @@
         <!-- 一级菜单 -->
         <div class="item-a">
           <ul class="item-a-ul" id="item-a">
-            <li v-for="(item,index) in linkageData" :key="item.value"
-              :class="{'selected':selectIndex.item1 == item.value}" @click="chooseItem1(index,item.value)">
-              {{item.label}} <i class="el-icon-arrow-right"></i>
+            <li v-for="(item,index) in linkageData" :key="item.cateId"
+              :class="{'selected':selectIndex.item1 == item.cateId}" @click="chooseItem1(index,item.cateId)">
+              {{item.cateName}} <i class="el-icon-arrow-right"></i>
             </li>
           </ul>
         </div>
@@ -30,18 +30,18 @@
         <!-- 二级菜单 -->
         <div class="item-b">
           <ul class="item-b-ul" v-show="isShowFlag2">
-            <li v-for="(item,index) in item2ChildData" :key="item.value"
-              :class="{'selected':selectIndex.item2 == item.value}" @click="chooseItem2(index,item.value)">
-              {{item.label}}<i class="el-icon-arrow-right"></i>
+            <li v-for="(item,index) in item2ChildData" :key="item.cateId"
+              :class="{'selected':selectIndex.item2 == item.cateId}" @click="chooseItem2(index,item.cateId)">
+              {{item.cateName}}<i class="el-icon-arrow-right"></i>
             </li>
           </ul>
         </div>
         <!-- 三级菜单 -->
         <div class="item-c">
           <ul class="item-c-ul" v-show="isShowFlag3">
-            <li v-for="(item,index) in item3ChildData" :key="item.value"
-              :class="{'selected':selectIndex.item3 == item.value}" @click="chooseItem3(index,item.value)">
-              {{item.label}}<i class="el-icon-arrow-right"></i>
+            <li v-for="(item,index) in item3ChildData" :key="item.cateId"
+              :class="{'selected':selectIndex.item3 == item.cateId}" @click="chooseItem3(index,item.cateId)">
+              {{item.cateName}}<i class="el-icon-arrow-right"></i>
             </li>
           </ul>
         </div>
@@ -68,8 +68,11 @@
 </template>
 
 <script>
+  import {
+    goodsCategoryList
+  } from '@/api/goods'
   const city = require("../../../src/json/citys.json")
-  const b = require("../../../src/json/classifyData.json")
+  // const b = require("../../../src/json/classifyData.json")
   export default {
     name: 'AddGoods',
     // components: {
@@ -117,28 +120,32 @@
       }
     },
     created() {
-      // this.getList()
+      this.getList()
     },
     mounted() {
-      this.loadData()
+      // this.loadData()
 
     },
     methods: {
-      // getList() {
-      //   this.listLoading = true
-      //   fetchList(this.listQuery).then(response => {
-      //     this.list = response.data.items
-      //     this.total = response.data.total
-      //     this.listLoading = false
-      //   })
-      // },
+      getList() {
+        // this.listLoading = true
+        goodsCategoryList().then(response => {
+          this.linkageData = response.data.data
+          console.log(this.linkageData)
+          this.loadData()
+          // this.list = response.data.data
+
+          // this.total = response.data.total
+          // this.listLoading = false
+        })
+      },
       remoteMethod(query) {
         if (query !== '') {
           this.loading = true;
           setTimeout(() => {
             this.loading = false;
             this.options = this.list.filter(item => {
-              return JSON.stringify(item.title).toLowerCase().indexOf(query.toLowerCase()) > -1;
+              return JSON.stringify(item.cateName).toLowerCase().indexOf(query.toLowerCase()) > -1;
             });
           }, 200);
         } else {
@@ -147,8 +154,8 @@
       },
 
       async loadData() {
-        console.log(b)
-        this.linkageData = b.linkageData
+        // console.log(b)
+        // this.linkageData = b.linkageData
         if (this.$route.query.chosedData !== undefined) {
           this.chosedData = JSON.parse(this.$route.query.chosedData)
           this.setData()
@@ -156,40 +163,39 @@
         }
         for (var i = 0; i < this.linkageData.length; i++) {
           var item = {
-              'title': [],
-              'id': []
+              'cateName': [],
+              'cateId': []
             },
             child2 = this.linkageData[i].children
-          item.id.push(this.linkageData[i].value)
-          item.title.push(this.linkageData[i].label)
+          item.cateId.push(this.linkageData[i].cateId)
+          item.cateName.push(this.linkageData[i].cateName)
           //二级
           if (child2 != null && child2.length > 0) {
             for (var j = 0; j < child2.length; j++) {
               var child3 = child2[j].children
-              item.id.push(child2[j].value)
-              item.title.push(child2[j].label)
+              item.cateId.push(child2[j].cateId)
+              item.cateName.push(child2[j].cateName)
               //三级
               if (child3 != null && child3.length > 0) {
                 for (var k = 0; k < child3.length; k++) {
-                  item.id.push(child3[k].value)
-                  item.title.push(child3[k].label)
+                  item.cateId.push(child3[k].cateId)
+                  item.cateName.push(child3[k].cateName)
                   this.list.push(this.cloneObj(item))
-                  item.id.pop()
-                  item.title.pop()
+                  item.cateId.pop()
+                  item.cateName.pop()
                 }
               } else {
                 this.list.push(this.cloneObj(item))
               }
-              item.id.pop()
-              item.title.pop()
+              item.cateId.pop()
+              item.cateName.pop()
             }
           } else {
             this.list.push(this.cloneObj(item))
           }
-          item.id.pop()
-          item.title.pop()
+          item.cateId.pop()
+          item.cateName.pop()
         }
-
         // await axios.get("../../../static/testData/classifyData.json").then(res => {
         //   console.log(res);
         //   if (res.status == 200) {
@@ -230,6 +236,14 @@
             this.isNextFlag = true
             this.chooseClassify += " > " + this.chosedData[2].label
           }
+          // console.log("this.item3ChildData:", this.item3ChildData)
+          // //没有三级类目，允许跳转
+          // if (this.item3ChildData == null || this.item3ChildData.length < 1) {
+          //   this.isNextFlag = true
+          // }else{
+          //   //有三级类目，不允许跳转
+          //    this.isNextFlag = false
+          // }
         } else {
           this.isNextFlag = false
         }
@@ -237,9 +251,9 @@
       position() {
         for (var i = 0; i < this.linkageData.length; i++) {
           //循环一级菜单
-          if (this.inputKey[0] == this.linkageData[i].value) {
+          if (this.inputKey[0] == this.linkageData[i].cateId) {
             this.chosedData[0].value = this.inputKey[0]
-            this.chosedData[0].label = this.linkageData[i].label
+            this.chosedData[0].label = this.linkageData[i].cateName
             this.selectIndex.item1 = this.inputKey[0]
             this.isShowFlag2 = "true"
             this.item2ChildData = this.linkageData[i].children
@@ -248,9 +262,9 @@
             }
             for (var j = 0; j < this.item2ChildData.length; j++) {
               //循环二级菜单
-              if (this.inputKey[1] == this.item2ChildData[j].value) {
+              if (this.inputKey[1] == this.item2ChildData[j].cateId) {
                 this.chosedData[1].value = this.inputKey[1]
-                this.chosedData[1].label = this.item2ChildData[j].label
+                this.chosedData[1].label = this.item2ChildData[j].cateName
                 this.selectIndex.item2 = this.inputKey[1]
                 this.item3ChildData = this.item2ChildData[j].children
                 if (j * 32 > 370) {
@@ -262,9 +276,9 @@
                   if (this.inputKey.length == 3) {
                     for (var x = 0; x < this.item3ChildData.length; x++) {
                       //循环三级菜单
-                      if (this.inputKey[2] == this.item3ChildData[x].value) {
+                      if (this.inputKey[2] == this.item3ChildData[x].cateId) {
                         this.chosedData[2].value = this.inputKey[2]
-                        this.chosedData[2].label = this.item3ChildData[x].label
+                        this.chosedData[2].label = this.item3ChildData[x].cateName
                         this.selectIndex.item3 = this.inputKey[2]
                         if (x * 32 > 370) {
                           document.getElementById('item-c').scrollTop = x * 32
@@ -332,7 +346,7 @@
         this.selectIndex.item3 = "-1"
         // 将一级分类选中的数据赋值
         this.chosedData[0].value = id
-        this.chosedData[0].label = this.linkageData[val].label
+        this.chosedData[0].label = this.linkageData[val].cateName
         //清空二级和三级选中的数据
         this.chosedData[1].value = ''
         this.chosedData[1].label = ''
@@ -351,23 +365,27 @@
       },
       //选择二级分类
       chooseItem2(val, id) {
-        console.log(this.selectIndex)
         //将选中的一栏进行标记
         this.selectIndex.item2 = id
         // 将三级分类选中状态取消
         this.selectIndex.item3 = "-1"
         // 将二级分类选中的数据赋值
         this.chosedData[1].value = id
-        this.chosedData[1].label = this.item2ChildData[val].label
+        this.chosedData[1].label = this.item2ChildData[val].cateName
         //清空三级选中的数据
         this.chosedData[2].value = ''
         this.chosedData[2].label = ''
+        this.item3ChildData = this.item2ChildData[val].children
         //调用setData方法，将选中的类目拼接成字符串
         this.setData()
-        this.item3ChildData = this.item2ChildData[val].children
         //只有三级菜单有数据才会显示三级菜单
         if (this.item3ChildData != null && this.item3ChildData.length > 0) {
           this.isShowFlag3 = true
+          //有三级类目，不允许跳转
+          this.isNextFlag = false
+        }else{
+          //没有三级类目，允许跳转
+           this.isNextFlag = true
         }
       },
       //选择三级分类
@@ -376,7 +394,7 @@
         this.selectIndex.item3 = id;
         // 将三级分类选中的数据赋值
         this.chosedData[2].value = id
-        this.chosedData[2].label = this.item3ChildData[val].label
+        this.chosedData[2].label = this.item3ChildData[val].cateName
         //调用setData方法，将选中的类目拼接成字符串
         this.setData()
       },
@@ -456,6 +474,7 @@
         border: none;
         margin-left: -2px;
         z-index: 1;
+        outline: none;
       }
     }
 

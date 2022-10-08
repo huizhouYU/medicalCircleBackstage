@@ -39,7 +39,8 @@ module.exports = {
     // before: require('./mock/mock-server.js')//该配置是请求mock模拟接口数据
     proxy:{  // 添加代理配置
           [process.env.VUE_APP_BASE_API]:{
-            target:"https://mobile-ms.uat.homecreditcfc.cn/mock/633261554fab890028c58115/yijiequan",
+            // target:"https://mobile-ms.uat.homecreditcfc.cn/mock/633261554fab890028c58115/yijiequan",
+            target:"http://seller-api.yijiequan.cn",
             changeOrigin:true,
             pathRewrite:{
               ["^" + process.env.VUE_APP_BASE_API]:""

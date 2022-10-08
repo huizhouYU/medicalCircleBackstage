@@ -218,7 +218,8 @@
     },
     data() {
       const validateUsername = (rule, value, callback) => {
-        if (!validUsername(value)) {
+        // if (!validUsername(value)) {
+        if(value.trim().length<0){
           callback(new Error('请输入用户名'))
         } else {
           callback()
@@ -271,8 +272,8 @@
         isHide: false,
         //登录
         loginForm: {
-          username: 'admin',
-          password: '111111',
+          username: 'cuiqianming',
+          password: '123456',
           verCode: ''
         },
         loginCodeForm: {
@@ -547,29 +548,29 @@
         // })
 
       },
-      async newlogin() {
-        if (this.loginForm.username === '' && this.loginForm.password === '') {
-          this.$message.error('用户名和密码不能为空！')
-          return ''
-        }
-        const res = await this.$http.post('login', this.loginForm)
-        // 对象结构赋值
-        const {
-          data,
-          meta: {
-            msg,
-            status
-          }
-        } = res.data
-        if (msg === 200) {
-          // 保存token值
-          localStorage.setItem('token', data.token)
-          // 登录成功 跳转首页
-          this.$router.push({
-            name: 'home'
-          })
-        }
-      },
+      // async newlogin() {
+      //   if (this.loginForm.username === '' && this.loginForm.password === '') {
+      //     this.$message.error('用户名和密码不能为空！')
+      //     return ''
+      //   }
+      //   const res = await this.$http.post('login', this.loginForm)
+      //   // 对象结构赋值
+      //   const {
+      //     data,
+      //     meta: {
+      //       msg,
+      //       status
+      //     }
+      //   } = res.data
+      //   if (msg === 200) {
+      //     // 保存token值
+      //     localStorage.setItem('token', data.token)
+      //     // 登录成功 跳转首页
+      //     this.$router.push({
+      //       name: 'home'
+      //     })
+      //   }
+      // },
       getCookie() {
         if (document.cookie.length > 0) {
           var arr = document.cookie.split(";");
