@@ -16,14 +16,8 @@
     </div>
 
     <!-- 第二步:定义form表单 -->
-    <el-form
-      ref="ruleForm"
-      :model="ruleForm"
-      :rules="rules"
-      label-position="right"
-      label-width="110px"
-      class="el-form-content "
-    >
+    <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-position="right" label-width="110px"
+      class="el-form-content ">
       <div v-show="isLook" class="sign">
         <i v-show="examineResult == '0'" class="iconfont" style="color: #FF7575">&#xe6cd;</i>
         <i v-show="examineResult == '-1'" class="iconfont" style="color: #40A9FF">&#xe6ce;</i>
@@ -34,29 +28,31 @@
         <div class="item-title">认证信息</div>
         <!-- 主体类型 -->
         <div class="item-both">
-          <el-form-item label="主体类型：" prop="shopType">
-            <el-select v-model="ruleForm.shopType" placeholder="请选择主体类型" @change="adjustLayout">
-              <el-option v-for="item in shopTypeOption" :key="item.value" :label="item.label" :value="item.value" :disabled="isLook" />
+          <el-form-item label="主体类型：" prop="stype">
+            <el-select v-model="ruleForm.stype" placeholder="请选择主体类型" @change="adjustLayout">
+              <el-option v-for="item in shopTypeOption" :key="item.value" :label="item.label" :value="item.value"
+                :disabled="isLook" />
             </el-select>
           </el-form-item>
           <div class="tip">注：主体类型设置后无法更改</div>
         </div>
         <div class="inpout-content">
-          <el-form-item v-show="ruleForm.shopType == 1" label="真实姓名：" prop="name" class="item-left">
+          <el-form-item v-show="ruleForm.stype == 'personal'" label="真实姓名：" prop="name" class="item-left">
             <el-input v-model="ruleForm.name" :disabled="isLook" />
           </el-form-item>
-          <el-form-item v-show="ruleForm.shopType == 2" label="企业名称：" prop="name" class="item-left">
+          <el-form-item v-show="ruleForm.stype == 'company'" label="企业名称：" prop="name" class="item-left">
             <el-input v-model="ruleForm.name" placeholder="请与营业执照的公司名称保持一致" :disabled="isLook" />
           </el-form-item>
-          <el-form-item v-show="ruleForm.shopType == 1" label="身份证号码：" prop="idNo" class="item-right">
+          <el-form-item v-show="ruleForm.stype == 'personal'" label="身份证号码：" prop="idNo" class="item-right">
             <el-input v-model="ruleForm.engineer.idNo" :disabled="isLook" />
           </el-form-item>
           <el-form-item label="店铺名称：" prop="shopName" class="item-left">
             <el-input v-model="ruleForm.shopName" :disabled="isLook" />
           </el-form-item>
-          <el-form-item label="所属分类：" prop="shopSort" class="item-right">
-            <el-select v-model="ruleForm.shopSort" placeholder="请选择所属分类">
-              <el-option v-for="item in shopSortOption" :key="item.value" :label="item.label" :value="item.value" :disabled="isLook" />
+          <el-form-item label="店铺分类：" prop="shopSort" class="item-right">
+            <el-select v-model="ruleForm.shopSort" placeholder="请选择店铺分类">
+              <el-option v-for="item in shopSortOption" :key="item.cateId" :label="item.cateName" :value="item.cateId"
+                :disabled="isLook" />
             </el-select>
           </el-form-item>
           <el-form-item label="所属地区：" prop="area" class="item-left">
@@ -66,7 +62,7 @@
             <el-input v-model="ruleForm.postalCode" :disabled="isLook" />
           </el-form-item>
           <el-form-item label="详细地址：" prop="address" class="address-input">
-            <el-input v-model="ruleForm.address" :disabled="isLook" />
+            <el-input v-model="ruleForm.address" :disabled="isLook" placeholder="请填写详细的街道地址"/>
           </el-form-item>
         </div>
         <!-- 下一步 -->
@@ -82,44 +78,25 @@
 
           <div class="img-list">
             <!-- 身份证正面 -->
-            <upload-one-img :mr-src="cardFront.cardImg" :title="cardFront.cardTitle" :remark="cardFront.cardRemark" />
+
+            <upload-one-img :mr-src="cardFront.cardImg" :title="cardFront.cardTitle" :remark="cardFront.cardRemark" @getImgFile = "copyImgFile"/>
             <!-- 身份证反面 -->
             <upload-one-img :mr-src="cardBack.cardImg" :title="cardBack.cardTitle" :remark="cardBack.cardRemark" />
             <!-- 手持身份证 -->
-            <upload-one-img
-              v-show="ruleForm.shopType == 1"
-              :mr-src="cardHold.cardImg"
-              :title="cardHold.cardTitle"
-              :remark="cardHold.cardRemark"
-            />
+            <upload-one-img v-show="ruleForm.stype == 'personal'" :mr-src="cardHold.cardImg" :title="cardHold.cardTitle"
+              :remark="cardHold.cardRemark" />
             <!-- 其他证件 -->
-            <upload-one-img
-              v-show="ruleForm.shopType == 1"
-              :mr-src="cardOther.cardImg"
-              :title="cardOther.cardTitle"
-              :remark="cardOther.cardRemark"
-            />
+            <upload-one-img v-show="ruleForm.stype == 'personal'" :mr-src="cardOther.cardImg"
+              :title="cardOther.cardTitle" :remark="cardOther.cardRemark" />
             <!-- 营业执照 -->
-            <upload-one-img
-              v-show="ruleForm.shopType == 2"
-              :mr-src="businessLicense.cardImg"
-              :title="businessLicense.cardTitle"
-              :remark="businessLicense.cardRemark"
-            />
+            <upload-one-img v-show="ruleForm.stype == 'company'" :mr-src="businessLicense.cardImg"
+              :title="businessLicense.cardTitle" :remark="businessLicense.cardRemark" />
             <!-- 医疗器械生产许可证 -->
-            <upload-one-img
-              v-show="ruleForm.shopType == 2"
-              :mr-src="licenceOne.cardImg"
-              :title="licenceOne.cardTitle"
-              :remark="licenceOne.cardRemark"
-            />
+            <upload-one-img v-show="ruleForm.stype == 'company'" :mr-src="licenceOne.cardImg"
+              :title="licenceOne.cardTitle" :remark="licenceOne.cardRemark" />
             <!-- 医疗器械生产许可证 -->
-            <upload-one-img
-              v-show="ruleForm.shopType == 2"
-              :mr-src="licenceTwo.cardImg"
-              :title="licenceTwo.cardTitle"
-              :remark="licenceTwo.cardRemark"
-            />
+            <upload-one-img v-show="ruleForm.stype == 'company'" :mr-src="licenceTwo.cardImg"
+              :title="licenceTwo.cardTitle" :remark="licenceTwo.cardRemark" />
 
           </div>
         </el-form-item>
@@ -134,8 +111,8 @@
       <div v-show="active == 2 || isLook" :class="[{publicStepHeight:!isLook},'lx-info','public-step']">
         <div class="item-title">联系信息</div>
         <!-- 联系电话 -->
-        <el-form-item label="联系电话：" prop="phone" class="phone-input">
-          <el-input v-model="ruleForm.phone" placeholder="请与身份证姓名保持一致" :disabled="isLook" />
+        <el-form-item label="联系电话：" prop="tel" class="phone-input">
+          <el-input v-model="ruleForm.tel" placeholder="请与身份证姓名保持一致" :disabled="isLook" />
         </el-form-item>
         <!-- 验证码 -->
         <el-form-item v-show="!isLook" label="验证码：" prop="vCode" class="vcode-input">
@@ -156,227 +133,243 @@
 </template>
 
 <script>
-import axios from 'axios'
-import UploadOneImg from '../shop/uploadOneImg.vue'
-export default {
-  components: {
-    UploadOneImg
-  },
-  data() {
-    var checkphone = (rule, value, callback) => {
-      // let phoneReg = /(^1[3|4|5|6|7|8|9]\d{9}$)|(^09\d{8}$)/;
-      if (value === '') {
-        callback(new Error('请输入手机号'))
-      } else if (!this.isCellPhone(value)) {
-        // 引入methods中封装的检查手机格式的方法
-        callback(new Error('请输入正确的手机号!'))
-      } else {
-        callback()
-      }
-    }
-    return {
-      examineResult: '-1', // 审核状态
-      cities: [],
-      isLook: false, // 是否查看
-      show: true,
-      count: '',
-      cardFront: {
-        cardImg: require('../../assets/images/pic_card_z.png'),
-        cardTitle: '身份证正面',
-        cardRemark: '请上传本人（法人）身份证原件图'
-      },
-      cardBack: {
-        cardImg: require('../../assets/images/pic_card_f.png'),
-        cardTitle: '身份证反面',
-        cardRemark: '请上传本人（法人）身份证原件图'
-      },
-      cardHold: {
-        cardImg: require('../../assets/images/pic_card_s.png'),
-        cardTitle: '手持身份证',
-        cardRemark: '请上传手持身份证'
-      },
-      cardOther: {
-        cardImg: require('../../assets/images/pic_card_other.png'),
-        cardTitle: '其他证件',
-        cardRemark: '请上传证件原件图'
-      },
-      businessLicense: {
-        cardImg: require('../../assets/images/pic_card_other.png'),
-        cardTitle: '营业执照',
-        cardRemark: '请上传企业营业执照原件图'
-      },
-      licenceOne: {
-        cardImg: require('../../assets/images/pic_card_other.png'),
-        cardTitle: '医疗器械生产许可证',
-        cardRemark: '请上传企业医疗器械生产许可证原件图，如果是医疗器械生产企业必传'
-      },
-      licenceTwo: {
-        cardImg: require('../../assets/images/pic_card_other.png'),
-        cardTitle: '医疗器械生产许可证',
-        cardRemark: '请上传企业医疗器械生产许可证原件图，如果是医疗器械生产企业必传'
-      },
+  import {
+    storeCategoryList
+  } from '@/api/shop'
+  import {
+    uploadImage
+  } from '@/api/public'
 
-      isShowCardFrontDiv: false, // 是否展示【身份证正面】隐藏div
-      active: 0,
-      // 主体类型选项
-      shopTypeOption: [{
-        value: '1',
-        label: '个人工程师'
-      },
-      {
-        value: '2',
-        label: '企业'
-      }
-      ],
-      // 所属分类选项
-      shopSortOption: [{
-        value: '1',
-        label: '分类一'
-      },
-      {
-        value: '2',
-        label: '分类二'
-      }
-      ],
-      ruleForm: {
-        shopType: '1', // 主体类型
-        name: '', // 个人工程师：姓名；企业：企业姓名
-        shopName: '', // 店铺名称
-        shopSort: '', // 所属分类
-        areaValue: [], // 所在地区
-        postalCode: '', // 邮政编码
-        address: '', // 详细地址
-        cardFront: '1', // 身份证正面
-        cardBack: '', // 身份证反面
-        engineer: {
-          idNo: '', // 身份证号码
-          cardHold: '', // 手持身份证
-          cardOther: '' // 其他证件
-        },
-        business: {
-          businessLicense: '', // 营业执照
-          licenceOne: '', // 许可证
-          licenceTwo: '' // 许可证
-        },
-        phone: '', // 联系电话
-        vCode: '' // 验证码
-      },
-      rules: {
-        shopType: [{
-          required: true,
-          message: '请选择主体类型',
-          trigger: 'change'
-        }],
-        name: [{
-          required: true,
-          message: '请输入真实姓名',
-          trigger: 'blur'
-        }],
-        idNo: [{
-          required: true,
-          message: '请输入身份证号码',
-          trigger: 'blur'
-        }],
-        shopName: [{
-          required: true,
-          message: '请输入店铺名称',
-          trigger: 'blur'
-        },
-        {
-          min: 3,
-          max: 5,
-          message: '长度在 3 到 5 个字符',
-          trigger: 'blur'
-        }
-        ],
-        phone: [{
-          required: true,
-          validator: checkphone,
-          trigger: 'blur'
-        }],
-        vCode: [{
-          required: true,
-          message: '请输入验证码',
-          trigger: 'blur'
-        }]
-
-      }
-    }
-  },
-  mounted() {
-    axios.get('../../../static/testData/citys.json').then(res => {
-      console.log(res)
-      if (res.status == 200) {
-        this.cities = res.data
-      } else {
-        this.$message.error('数据请求失败，请稍后再试！')
-      }
-    })
-  },
-  methods: {
-    // 根据选择的主体类型不同，显示不同的信息
-    adjustLayout() {
-      // if(this.ruleForm.shopType == 1){
-      // }
+  const city = require("../../../src/json/citys.json")
+  import axios from 'axios'
+  import UploadOneImg from '../shop/uploadOneImg.vue'
+  export default {
+    components: {
+      UploadOneImg
     },
-    isCellPhone(val) {
-      if (!/^1(3|4|5|6|7|8)\d{9}$/.test(val)) {
-        return false
-      } else {
-        return true
-      }
-    },
-    showCardFrontDiv() {
-      this.isShowCardFrontDiv = true
-    },
-    hideCardFrontDiv() {
-      this.isShowCardFrontDiv = false
-    },
-    // 步骤条下一步的方法
-    next() {
-      if (this.active++ > 2) this.active = 0
-      // if (this.active++ > 3) this.active = 1
-    },
-    // 步骤条上一步的方法
-    pre() {
-      if (this.active-- < 2) this.active = 0
-    },
-    // 获取验证码
-    getVcode() {
-      // axios请求
-      console.log(this.ruleForm.phone)
-      // 验证码倒计时
-      if (!this.timer) {
-        this.count = 60
-        this.show = false
-        this.timer = setInterval(() => {
-          if (this.count > 0 && this.count <= 60) {
-            this.count--
-          } else {
-            this.show = true
-            clearInterval(this.timer)
-            this.timer = null
-          }
-        }, 1000)
-      }
-    },
-    // 提交
-    submitForm(formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          alert('submit!')
+    data() {
+      var checkphone = (rule, value, callback) => {
+        // let phoneReg = /(^1[3|4|5|6|7|8|9]\d{9}$)|(^09\d{8}$)/;
+        if (value === '') {
+          callback(new Error('请输入手机号'))
+        } else if (!this.isCellPhone(value)) {
+          // 引入methods中封装的检查手机格式的方法
+          callback(new Error('请输入正确的手机号!'))
         } else {
-          console.log('error submit!!')
-          return false
+          callback()
         }
-      })
-    },
-    resetForm(formName) {
-      this.$refs[formName].resetFields()
-    }
+      }
+      return {
+        examineResult: '-1', // 审核状态
+        cities: [],
+        isLook: false, // 是否查看
+        show: true,
+        count: '',
+        cardFront: {
+          cardImg: require('../../assets/images/pic_card_z.png'),
+          cardTitle: '身份证正面',
+          cardRemark: '请上传本人（法人）身份证原件图'
+        },
+        cardBack: {
+          cardImg: require('../../assets/images/pic_card_f.png'),
+          cardTitle: '身份证反面',
+          cardRemark: '请上传本人（法人）身份证原件图'
+        },
+        cardHold: {
+          cardImg: require('../../assets/images/pic_card_s.png'),
+          cardTitle: '手持身份证',
+          cardRemark: '请上传手持身份证'
+        },
+        cardOther: {
+          cardImg: require('../../assets/images/pic_card_other.png'),
+          cardTitle: '其他证件',
+          cardRemark: '请上传证件原件图'
+        },
+        businessLicense: {
+          cardImg: require('../../assets/images/pic_card_other.png'),
+          cardTitle: '营业执照',
+          cardRemark: '请上传企业营业执照原件图'
+        },
+        licenceOne: {
+          cardImg: require('../../assets/images/pic_card_other.png'),
+          cardTitle: '医疗器械生产许可证',
+          cardRemark: '请上传企业医疗器械生产许可证原件图，如果是医疗器械生产企业必传'
+        },
+        licenceTwo: {
+          cardImg: require('../../assets/images/pic_card_other.png'),
+          cardTitle: '医疗器械生产许可证',
+          cardRemark: '请上传企业医疗器械生产许可证原件图，如果是医疗器械生产企业必传'
+        },
 
+        // isShowCardFrontDiv: false, // 是否展示【身份证正面】隐藏div
+        active: 0,
+        // 主体类型选项
+        shopTypeOption: [{
+          value: 'personal',
+          label: '个人工程师'
+        }, {
+          value: 'company',
+          label: '企业'
+        }, ],
+        // 所属分类选项
+        shopSortOption: [],
+        ruleForm: {
+          stype: 'company', // 主体类型:店铺类型 personal-个人 company-企业,示例值(company)
+          storeName: '', // 个人工程师：姓名；企业：企业姓名
+          shopName: '', // 店铺名称
+          shopSort: '', // 所属分类
+          areaValue: [], // 所在地区
+          postalCode: '', // 邮政编码
+          address: '', // 详细地址
+          identityFront: '', // 身份证正面
+          cardBack: '', // 身份证反面
+          engineer: {
+            idNo: '', // 身份证号码
+            cardHold: '', // 手持身份证
+            cardOther: '' // 其他证件
+          },
+          business: {
+            businessLicense: '', // 营业执照
+            licenceOne: '', // 许可证
+            licenceTwo: '' // 许可证
+          },
+          tel: '', // 联系电话
+          vCode: '' // 验证码
+        },
+        rules: {
+          stype: [{
+            required: true,
+            message: '请选择主体类型',
+            trigger: 'change'
+          }],
+          storeName: [{
+            required: true,
+            message: '请输入真实姓名',
+            trigger: 'blur'
+          }],
+          idNo: [{
+            required: true,
+            message: '请输入身份证号码',
+            trigger: 'blur'
+          }],
+          shopName: [{
+              required: true,
+              message: '请输入店铺名称',
+              trigger: 'blur'
+            },
+            {
+              min: 3,
+              max: 5,
+              message: '长度在 3 到 5 个字符',
+              trigger: 'blur'
+            }
+          ],
+          tel: [{
+            required: true,
+            validator: checkphone,
+            trigger: 'blur'
+          }],
+          vCode: [{
+            required: true,
+            message: '请输入验证码',
+            trigger: 'blur'
+          }]
+
+        }
+      }
+    },
+    mounted() {
+      // axios.get('../../../static/testData/citys.json').then(res => {
+      //   console.log(res)
+      //   if (res.status == 200) {
+      //     this.cities = res.data
+      //   } else {
+      //     this.$message.error('数据请求失败，请稍后再试！')
+      //   }
+      // })
+      this.getData()
+    },
+    methods: {
+      getData() {
+        //获取店铺分类
+        storeCategoryList().then(response => {
+          this.shopSortOption = response.data.data
+        })
+        //获取地区
+        this.cities = city
+      },
+      copyImgFile(file){
+        console.log(file)
+        //假设现在这个地方上传图片
+        uploadImage(JSON.stringify(file)).then(Response =>{
+          this.ruleForm.identityFront = response.data.data
+          console.log(response.data.data)
+          console.log(this.ruleForm.identityFront)
+        })
+      },
+      // 根据选择的主体类型不同，显示不同的信息,清空数据
+      adjustLayout() {
+        // if(this.ruleForm.shopType == 1){
+        // }
+      },
+      isCellPhone(val) {
+        if (!/^1(3|4|5|6|7|8)\d{9}$/.test(val)) {
+          return false
+        } else {
+          return true
+        }
+      },
+      // showCardFrontDiv() {
+      //   this.isShowCardFrontDiv = true
+      // },
+      // hideCardFrontDiv() {
+      //   this.isShowCardFrontDiv = false
+      // },
+      // 步骤条下一步的方法
+      next() {
+        if (this.active++ > 2) this.active = 0
+        // if (this.active++ > 3) this.active = 1
+      },
+      // 步骤条上一步的方法
+      pre() {
+        if (this.active-- < 2) this.active = 0
+      },
+      // 获取验证码
+      getVcode() {
+        // axios请求
+        console.log(this.ruleForm.phone)
+        // 验证码倒计时
+        if (!this.timer) {
+          this.count = 60
+          this.show = false
+          this.timer = setInterval(() => {
+            if (this.count > 0 && this.count <= 60) {
+              this.count--
+            } else {
+              this.show = true
+              clearInterval(this.timer)
+              this.timer = null
+            }
+          }, 1000)
+        }
+      },
+      // 提交
+      submitForm(formName) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            alert('submit!')
+          } else {
+            console.log('error submit!!')
+            return false
+          }
+        })
+      },
+      resetForm(formName) {
+        this.$refs[formName].resetFields()
+      }
+
+    }
   }
-}
 </script>
 
 <style scoped lang="less">
@@ -416,30 +409,38 @@ export default {
     .el-steps {
       width: 100%;
     }
-    /deep/ .el-step__title{
+
+    /deep/ .el-step__title {
       font-weight: bold;
     }
-    /deep/ .el-step__line{
-      border-top:1px dashed;
+
+    /deep/ .el-step__line {
+      border-top: 1px dashed;
     }
-    /deep/ .el-step__head.is-process{
+
+    /deep/ .el-step__head.is-process {
       color: #ccc;
     }
-    /deep/ .el-step__icon.is-text{
+
+    /deep/ .el-step__icon.is-text {
       border: 1px solid;
     }
-    /deep/ .el-step__title.is-process{
+
+    /deep/ .el-step__title.is-process {
       // font-weight: 700;
       color: #999999;
     }
+
     /deep/ .el-step__head.is-success,
-    /deep/ .el-step__title.is-success{
+    /deep/ .el-step__title.is-success {
       color: #1890FF;
       border-color: #1890FF;
     }
-    /deep/ .el-step__head.is-success .is-text{
+
+    /deep/ .el-step__head.is-success .is-text {
       background-color: #1890FF;
-      .el-step__icon-inner{
+
+      .el-step__icon-inner {
         color: #fff;
       }
 
@@ -454,8 +455,9 @@ export default {
     height: calc(100% - 80px);
     font-size: 12px;
     font-family: Microsoft YaHei-Bold, Microsoft YaHei;
+
     // margin-right: 10px;
-    /deep/.el-form-item__label{
+    /deep/.el-form-item__label {
       padding-right: 25px;
     }
 

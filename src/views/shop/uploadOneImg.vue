@@ -12,8 +12,8 @@
       <div class="upload-img">
         <img :src="mrSrc" alt="">
         <span>上传</span>
-        <input type="file" id="inputFile" accept="image/png, image/jpeg, image/gif, image/jpg" @change="previewFile()" style="display: none; " class="hiddenInput"
-          multiple="multiple">
+        <input type="file" id="inputFile" accept="image/png, image/jpeg, image/gif, image/jpg" @change="previewFile"
+          style="display: none; " class="hiddenInput" multiple="multiple">
       </div>
     </label>
 
@@ -42,31 +42,36 @@
         this.isShowCardImgDiv = false;
       },
       uploadImg() {
-        alert("上传图片")
+        // alert("上传图片")
       },
-      deleteImg(){
+      deleteImg() {
         this.cardImgUrl = ''
       },
-      previewFile() {
+      previewFile(e) {
         console.log("上传图片")
-        console.log(document.getElementById("inputFile"))
-        console.log(document.getElementById("inputFile").value)
-        console.log(document.querySelector('input[type=file]').value)
-        this.cardImgUrl =document.querySelector('input[type=file]').value
-        // const preview = document.querySelector('img');
-        // const file = document.querySelector('input[type=file]').files[0];
-        // console.log(file)
-        // const reader = new FileReader();
-        // console.log(reader)
-        // reader.addEventListener("load", function() {
-        //   // convert image file to base64 string
-        //   this.cardImgUrl = reader.result;
-        //   console.log("this.cardImgUrl",this.cardImgUrl)
-        // }, false);
-        // if (file) {
-        //   reader.readAsDataURL(file);
-        // }
-        // console.log(reader)
+        console.log(e.target.files)
+        // 1.获取用户选择的文件对象
+        const files = e.target.files
+        if (files.length === 0) {
+          // 2.1用户没有选择图片(使用默认图片)
+          this.cardImgUrl = ""
+        } else {
+          // 2.2用户选择了图片(使用选择的图片)
+          // ◆将 File 对象 转成 BASE64 字符串
+          // 1.创建 FileReader 对象
+          const fr = new FileReader()
+          // 2.调用 readAsDataURL 函数，读取文件内容
+          fr.readAsDataURL(files[0])
+          // 3.监听 fr 的 onload 事件
+          fr.onload = (e) => {
+            // 通过 e.target.result 获取到读取的结果，值是 BASE64 格式的字符串
+            // 法1
+            // this.$refs.imgRef.src = e.target.result
+            // 法2
+            this.cardImgUrl = e.target.result
+            this.$emit("getImgFile",files[0])
+          }
+        }
       }
     }
   }
