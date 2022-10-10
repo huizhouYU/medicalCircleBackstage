@@ -3,11 +3,6 @@
 
     <!-- 第一步:定义出4个步骤 -->
     <div v-show="!isLook" class="steps-content">
-      <!-- <el-steps :active="active"  finish-status="success">
-        <el-step title="认证信息" />
-        <el-step title="证明材料" />
-        <el-step title="联系信息" />
-      </el-steps> -->
       <el-steps :active="active" finish-status="success">
         <el-step title="认证信息" />
         <el-step title="证明材料" />
@@ -19,8 +14,8 @@
     <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-position="right" label-width="110px"
       class="el-form-content ">
       <div v-show="isLook" class="sign">
-        <i v-show="examineResult == '0'" class="iconfont" style="color: #FF7575">&#xe6cd;</i>
-        <i v-show="examineResult == '-1'" class="iconfont" style="color: #40A9FF">&#xe6ce;</i>
+        <i v-show="examineResult == '2'" class="iconfont" style="color: #FF7575">&#xe6cd;</i>
+        <i v-show="examineResult == '0'" class="iconfont" style="color: #40A9FF">&#xe6ce;</i>
         <i v-show="examineResult == '1'" class="iconfont" style="color: #13ce66">&#xe6d1;</i>
       </div>
       <!-- 认证信息 -->
@@ -37,32 +32,26 @@
           <div class="tip">注：主体类型设置后无法更改</div>
         </div>
         <div class="inpout-content">
-          <el-form-item v-show="ruleForm.stype == 'personal'" label="真实姓名：" prop="name" class="item-left">
-            <el-input v-model="ruleForm.name" :disabled="isLook" />
+          <el-form-item v-show="ruleForm.stype == 'personal'" label="真实姓名：" class="item-left">
+            <el-input v-model="ruleForm.storeName" :disabled="isLook" />
           </el-form-item>
-          <el-form-item v-show="ruleForm.stype == 'company'" label="企业名称：" prop="name" class="item-left">
-            <el-input v-model="ruleForm.name" placeholder="请与营业执照的公司名称保持一致" :disabled="isLook" />
+          <el-form-item v-show="ruleForm.stype == 'company'" label="企业名称：" class="item-left">
+            <el-input v-model="ruleForm.storeName" placeholder="请与营业执照的公司名称保持一致" :disabled="isLook" />
           </el-form-item>
-          <el-form-item v-show="ruleForm.stype == 'personal'" label="身份证号码：" prop="idNo" class="item-right">
-            <el-input v-model="ruleForm.engineer.idNo" :disabled="isLook" />
-          </el-form-item>
-          <el-form-item label="店铺名称：" prop="shopName" class="item-left">
-            <el-input v-model="ruleForm.shopName" :disabled="isLook" />
-          </el-form-item>
-          <el-form-item label="店铺分类：" prop="shopSort" class="item-right">
-            <el-select v-model="ruleForm.shopSort" placeholder="请选择店铺分类">
+          <el-form-item label="店铺分类：" prop="categoryId" class="item-right">
+            <el-select v-model="ruleForm.categoryId" placeholder="请选择店铺分类">
               <el-option v-for="item in shopSortOption" :key="item.cateId" :label="item.cateName" :value="item.cateId"
                 :disabled="isLook" />
             </el-select>
           </el-form-item>
-          <el-form-item label="所属地区：" prop="area" class="item-left">
-            <el-cascader v-model="ruleForm.areaValue" :options="cities" :disabled="isLook" />
+          <el-form-item label="身份证号码：" class="item-left">
+            <el-input v-model="ruleForm.identityCard" :disabled="isLook" />
           </el-form-item>
-          <el-form-item label="邮政编码：" prop="postalCode" class="item-right">
-            <el-input v-model="ruleForm.postalCode" :disabled="isLook" />
+          <el-form-item label="所属地区：" class="item-left">
+            <el-cascader v-model="ruleForm.regionId" :options="cities" :disabled="isLook" @change="changeFormat" />
           </el-form-item>
           <el-form-item label="详细地址：" prop="address" class="address-input">
-            <el-input v-model="ruleForm.address" :disabled="isLook" placeholder="请填写详细的街道地址"/>
+            <el-input v-model="ruleForm.address" :disabled="isLook" placeholder="请填写详细的街道地址" />
           </el-form-item>
         </div>
         <!-- 下一步 -->
@@ -78,26 +67,27 @@
 
           <div class="img-list">
             <!-- 身份证正面 -->
-
-            <upload-one-img :mr-src="cardFront.cardImg" :title="cardFront.cardTitle" :remark="cardFront.cardRemark" @getImgFile = "copyImgFile"/>
+            <upload-one-img :mr-src="cardFront.cardImg" :title="cardFront.cardTitle" :imgUrl="ruleForm.identityFront" :remark="cardFront.cardRemark"
+              @getImgFile="identityFrontImgFile" />
             <!-- 身份证反面 -->
-            <upload-one-img :mr-src="cardBack.cardImg" :title="cardBack.cardTitle" :remark="cardBack.cardRemark" />
+            <upload-one-img :mr-src="cardBack.cardImg" :title="cardBack.cardTitle" :imgUrl="ruleForm.identityBack"  :remark="cardBack.cardRemark"
+              @getImgFile="identityBackImgFile" />
             <!-- 手持身份证 -->
-            <upload-one-img v-show="ruleForm.stype == 'personal'" :mr-src="cardHold.cardImg" :title="cardHold.cardTitle"
-              :remark="cardHold.cardRemark" />
+            <upload-one-img v-show="ruleForm.stype == 'personal'" :mr-src="cardHold.cardImg" :title="cardHold.cardTitle" :imgUrl="ruleForm.identityHandle"
+              :remark="cardHold.cardRemark" @getImgFile="identityHandleImgFile" />
             <!-- 其他证件 -->
             <upload-one-img v-show="ruleForm.stype == 'personal'" :mr-src="cardOther.cardImg"
-              :title="cardOther.cardTitle" :remark="cardOther.cardRemark" />
+              :title="cardOther.cardTitle" :imgUrl="ruleForm.otherCertificate"  :remark="cardOther.cardRemark" @getImgFile="otherCertificateImgFile" />
             <!-- 营业执照 -->
             <upload-one-img v-show="ruleForm.stype == 'company'" :mr-src="businessLicense.cardImg"
-              :title="businessLicense.cardTitle" :remark="businessLicense.cardRemark" />
+              :title="businessLicense.cardTitle" :imgUrl="ruleForm.businessLicense"  :remark="businessLicense.cardRemark"
+              @getImgFile="businessLicenseImgFile" />
             <!-- 医疗器械生产许可证 -->
             <upload-one-img v-show="ruleForm.stype == 'company'" :mr-src="licenceOne.cardImg"
-              :title="licenceOne.cardTitle" :remark="licenceOne.cardRemark" />
-            <!-- 医疗器械生产许可证 -->
+              :title="licenceOne.cardTitle" :imgUrl="ruleForm.productionLicense"  :remark="licenceOne.cardRemark" @getImgFile="productionLicenseImgFile" />
+            <!-- 经营许可证 -->
             <upload-one-img v-show="ruleForm.stype == 'company'" :mr-src="licenceTwo.cardImg"
-              :title="licenceTwo.cardTitle" :remark="licenceTwo.cardRemark" />
-
+              :title="licenceTwo.cardTitle" :imgUrl="ruleForm.businessCertificate"  :remark="licenceTwo.cardRemark" @getImgFile="businessCertificateImgFile" />
           </div>
         </el-form-item>
         <!-- 上一步 下一步 -->
@@ -111,8 +101,12 @@
       <div v-show="active == 2 || isLook" :class="[{publicStepHeight:!isLook},'lx-info','public-step']">
         <div class="item-title">联系信息</div>
         <!-- 联系电话 -->
+        <el-form-item label="联系人：" class="phone-input">
+          <el-input v-model="ruleForm.ownerName" placeholder="请输入联系人" :disabled="isLook" />
+        </el-form-item>
+        <!-- 联系电话 -->
         <el-form-item label="联系电话：" prop="tel" class="phone-input">
-          <el-input v-model="ruleForm.tel" placeholder="请与身份证姓名保持一致" :disabled="isLook" />
+          <el-input v-model="ruleForm.tel" placeholder="请输入联系方式" :disabled="isLook" />
         </el-form-item>
         <!-- 验证码 -->
         <el-form-item v-show="!isLook" label="验证码：" prop="vCode" class="vcode-input">
@@ -125,7 +119,7 @@
         <!-- 上一步 下一步 -->
         <div v-show="!isLook" class="item-btn lx-btn-pre-sub">
           <el-button class="public-el-submit-btn pre-but" @click="pre">上一步</el-button>
-          <el-button class="public-el-submit-btn" type="primary" plain @click="submitForm">确认提交</el-button>
+          <el-button class="public-el-submit-btn" type="primary" plain @click="submitForm('ruleForm')">确认提交</el-button>
         </div>
       </div>
     </el-form>
@@ -134,14 +128,15 @@
 
 <script>
   import {
-    storeCategoryList
+    storeCategoryList,
+    storeApply,
+    storeDetail
   } from '@/api/shop'
   import {
     uploadImage
   } from '@/api/public'
-
   const city = require("../../../src/json/citys.json")
-  import axios from 'axios'
+
   import UploadOneImg from '../shop/uploadOneImg.vue'
   export default {
     components: {
@@ -149,7 +144,6 @@
     },
     data() {
       var checkphone = (rule, value, callback) => {
-        // let phoneReg = /(^1[3|4|5|6|7|8|9]\d{9}$)|(^09\d{8}$)/;
         if (value === '') {
           callback(new Error('请输入手机号'))
         } else if (!this.isCellPhone(value)) {
@@ -197,11 +191,9 @@
         },
         licenceTwo: {
           cardImg: require('../../assets/images/pic_card_other.png'),
-          cardTitle: '医疗器械生产许可证',
-          cardRemark: '请上传企业医疗器械生产许可证原件图，如果是医疗器械生产企业必传'
+          cardTitle: '经营许可证',
+          cardRemark: '请上传企业经营许可证原件图，如果是医疗器械生产企业必传'
         },
-
-        // isShowCardFrontDiv: false, // 是否展示【身份证正面】隐藏div
         active: 0,
         // 主体类型选项
         shopTypeOption: [{
@@ -213,57 +205,72 @@
         }, ],
         // 所属分类选项
         shopSortOption: [],
+        //图片上传之前，file保存的集合
+        imgFile: {
+          identityFront: '', //身份证正面
+          identityBack: '', //身份证背面
+          identityHandle: '', //手持身份证，个人工程师必传
+          businessCertificate: '', //经营许可证，如果是代理商企业必传
+          businessLicense: '', //营业执照
+          productionLicense: '', //生产许可证，如果是生产企业必传
+          otherCertificate: '', //其他证件
+        },
         ruleForm: {
           stype: 'company', // 主体类型:店铺类型 personal-个人 company-企业,示例值(company)
           storeName: '', // 个人工程师：姓名；企业：企业姓名
-          shopName: '', // 店铺名称
-          shopSort: '', // 所属分类
-          areaValue: [], // 所在地区
-          postalCode: '', // 邮政编码
+          identityCard: '', //身份证,示例值(340111199901019876)
+          categoryId: '', // 所属分类
+          regionId: '', // 所在地区
           address: '', // 详细地址
-          identityFront: '', // 身份证正面
-          cardBack: '', // 身份证反面
-          engineer: {
-            idNo: '', // 身份证号码
-            cardHold: '', // 手持身份证
-            cardOther: '' // 其他证件
-          },
-          business: {
-            businessLicense: '', // 营业执照
-            licenceOne: '', // 许可证
-            licenceTwo: '' // 许可证
-          },
+          identityFront: '', //身份证正面
+          identityBack: '', //身份证背面
+          identityHandle: '', //手持身份证，个人工程师必传
+          businessCertificate: '', //经营许可证，如果是代理商企业必传
+          businessLicense: '', //营业执照
+          productionLicense: '', //生产许可证，如果是生产企业必传
+          otherCertificate: '', //其他证件
+
+
+          // identityFront: '', // 身份证正面
+          // cardBack: '', // 身份证反面
+          // engineer: {
+          //   idNo: '', // 身份证号码
+          //   cardHold: '', // 手持身份证
+          //   cardOther: '' // 其他证件
+          // },
+          // business: {
+          //   businessLicense: '', // 营业执照
+          //   licenceOne: '', // 许可证
+          //   licenceTwo: '' // 许可证
+          // },
+          ownerName: '', //联系人
           tel: '', // 联系电话
           vCode: '' // 验证码
         },
         rules: {
-          stype: [{
-            required: true,
-            message: '请选择主体类型',
-            trigger: 'change'
-          }],
-          storeName: [{
-            required: true,
-            message: '请输入真实姓名',
-            trigger: 'blur'
-          }],
-          idNo: [{
-            required: true,
-            message: '请输入身份证号码',
-            trigger: 'blur'
-          }],
-          shopName: [{
-              required: true,
-              message: '请输入店铺名称',
-              trigger: 'blur'
-            },
-            {
-              min: 3,
-              max: 5,
-              message: '长度在 3 到 5 个字符',
-              trigger: 'blur'
-            }
-          ],
+          // stype: [
+          //   {
+          //   required: true,
+          //   message: '请选择主体类型',
+          //   trigger: 'change'
+          // }],
+          // storeName: [{
+          //   required: true,
+          //   message: '请输入真实姓名',
+          //   trigger: 'blur'
+          // }],
+          // idNo: [{
+          //   required: true,
+          //   message: '请输入身份证号码',
+          //   trigger: 'blur'
+          // }],
+          //   {
+          //     min: 3,
+          //     max: 5,
+          //     message: '长度在 3 到 5 个字符',
+          //     trigger: 'blur'
+          //   }
+          // ],
           tel: [{
             required: true,
             validator: checkphone,
@@ -279,14 +286,6 @@
       }
     },
     mounted() {
-      // axios.get('../../../static/testData/citys.json').then(res => {
-      //   console.log(res)
-      //   if (res.status == 200) {
-      //     this.cities = res.data
-      //   } else {
-      //     this.$message.error('数据请求失败，请稍后再试！')
-      //   }
-      // })
       this.getData()
     },
     methods: {
@@ -297,15 +296,44 @@
         })
         //获取地区
         this.cities = city
-      },
-      copyImgFile(file){
-        console.log(file)
-        //假设现在这个地方上传图片
-        uploadImage(JSON.stringify(file)).then(Response =>{
-          this.ruleForm.identityFront = response.data.data
-          console.log(response.data.data)
-          console.log(this.ruleForm.identityFront)
+        //获取店铺详情
+        storeDetail().then(response => {
+          if(response.data.data != null){
+            this.ruleForm = response.data.data
+            this.isLook = true
+            // 店铺状态 0-待审核 1-审核成功 2-审核失败
+            this.examineResult = response.data.data.state
+          }
         })
+      },
+      //身份证正面
+      identityFrontImgFile(file) {
+        console.log(file)
+        this.imgFile.identityFront = file
+      },
+      //身份证反面
+      identityBackImgFile(file) {
+        this.imgFile.identityBack = file
+      },
+      //手持身份证，个人工程师必传
+      identityHandleImgFile(file) {
+        this.imgFile.identityHandle = file
+      },
+      //其他证件
+      otherCertificateImgFile(file) {
+        this.imgFile.otherCertificate = file
+      },
+      //营业执照
+      businessLicenseImgFile(file) {
+        this.imgFile.businessLicense = file
+      },
+      //生产许可证，如果是生产企业必传
+      productionLicenseImgFile(file) {
+        this.imgFile.productionLicense = file
+      },
+      //经营许可证，如果是代理商企业必传
+      businessCertificateImgFile(file) {
+        this.imgFile.businessCertificate = file
       },
       // 根据选择的主体类型不同，显示不同的信息,清空数据
       adjustLayout() {
@@ -357,12 +385,155 @@
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            alert('submit!')
+            if (this.checkData()) {
+              //提交数据到后台： 先提交证明材料，再表单提交
+              this.postData()
+              alert('submit!')
+            }
+
           } else {
             console.log('error submit!!')
             return false
           }
         })
+      },
+      changeFormat() {
+        this.ruleForm.regionId = JSON.stringify(this.ruleForm.regionId)
+        console.log("jjj", JSON.stringify(this.ruleForm.regionId))
+      },
+      async postData() {
+        //上传身份证正面
+        if (this.imgFile.identityFront != '') {
+          let param = new FormData(); //创建form对象
+          param.append('file', this.imgFile.identityFront); //通过append向form对象添加数据
+          await uploadImage(param).then(response => {
+            this.ruleForm.identityFront = response.data.data
+          })
+        }
+        //上传身份证反面
+        if (this.imgFile.identityBack != '') {
+          let param = new FormData(); //创建form对象
+          param.append('file', this.imgFile.identityBack); //通过append向form对象添加数据
+          await uploadImage(param).then(response => {
+            this.ruleForm.identityBack = response.data.data
+          })
+        }
+        //上传手持身份证【个人工程师】
+        if (this.ruleForm.stype == 'personal' && this.imgFile.identityHandle != '') {
+          let param = new FormData(); //创建form对象
+          param.append('file', this.imgFile.identityHandle); //通过append向form对象添加数据
+          await uploadImage(param).then(response => {
+            this.ruleForm.identityHandle = response.data.data
+          })
+        }
+        //上传其他证件【个人工程师】
+        if (this.ruleForm.stype == 'personal' && this.imgFile.otherCertificate != '') {
+          let param = new FormData(); //创建form对象
+          param.append('file', this.imgFile.otherCertificate); //通过append向form对象添加数据
+          await uploadImage(param).then(response => {
+            this.ruleForm.otherCertificate = response.data.data
+          })
+        }
+        //经营许可证【企业】
+        if (this.ruleForm.stype == 'company' && this.imgFile.businessCertificate != '') {
+          let param = new FormData(); //创建form对象
+          param.append('file', this.imgFile.businessCertificate); //通过append向form对象添加数据
+          await uploadImage(param).then(response => {
+            this.ruleForm.businessCertificate = response.data.data
+          })
+        }
+        //营业执照【企业】
+        if (this.ruleForm.stype == 'company' && this.imgFile.businessLicense != '') {
+          let param = new FormData(); //创建form对象
+          param.append('file', this.imgFile.businessLicense); //通过append向form对象添加数据
+          await uploadImage(param).then(response => {
+            this.ruleForm.businessLicense = response.data.data
+          })
+        }
+        //生产许可证【企业】
+        if (this.ruleForm.stype == 'company' && this.imgFile.productionLicense != '') {
+          let param = new FormData(); //创建form对象
+          param.append('file', this.imgFile.productionLicense); //通过append向form对象添加数据
+          await uploadImage(param).then(response => {
+            this.ruleForm.productionLicense = response.data.data
+          })
+        }
+        console.log("证件上传后数据：", this.ruleForm)
+        console.log("要上传的数据：", JSON.stringify(this.ruleForm))
+        await storeApply(JSON.stringify(this.ruleForm)).then(response => {
+          console.log(response.data.data)
+        })
+      },
+      checkData() {
+        if (this.ruleForm.stype == null || this.ruleForm.stype == '') {
+          this.$message.error('请选择【认证信息】主体类型！')
+          return false
+        }
+        if (this.ruleForm.stype == 'company') {
+          if (this.ruleForm.storeName == null || this.ruleForm.storeName == '') {
+            this.$message.error('请填写【认证信息】企业名称！')
+            return false
+          }
+        }
+        if (this.ruleForm.stype == 'personal') {
+          if (this.ruleForm.storeName == null || this.ruleForm.storeName == '') {
+            this.$message.error('请填写【认证信息】真实姓名！')
+            return false
+          }
+        }
+        if (this.ruleForm.identityCard == null || this.ruleForm.identityCard == '') {
+          this.$message.error('请填写【认证信息】身份证号码！')
+          return false
+        }
+        if (this.ruleForm.categoryId == null || this.ruleForm.categoryId == '') {
+          this.$message.error('请选择【认证信息】店铺分类！')
+          return false
+        }
+        if (this.ruleForm.regionId.length < 1) {
+          this.$message.error('请选择【认证信息】所在地区！')
+          return false
+        }
+        if (this.ruleForm.address == null || this.ruleForm.address == '') {
+          this.$message.error('请上传【认证信息】详细地址！')
+          return false
+        }
+        if (this.imgFile.identityFront == null || this.imgFile.identityFront == '') {
+          this.$message.error('请上传【证明材料】身份证正面！')
+          return false
+        }
+        if (this.imgFile.identityBack == null || this.imgFile.identityBack == '') {
+          this.$message.error('请上传【证明材料】身份证反面！')
+          return false
+        }
+        if (this.ruleForm.stype == 'personal') {
+          if (this.imgFile.identityHandle == null || this.imgFile.identityHandle == '') {
+            this.$message.error('请上传【证明材料】手持身份证！')
+            return false
+          }
+        }
+        if (this.ruleForm.stype == 'company') {
+          if (this.imgFile.businessLicense == null || this.imgFile.businessLicense == '') {
+            this.$message.error('请上传【证明材料】营业执照！')
+            return false
+          }
+          if (this.imgFile.productionLicense == null || this.imgFile.productionLicense == '') {
+            this.$message.error('请上传【证明材料】生产许可证！')
+            return false
+          }
+          if (this.imgFile.businessCertificate == null || this.imgFile.businessCertificate == '') {
+            this.$message.error('请上传【证明材料】经营许可证！')
+            return false
+          }
+        }
+        if (this.ruleForm.tel == null || this.ruleForm.tel == '') {
+          this.$message.error('请填写【联系信息】联系方式！')
+          return false
+        }
+        if (this.ruleForm.tel == null || this.ruleForm.tel == '') {
+          this.$message.error('请填写【联系信息】短信验证码！')
+          return false
+        }
+        return true
       },
       resetForm(formName) {
         this.$refs[formName].resetFields()

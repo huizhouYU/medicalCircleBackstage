@@ -1,16 +1,23 @@
 import request from '@/utils/request'
-
-export function goodsList(query) {
+//店铺认证
+export function storeApply(query) {
   return request({
-    url: 'goods/list',
+    url: 'store/apply',
     method: 'post',
     params: query
   })
 }
-
+//获取店铺分类
 export function storeCategoryList() {
   return request({
     url: '/store/category',
+    method: 'get',
+  })
+}
+//获取店铺详情
+export function storeDetail() {
+  return request({
+    url: 'store/detail',
     method: 'get',
   })
 }

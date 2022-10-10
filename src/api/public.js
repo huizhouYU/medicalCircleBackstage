@@ -1,11 +1,11 @@
-import request from '@/utils/request'
+import axios from '@/utils/axios'
 
-export function uploadImage(query) {
-  return request({
+//上传图片
+export function uploadImage(data) {
+  return axios({
     url: '/attach/uploadImage',
     method: 'post',
-    params: {'file':query},
-    // headers: {'Content-Type': 'multipart/form-data'}
+    data
   })
 }
 

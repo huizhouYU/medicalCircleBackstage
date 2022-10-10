@@ -1,13 +1,13 @@
 <template>
   <div class="box">
     <!-- 编辑区域 -->
-    <el-form :model="shopInfo" label-width="100px" label-position="right" class="eidt-box">
+    <el-form :model="shopInfo.shopInfo" label-width="100px" label-position="right" class="eidt-box">
       <!-- 产品主图 -->
       <el-form-item label="店铺店标：">
         <div label="图片可拖曳排序：" prop="trialImgs" class="content-images">
           <div class="row">
             <!-- <DragUpload :all-list="ruleForm.trialImgs" :limit="limit" @allList="trialImgs" /> -->
-            <uploadOne :mrSrc="shopLogo" :isWhole="true"></uploadOne>
+            <uploadOne :mrSrc="shopInfo.storeLogo" :isWhole="true"></uploadOne>
             <div class="gray-tip">请上传300*300的图片，大小不超过2m</div>
           </div>
         </div>
@@ -31,11 +31,11 @@
       </el-form-item>
       <!-- 店铺名称 -->
       <el-form-item label="店铺名称：">
-        <el-input v-model="shopInfo.address" placeholder="请输入店铺名称" autocomplete="off" size="medium" type="text" />
+        <el-input v-model="shopInfo.storeName" placeholder="请输入店铺名称" autocomplete="off" size="medium" type="text" />
       </el-form-item>
       <!-- 联系人 -->
       <el-form-item label="联系人：">
-        <el-input v-model="shopInfo.telName" placeholder="请输入联系人" autocomplete="off" size="medium" type="text" />
+        <el-input v-model="shopInfo.ownerName" placeholder="请输入联系人" autocomplete="off" size="medium" type="text" />
       </el-form-item>
       <!-- 联系电话 -->
       <el-form-item label="联系电话：">
@@ -47,18 +47,17 @@
       </el-form-item>
       <!-- 服务内容 -->
       <el-form-item label="服务内容：">
-        <el-input v-model="shopInfo.address" placeholder="可以描述一下您提供的服务" autocomplete="off" size="medium"
+        <el-input v-model="shopInfo.content" placeholder="可以描述一下您提供的服务" autocomplete="off" size="medium"
           type="textarea" />
       </el-form-item>
-      <el-form-item label="资质证书：">
+     <!-- <el-form-item label="资质证书：">
         <div label="图片可拖曳排序：" prop="certificates" class="content-images">
           <div class="row">
-            <!-- <DragUpload :all-list="ruleForm.certificates" :limit="5" @allList="certificates" /> -->
             <DragUpload :all-list="ruleForm.certificates" :limit="5" />
             <div class="gray-tip">请：图片上传不超过5张，图片支持jpg/png格式，不超过500kb，尺寸为800*800</div>
           </div>
         </div>
-      </el-form-item>
+      </el-form-item> -->
       <!-- 店铺简介： -->
       <el-form-item label="店铺简介：">
         <edit class="edit" />
@@ -78,6 +77,9 @@
 </template>
 
 <script>
+  import {
+    storeDetail
+  } from '@/api/shop'
   import edit from '../utils/edit.vue'
   import DragUpload from '../utils/DragUpload' // 引入vue-draggable
   import uploadOne from '../utils/uploadOne' // 引入vue-draggable
@@ -114,28 +116,6 @@
           tel: '', // 联系电话
           address: '' // 店铺地址
         },
-        // 发布信息
-        demandInfo: {
-          infoType: '', // 信息类型
-          infoBrand: '', // 设备品牌
-          infoModel: '', // 设备型号
-          infoTitle: '' // 信息标题
-        },
-        // 信息类型
-        infoTypeOptions: [{
-          value: '1',
-          label: '类型一'
-        }, {
-          value: '2',
-          label: '类型二'
-        }],
-        infoModelOptions: [{
-          value: '1',
-          label: '型号一'
-        }, {
-          value: '2',
-          label: '型号二'
-        }],
         ruleForm: {
           imgUrl: '',
           trialImgs: [],
@@ -143,7 +123,9 @@
         },
       }
     },
-    mounted() {},
+    mounted() {
+      this.getData()
+    },
     computed: {
       uploadDisabled: function() {
         console.log(this.ruleForm.csAvatar)
@@ -151,6 +133,15 @@
       },
     },
     methods: {
+      getData(){
+        //获取店铺详情
+        storeDetail().then(response => {
+          if(response.data.data != null){
+           this.shopInfo =response.data.data
+           this.shopInfo.storeLogo = "https://images.weserv.nl/?url="+this.shopInfo.storeLogo
+          }
+        })
+      },
       //预览图片 加载图片之前先设置高度
       onLoadImg: function(e) {
         var img = e.target;

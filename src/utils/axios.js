@@ -9,18 +9,19 @@ const service = axios.create({
   // withCredentials: true, // send cookies when cross-domain requests  允许跨域携带cookie
   timeout: 5000 // request timeout
 })
-// request interceptor
+// request interceptor 请求拦截器
 service.interceptors.request.use(
   config => {
-    // do something before request is sent
+    // do something before request is sent 在发送请求之前做一些事情
 
     if (store.getters.token) {
-      // let each request carry token
-      // ['X-Token'] is a custom headers key
-      // please modify it according to the actual situation
-      config.headers['Authorization'] = 'Bearer '+ getToken()
-      config.headers['content-type'] = "multipart/form-data"
+      // let each request carry token 让每个请求都携带令牌
+      // ['X-Token'] is a custom headers key ['X-Token']是自定义标头密钥
       // config.headers['X-Token'] = getToken()
+      // please modify it according to the actual situation 请根据实际情况修改
+      config.headers['Authorization'] = 'Bearer '+ getToken()
+      config.headers['Content-Type'] = "multipart/form-data"
+
     }
     return config
   },

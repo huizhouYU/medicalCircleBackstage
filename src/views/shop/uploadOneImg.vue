@@ -26,12 +26,18 @@
 
 <script>
   export default {
-    props: ["mrSrc", "title", "remark"],
+    props: ["mrSrc", "title", "remark", "imgUrl"],
     data() {
       return {
         cardImgUrl: "",
         isShowCardImgDiv: false,
         chosedImgUrl: ''
+      }
+    },
+    mounted() {},
+    watch: {
+      imgUrl(val) {
+        this.cardImgUrl = "https://images.weserv.nl/?url=" + val
       }
     },
     methods: {
@@ -69,7 +75,7 @@
             // this.$refs.imgRef.src = e.target.result
             // 法2
             this.cardImgUrl = e.target.result
-            this.$emit("getImgFile",files[0])
+            this.$emit("getImgFile", files[0])
           }
         }
       }
