@@ -1,10 +1,10 @@
 import request from '@/utils/request'
 //店铺认证
-export function storeApply(query) {
+export function storeApply(data) {
   return request({
     url: 'store/apply',
     method: 'post',
-    params: query
+    data
   })
 }
 //获取店铺分类
@@ -19,6 +19,14 @@ export function storeDetail() {
   return request({
     url: 'store/detail',
     method: 'get',
+  })
+}
+
+//更新店铺基本信息
+export function storeUpdate(data) {
+  return request({
+    url: '/store/update',
+    method: 'post',    data
   })
 }
 

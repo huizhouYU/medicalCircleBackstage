@@ -4,8 +4,8 @@
       <img :src="cardImgUrl" alt="" class="card-img-info">
       <!-- 预览+删除 -->
       <div class="preview-del-div" v-show="isShowCardImgDiv">
-        <i class="el-icon-zoom-in"></i>
-        <i class="el-icon-delete" @click="deleteImg"></i>
+        <!-- <i class="el-icon-zoom-in" ></i> -->
+        <i class="el-icon-delete" @click="deleteImg" v-show="!isLook"></i>
       </div>
     </div>
     <label v-else>
@@ -26,7 +26,7 @@
 
 <script>
   export default {
-    props: ["mrSrc", "title", "remark", "imgUrl"],
+    props: ["mrSrc", "title", "remark", "imgUrl","isLook"],
     data() {
       return {
         cardImgUrl: "",

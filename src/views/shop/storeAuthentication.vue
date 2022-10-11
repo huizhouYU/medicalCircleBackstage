@@ -47,8 +47,11 @@
           <el-form-item label="身份证号码：" class="item-left">
             <el-input v-model="ruleForm.identityCard" :disabled="isLook" />
           </el-form-item>
-          <el-form-item label="所属地区：" class="item-left">
-            <el-cascader v-model="ruleForm.regionId" :options="cities" :disabled="isLook" @change="changeFormat" />
+          <el-form-item label="所属地区：" class="item-left" v-show="!isLook">
+            <el-cascader v-model="ruleForm.regionId" :options="cities" :disabled="isLook" @change="changeFormat" ref="cascaderRegion"/>
+          </el-form-item>
+          <el-form-item label="所属地区：" class="item-left" v-show="isLook">
+            <el-input v-model="ruleForm.regionName" placeholder="请选择所属地区" :disabled="isLook" />
           </el-form-item>
           <el-form-item label="详细地址：" prop="address" class="address-input">
             <el-input v-model="ruleForm.address" :disabled="isLook" placeholder="请填写详细的街道地址" />
@@ -68,26 +71,26 @@
           <div class="img-list">
             <!-- 身份证正面 -->
             <upload-one-img :mr-src="cardFront.cardImg" :title="cardFront.cardTitle" :imgUrl="ruleForm.identityFront" :remark="cardFront.cardRemark"
-              @getImgFile="identityFrontImgFile" />
+              @getImgFile="identityFrontImgFile" isLook="isLook"/>
             <!-- 身份证反面 -->
             <upload-one-img :mr-src="cardBack.cardImg" :title="cardBack.cardTitle" :imgUrl="ruleForm.identityBack"  :remark="cardBack.cardRemark"
-              @getImgFile="identityBackImgFile" />
+              @getImgFile="identityBackImgFile"  isLook="isLook"/>
             <!-- 手持身份证 -->
             <upload-one-img v-show="ruleForm.stype == 'personal'" :mr-src="cardHold.cardImg" :title="cardHold.cardTitle" :imgUrl="ruleForm.identityHandle"
-              :remark="cardHold.cardRemark" @getImgFile="identityHandleImgFile" />
+              :remark="cardHold.cardRemark" @getImgFile="identityHandleImgFile" isLook="isLook" />
             <!-- 其他证件 -->
             <upload-one-img v-show="ruleForm.stype == 'personal'" :mr-src="cardOther.cardImg"
-              :title="cardOther.cardTitle" :imgUrl="ruleForm.otherCertificate"  :remark="cardOther.cardRemark" @getImgFile="otherCertificateImgFile" />
+              :title="cardOther.cardTitle" :imgUrl="ruleForm.otherCertificate"  :remark="cardOther.cardRemark" @getImgFile="otherCertificateImgFile" isLook="isLook" />
             <!-- 营业执照 -->
             <upload-one-img v-show="ruleForm.stype == 'company'" :mr-src="businessLicense.cardImg"
               :title="businessLicense.cardTitle" :imgUrl="ruleForm.businessLicense"  :remark="businessLicense.cardRemark"
-              @getImgFile="businessLicenseImgFile" />
+              @getImgFile="businessLicenseImgFile" isLook="isLook" />
             <!-- 医疗器械生产许可证 -->
             <upload-one-img v-show="ruleForm.stype == 'company'" :mr-src="licenceOne.cardImg"
-              :title="licenceOne.cardTitle" :imgUrl="ruleForm.productionLicense"  :remark="licenceOne.cardRemark" @getImgFile="productionLicenseImgFile" />
+              :title="licenceOne.cardTitle" :imgUrl="ruleForm.productionLicense"  :remark="licenceOne.cardRemark" @getImgFile="productionLicenseImgFile" isLook="isLook" />
             <!-- 经营许可证 -->
             <upload-one-img v-show="ruleForm.stype == 'company'" :mr-src="licenceTwo.cardImg"
-              :title="licenceTwo.cardTitle" :imgUrl="ruleForm.businessCertificate"  :remark="licenceTwo.cardRemark" @getImgFile="businessCertificateImgFile" />
+              :title="licenceTwo.cardTitle" :imgUrl="ruleForm.businessCertificate"  :remark="licenceTwo.cardRemark" @getImgFile="businessCertificateImgFile" isLook="isLook" />
           </div>
         </el-form-item>
         <!-- 上一步 下一步 -->
@@ -221,6 +224,7 @@
           identityCard: '', //身份证,示例值(340111199901019876)
           categoryId: '', // 所属分类
           regionId: '', // 所在地区
+          regionName:'',//所在地区名称
           address: '', // 详细地址
           identityFront: '', //身份证正面
           identityBack: '', //身份证背面
@@ -297,6 +301,10 @@
         //获取地区
         this.cities = city
         //获取店铺详情
+        this.getStoreDetail()
+      },
+      //获取店铺详情
+      getStoreDetail(){
         storeDetail().then(response => {
           if(response.data.data != null){
             this.ruleForm = response.data.data
@@ -398,8 +406,13 @@
         })
       },
       changeFormat() {
-        this.ruleForm.regionId = JSON.stringify(this.ruleForm.regionId)
-        console.log("jjj", JSON.stringify(this.ruleForm.regionId))
+        console.log(this.$refs["cascaderRegion"])
+        if(this.$refs["cascaderRegion"].getCheckedNodes()[0] != undefined){
+          let regionName = this.$refs["cascaderRegion"].getCheckedNodes()[0].pathLabels
+          this.ruleForm.regionName = regionName.join("/")
+          console.log("jjj", JSON.stringify(this.ruleForm.regionName))
+        }
+
       },
       async postData() {
         //上传身份证正面
@@ -462,6 +475,11 @@
         console.log("要上传的数据：", JSON.stringify(this.ruleForm))
         await storeApply(JSON.stringify(this.ruleForm)).then(response => {
           console.log(response.data.data)
+          if(response.data.code == 10000){
+            this.$message.success("提交成功！")
+          }else{
+            this.$message.success(response.data.message)
+          }
         })
       },
       checkData() {

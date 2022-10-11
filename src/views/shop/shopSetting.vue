@@ -1,13 +1,14 @@
 <template>
   <div class="box">
     <!-- 编辑区域 -->
-    <el-form :model="shopInfo.shopInfo" label-width="100px" label-position="right" class="eidt-box">
+    <el-form ref="ruleForm" :rules="rules" :model="shopInfo" label-width="100px" label-position="right"
+      class="eidt-box">
       <!-- 产品主图 -->
       <el-form-item label="店铺店标：">
         <div label="图片可拖曳排序：" prop="trialImgs" class="content-images">
           <div class="row">
             <!-- <DragUpload :all-list="ruleForm.trialImgs" :limit="limit" @allList="trialImgs" /> -->
-            <uploadOne :mrSrc="shopInfo.storeLogo" :isWhole="true"></uploadOne>
+            <uploadOne :mrSrc="storeLogo" :isWhole="true" @getImgFile="getStoreLogoImgFile"></uploadOne>
             <div class="gray-tip">请上传300*300的图片，大小不超过2m</div>
           </div>
         </div>
@@ -19,10 +20,12 @@
           <span class="gray-tip">请上传1200*110的图片，大小不超过2m</span>
         </div> -->
         <div class="banner-tip">
-          <el-upload action="aaa" list-type="picture-card" :auto-upload="false"
-             ref="upload" :on-change="handleChange" :on-preview="handlePictureCardPreview"
-            :on-remove="handleRemove" :file-list="fileList" :class="{ hide: hideUploadBtn }">
-            <i class="el-icon-plus"></i>
+          <el-upload action="aaa" list-type="picture-card" :auto-upload="false" ref="upload" :on-change="handleChange"
+            :on-preview="handlePictureCardPreview" :on-remove="handleRemove" :file-list="fileList"
+            :class="{ hide: hideUploadBtn }">
+            <img v-if="shopInfo.storeBanner" :src="storeBanner" class="avatar" />
+            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            <!-- <i class="el-icon-plus"></i> -->
             <!-- <div class="el-upload__tip" slot="tip">请上传950*425的图片，大小不超过2m，最多可上传3张</div> -->
           </el-upload>
           <span class="gray-tip">请上传1200*110的图片，大小不超过2m</span>
@@ -30,7 +33,7 @@
 
       </el-form-item>
       <!-- 店铺名称 -->
-      <el-form-item label="店铺名称：">
+      <el-form-item label="店铺名称：" prop="storeName">
         <el-input v-model="shopInfo.storeName" placeholder="请输入店铺名称" autocomplete="off" size="medium" type="text" />
       </el-form-item>
       <!-- 联系人 -->
@@ -38,7 +41,7 @@
         <el-input v-model="shopInfo.ownerName" placeholder="请输入联系人" autocomplete="off" size="medium" type="text" />
       </el-form-item>
       <!-- 联系电话 -->
-      <el-form-item label="联系电话：">
+      <el-form-item label="联系电话：" prop="tel">
         <el-input v-model="shopInfo.tel" placeholder="请输入联系电话" autocomplete="off" size="medium" type="text" />
       </el-form-item>
       <!-- 店铺地址 -->
@@ -50,7 +53,7 @@
         <el-input v-model="shopInfo.content" placeholder="可以描述一下您提供的服务" autocomplete="off" size="medium"
           type="textarea" />
       </el-form-item>
-     <!-- <el-form-item label="资质证书：">
+      <!-- <el-form-item label="资质证书：">
         <div label="图片可拖曳排序：" prop="certificates" class="content-images">
           <div class="row">
             <DragUpload :all-list="ruleForm.certificates" :limit="5" />
@@ -60,13 +63,13 @@
       </el-form-item> -->
       <!-- 店铺简介： -->
       <el-form-item label="店铺简介：">
-        <edit class="edit" />
+        <edit class="edit" :description="shopInfo.description" @getContent="getDescription" />
       </el-form-item>
       <el-form-item label="店铺地址：">
-        <v-amap @mapDing="getCoordinate"></v-amap>
+        <v-amap @mapDing="getCoordinate" :longitude="shopInfo.longitude" :latitude="shopInfo.latitude"></v-amap>
       </el-form-item>
       <el-form-item class="submmit-form-item">
-        <el-button type="primary" class="public-el-submit-btn">提交</el-button>
+        <el-button type="primary" class="public-el-submit-btn" @click="submit">提交</el-button>
       </el-form-item>
     </el-form>
     <!-- 预览图片 -->
@@ -78,8 +81,12 @@
 
 <script>
   import {
-    storeDetail
+    storeDetail,
+    storeUpdate
   } from '@/api/shop'
+  import {
+    uploadImage
+  } from '@/api/public'
   import edit from '../utils/edit.vue'
   import DragUpload from '../utils/DragUpload' // 引入vue-draggable
   import uploadOne from '../utils/uploadOne' // 引入vue-draggable
@@ -92,10 +99,32 @@
       'v-amap': amap
     },
     data() {
+      var checkphone = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请输入手机号'))
+          this.$message.error("请输入手机号")
+        } else if (!this.isCellPhone(value)) {
+          // 引入methods中封装的检查手机格式的方法
+          callback(new Error('请输入正确的手机号!'))
+          this.$message.error("请输入正确的手机号!")
+        } else {
+          callback()
+        }
+      }
+      var checkStoreName = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请输入店铺名称'))
+          this.$message.error("请输入店铺名称")
+        } else {
+          callback()
+        }
+      }
       return {
-        shopLogo: require('../../assets/images/shop_logo.png'),
+        storeLogoImgFile: '',
+        storeBannerImgFile: '',
+        // shopLogo: require('../../assets/images/shop_logo.png'),
         //上传店铺横幅 开始
-        hideUploadBtn:false,
+        hideUploadBtn: false,
         boxWidth: "",
         dialogWidth: "",
         dialogVisibleimg: false,
@@ -107,14 +136,33 @@
           csAvatar: "",
         },
         //上传店铺横幅 结束
+        storeLogo: '', // 店铺logo
+        storeBanner: '', // 店铺横幅
         limit: 1, // 上传限制图片数量
         shopInfo: {
-          logoUrl: '', // 店铺logo
-          bannerUrl: '', // 店铺横幅
-          name: '', // 店铺名称
-          telName: '', //联系人
+          storeLogo: '', // 店铺logo
+          storeBanner: '', // 店铺横幅
+          storeName: '', // 店铺名称
+          ownerName: '', //联系人
           tel: '', // 联系电话
-          address: '' // 店铺地址
+          longitude: '', //经纬
+          latitude: '', //纬度
+          address: '', // 店铺地址
+          content: '', //服务内容
+          description: '', //店铺简介
+        },
+        rules: {
+          storeName: [{
+            required: true,
+            validator: checkStoreName,
+            trigger: 'blur'
+          }],
+          tel: [{
+            required: true,
+            validator: checkphone,
+            trigger: 'blur'
+          }]
+
         },
         ruleForm: {
           imgUrl: '',
@@ -133,14 +181,76 @@
       },
     },
     methods: {
-      getData(){
+      getData() {
         //获取店铺详情
         storeDetail().then(response => {
-          if(response.data.data != null){
-           this.shopInfo =response.data.data
-           this.shopInfo.storeLogo = "https://images.weserv.nl/?url="+this.shopInfo.storeLogo
+          if (response.data.data != null) {
+            this.shopInfo = response.data.data
+            // this.shopInfo.description = '<h1 style="text-align: center;">Welcome to the TinyMCE demo!</h1>'
+            if (response.data.data.storeLogo != null) {
+              this.storeLogo = "https://images.weserv.nl/?url=" + this.shopInfo.storeLogo
+            }
+            if (response.data.data.storeBanner != null) {
+              this.storeBanner = "https://images.weserv.nl/?url=" + this.shopInfo.storeBanner
+            }
           }
         })
+      },
+      //获取店铺简介
+      getDescription(val) {
+        this.shopInfo.description = val
+      },
+      submit() {
+        this.$refs['ruleForm'].validate((valid) => {
+          if (valid) {
+            this.submitData()
+          } else {
+            console.log('error submit!!')
+            return false
+          }
+        })
+      },
+      async submitData() {
+        //上传店铺logo
+        console.log("this.storeLogoImgFile:", this.storeLogoImgFile)
+        if (this.storeLogoImgFile != '') {
+          let param = new FormData(); //创建form对象
+          param.append('file', this.storeLogoImgFile); //通过append向form对象添加数据
+          await uploadImage(param).then(response => {
+            this.shopInfo.storeLogo = response.data.data
+          })
+        }
+        // //上传店铺横幅
+        console.log("this.storeBannerImgFile:", this.storeBannerImgFile)
+        if (this.storeBannerImgFile != '') {
+          let param = new FormData(); //创建form对象
+          param.append('file', this.storeBannerImgFile); //通过append向form对象添加数据
+          await uploadImage(param).then(response => {
+            this.shopInfo.storeBanner = response.data.data
+          })
+        }
+        console.log("this.shopInfo:", this.shopInfo)
+        // this.shopInfo.storeBanner = "http://image.yijiequan.cn/yijiequan/attach/bg2.jpg"
+        await storeUpdate(JSON.stringify(this.shopInfo)).then(response => {
+          console.log(response.data.data)
+          if (response.data.code == 10000) {
+            this.$message.success("提交成功！")
+          } else {
+            this.$message.success(response.data.message)
+          }
+        })
+      },
+      //先存储店铺logo文件
+      getStoreLogoImgFile(file) {
+        this.storeLogoImgFile = file
+      },
+
+      isCellPhone(val) {
+        if (!/^1(3|4|5|6|7|8)\d{9}$/.test(val)) {
+          return false
+        } else {
+          return true
+        }
       },
       //预览图片 加载图片之前先设置高度
       onLoadImg: function(e) {
@@ -158,32 +268,32 @@
         this.dialogWidth = width + 40 + 'px';
       },
       // 图片上传尺寸大小检验
-      beforeUpload(file) {
-        let _this = this
-        const is1M = file.size / 1024 / 1024 < 1; // 限制小于1M
-        const isSize = new Promise(function(resolve, reject) {
-          let width = 654; // 限制图片尺寸为654X270
-          let height = 270;
-          let _URL = window.URL || window.webkitURL;
-          let img = new Image();
-          console.log("上传图片:", new Image())
-          console.log(_URL)
-          img.onload = function() {
-            let valid = img.width === width && img.height === height;
-            valid ? resolve() : reject();
-          }
-          img.src = _URL.createObjectURL(file);
-        }).then(() => {
-          return file;
-        }, () => {
-          _this.$message.error('图片尺寸限制为654 x 270，大小不可超过1MB')
-          return Promise.reject();
-        });
-        if (!is1M) {
-          _this.$message.error('图片尺寸限制为654 x 270，大小不可超过1MB')
-        }
-        return isSize & is1M
-      },
+      // beforeUpload(file) {
+      //   let _this = this
+      //   const is1M = file.size / 1024 / 1024 < 1; // 限制小于1M
+      //   const isSize = new Promise(function(resolve, reject) {
+      //     let width = 654; // 限制图片尺寸为654X270
+      //     let height = 270;
+      //     let _URL = window.URL || window.webkitURL;
+      //     let img = new Image();
+      //     console.log("上传图片:", new Image())
+      //     console.log(_URL)
+      //     img.onload = function() {
+      //       let valid = img.width === width && img.height === height;
+      //       valid ? resolve() : reject();
+      //     }
+      //     img.src = _URL.createObjectURL(file);
+      //   }).then(() => {
+      //     return file;
+      //   }, () => {
+      //     _this.$message.error('图片尺寸限制为654 x 270，大小不可超过1MB')
+      //     return Promise.reject();
+      //   });
+      //   if (!is1M) {
+      //     _this.$message.error('图片尺寸限制为654 x 270，大小不可超过1MB')
+      //   }
+      //   return isSize & is1M
+      // },
       // 更换店铺横幅
       handleChange(file, fileList) {
         console.log(file)
@@ -195,27 +305,27 @@
           return false;
         }
         ////////////////////////
-        const isSize = new Promise(function(resolve, reject){
-            // let width = 750;
-            // let height = 1642;
-            let _URL = window.URL || window.webkitURL;
-            let img = new Image();
-            img.onload = function(){
-              let valid = img.width / img.height === 1.67;
-              valid ? resolve() : reject();
-            }
-            img.src = _URL.createObjectURL(file);
-          }).then(()=>{
-            return file;
-          }, ()=>{
-            // this.$message({
-            //   message:'上传图片比例建议为5：3!请重新选择!'
-            // });
-            this.isLoad = true
-            this.errText = '上传图片比例只能为5:3, 请重新选择上传!'
-            return Promise.reject()
-            return false;//必须加上return false; 才能阻止
-          })
+        // const isSize = new Promise(function(resolve, reject) {
+        //   // let width = 750;
+        //   // let height = 1642;
+        //   let _URL = window.URL || window.webkitURL;
+        //   let img = new Image();
+        //   img.onload = function() {
+        //     let valid = img.width / img.height === 1.67;
+        //     valid ? resolve() : reject();
+        //   }
+        //   img.src = _URL.createObjectURL(file);
+        // }).then(() => {
+        //   return file;
+        // }, () => {
+        //   // this.$message({
+        //   //   message:'上传图片比例建议为5：3!请重新选择!'
+        //   // });
+        //   this.isLoad = true
+        //   this.errText = '上传图片比例只能为5:3, 请重新选择上传!'
+        //   return Promise.reject()
+        //   return false; //必须加上return false; 才能阻止
+        // })
 
         ////////////////////////
 
@@ -228,12 +338,15 @@
           fileList.splice(-1, 1);
           return false;
         }
-        this.addimg = fileList[0].raw;
-        this.ruleForm.csAvatar = this.addimg;
-        this.hideUploadBtn= true
+        // this.addimg = fileList[0].raw;
+        // console.log("横幅:",fileList[0])
+        this.storeBannerImgFile = fileList[0].raw
+
+        // this.ruleForm.csAvatar = this.addimg;
+        this.hideUploadBtn = true
       },
       //判断宽高是否满足要求
-      isSize(file){
+      isSize(file) {
         return true
         // let _this = this;
         // let imgWidth = "";
@@ -267,7 +380,7 @@
         console.log(fileList)
         this.ruleForm.csAvatar = '';
         this.formdata = new FormData();
-        this.hideUploadBtn= false
+        this.hideUploadBtn = false
       },
       // 活动展示照片预览
       handlePictureCardPreview(file) {
@@ -277,6 +390,8 @@
       //搜索地址 查询结果
       getCoordinate(data) {
         console.log("getCoordinate:", data)
+        this.shopInfo.longitude = data.lng+''
+        this.shopInfo.latitude = data.lat+''
       },
       back() {
         this.$router.back()
@@ -294,12 +409,15 @@
   .box {
     height: 100%;
   }
-  /deep/.el-dialog__body{
+
+  /deep/.el-dialog__body {
     background-color: #fff;
   }
+
   // 隐藏上传组件
   .hide {
     height: 70px;
+
     /deep/.el-upload--picture-card {
       display: none !important;
     }
@@ -347,23 +465,25 @@
     }
 
     // 更换店铺横幅
-    .banner-box{
-      /deep/.el-upload--picture-card{
+    .banner-box {
+      /deep/.el-upload--picture-card {
         width: 560px;
         height: 70px;
         line-height: 80px;
       }
-      /deep/.el-upload-list--picture-card .el-upload-list__item{
+
+      /deep/.el-upload-list--picture-card .el-upload-list__item {
         width: 560px;
         height: 70px;
       }
     }
+
     .banner-tip {
       display: flex;
       flex-direction: column;
 
       img {
-        width: 500px;
+        width: 100%;
         height: 70px;
       }
     }

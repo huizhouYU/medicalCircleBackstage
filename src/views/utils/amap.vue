@@ -23,7 +23,24 @@
   };
   export default {
     name: "v-map",
-    props: {},
+    props: {
+      longitude:String,//经度
+      latitude:String,//纬度
+    },
+    watch:{
+      longitude(val){
+        if(val != undefined && val != null && val !=''){
+          this.center[0] = val
+          console.log("this.center[0]:",this.center[0])
+        }
+      },
+      latitude(val){
+        if(val != undefined && val != null && val !=''){
+          this.center[1] = val
+          console.log("this.center[1]:",this.center[1])
+        }
+      }
+    },
     data() {
       let self = this;
       return {
@@ -31,7 +48,8 @@
         //从这里下去是地图有关的
         address: '', //获取的位置
         zoom: 13, // 地图缩放
-        center: [122.59996, 26.197646], // 初始中心
+        // center: [122.59996, 26.197646], // 初始中心
+        center: [117.30823, 31.863293], // 初始中心
         lng: 0, //经纬度
         lat: 0,
         loaded: false,
@@ -45,34 +63,40 @@
           pName: 'Geolocation',
           events: {
             init(o) {
+              self.markers = [{
+                position: self.center,
+              }]
+              self.loaded = true;
+              self.$nextTick();
               // o 是高德地图定位插件实例
-              o.getCurrentPosition((status, result) => {
-                if (result && result.position) {
-                  self.address = result.formattedAddress;
-                  self.lng = result.position.lng;
-                  self.lat = result.position.lat;
-                  self.center = [self.lng, self.lat];
-                  self.markers = [{
-                    position: self.center,
-                  }]
-                  self.loaded = true;
-                  self.$nextTick();
-                } else {
-                  o.getCityInfo((status, result) => {
-                    if (result && result.center) {
-                      // self.address = result.formattedAddress;
-                      self.lng = result.center[0];
-                      self.lat = result.center[1];
-                      self.center = result.center;
-                      self.markers = [{
-                        position: self.center,
-                      }]
-                      self.loaded = true;
-                      self.$nextTick();
-                    }
-                  });
-                }
-              });
+              // o.getCurrentPosition((status, result) => {
+              //   console.log(result)
+              //   if (result && result.position) {
+              //     self.address = result.formattedAddress;
+              //     self.lng = result.position.lng;
+              //     self.lat = result.position.lat;
+              //     self.center = [self.lng, self.lat];
+              //     self.markers = [{
+              //       position: self.center,
+              //     }]
+              //     self.loaded = true;
+              //     self.$nextTick();
+              //   } else {
+              //     o.getCityInfo((status, result) => {
+              //       if (result && result.center) {
+              //         // self.address = result.formattedAddress;
+              //         self.lng = result.center[0];
+              //         self.lat = result.center[1];
+              //         self.center = result.center;
+              //         self.markers = [{
+              //           position: self.center,
+              //         }]
+              //         self.loaded = true;
+              //         self.$nextTick();
+              //       }
+              //     });
+              //   }
+              // });
             }
           }
         }],
@@ -85,7 +109,7 @@
       }
     },
     created() {
-      console.log(this.address)
+      // console.log(this.address)
     },
     methods: {
       searchMap() {
@@ -144,6 +168,7 @@
           });
         }
         regeoCode();
+        self.$emit('mapDing', {lng,lat});
       },
     }
   }
