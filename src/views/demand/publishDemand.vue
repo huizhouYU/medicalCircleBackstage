@@ -1,32 +1,26 @@
 <template>
   <div>
     <!-- 编辑需求区域 -->
-    <el-form
-      ref="demandInfo"
-      label-position="right"
-      label-width="90px"
-      class="demo-demandInfo eidt-box"
-      :model="demandInfo"
-      :rules="demandInfoRules"
-    >
+    <el-form ref="demandInfo" label-position="right" label-width="90px" class="demo-demandInfo eidt-box"
+      :model="demandInfo" :rules="demandInfoRules">
       <!-- 信息类型 -->
       <div class="demand-item-title">信息类型</div>
       <!-- 主体类型： -->
-      <el-form-item label="主体类型：" prop="infoType">
+      <el-form-item label="主体类型：" prop="articleType">
         <div class="demand-type">
-          <div :class="demandInfo.infoType == 1?'typeItemChosed':'type-item'" @click="demandInfo.infoType=1">
+          <div :class="demandInfo.articleType == 1?'typeItemChosed':'type-item'" @click="demandInfo.articleType=1">
             <span class="title">求购设备</span>
             <span class="remarks">我需要求购配件</span>
             <span class="eg">例：我的一个设备急需配件</span>
             <div class="statue" />
           </div>
-          <div :class="demandInfo.infoType == 2?'typeItemChosed':'type-item'" @click="demandInfo.infoType=2">
+          <div :class="demandInfo.articleType == 2?'typeItemChosed':'type-item'" @click="demandInfo.articleType=2">
             <span class="title">项目外包</span>
             <span class="remarks">我是第三方维修公司</span>
             <span class="eg">例：需要寻找工程师帮我去现场维修设备</span>
             <div class="statue" />
           </div>
-          <div :class="demandInfo.infoType == 3?'typeItemChosed':'type-item'" @click="demandInfo.infoType=3">
+          <div :class="demandInfo.articleType == 3?'typeItemChosed':'type-item'" @click="demandInfo.articleType=3">
             <span class="title">灵活兼职</span>
             <span class="remarks">我是医疗设备维修工程师</span>
             <span class="eg">例：我可以帮你去现场维修设备</span>
@@ -36,27 +30,25 @@
       </el-form-item>
       <!-- 基本信息 -->
       <div class="demand-item-title">基本信息</div>
-      <div v-show="demandInfo.infoType ==1 || demandInfo.infoType ==2">
+      <div v-show="demandInfo.articleType ==1 || demandInfo.articleType ==2">
         <!-- 需求标题 -->
-        <el-form-item label="需求标题：" prop="infoTitle">
-          <el-input
-            v-model="demandInfo.infoTitle"
-            type="text"
-            class="input-title"
-            placeholder="请输入需求标题"
-            maxlength="20"
-            show-word-limit
-          />
+        <el-form-item label="需求标题：" prop="title">
+          <el-input v-model="demandInfo.title" type="text" class="input-title" placeholder="请输入需求标题" maxlength="20"
+            show-word-limit />
         </el-form-item>
         <div class="item3">
           <el-form-item label="设备名称：" class="demandInfo-item" prop="equipmentName">
-            <el-input v-model="demandInfo.equipmentName" type="text" placeholder="请输入设备名称" show-word-limit />
+            <el-input v-model="demandInfo.equipmentName" type="text" placeholder="请输入设备名称" maxlength="20" show-word-limit />
           </el-form-item>
-          <el-form-item label="设备品牌：" class="demandInfo-item" prop="infoBrand">
-            <el-input v-model="demandInfo.infoBrand" type="text" placeholder="请输入设备品牌" show-word-limit />
+          <el-form-item label="设备品牌：" class="demandInfo-item" prop="brandId">
+            <el-select v-model="demandInfo.brandId" class="select-brand" @change="selectBrand">
+              <el-option v-for="item in brandsOptions" :key="item.brandId" :label="item.brandName" :value="item.brandId"
+                ref="brandSelect">
+              </el-option>
+            </el-select>
           </el-form-item>
           <el-form-item label="P/N码：" class="demandInfo-item">
-            <el-input v-model="demandInfo.equipmentName" type="text" placeholder="请输入P/N码" show-word-limit />
+            <el-input v-model="demandInfo.equipmentType" type="text" placeholder="请输入P/N码" show-word-limit />
           </el-form-item>
         </div>
         <!-- 商品图片 -->
@@ -70,30 +62,24 @@
         </el-form-item>
         <!-- 详情描述 -->
         <el-form-item label="详情描述：" class="product-detail">
-          <edit class="edit" />
+          <edit class="edit" :description="demandInfo.description" @getContent="getDescription" />
         </el-form-item>
       </div>
-      <div v-show="demandInfo.infoType ==2">
+      <div v-show="demandInfo.articleType ==2">
         <!-- 维修区域 -->
-        <el-form-item label="维修区域：" prop="areaValue">
-          <el-cascader v-model="areaValue" :options="cities" :props="{value: 'Id',label: 'name'}" />
+        <el-form-item label="维修区域：" prop="regionId">
+          <el-cascader v-model="demandInfo.regionId" :options="cities"  @change="changeFormat" ref="cascaderRegion"/>
         </el-form-item>
       </div>
-      <div v-show="demandInfo.infoType ==3">
+      <div v-show="demandInfo.articleType ==3">
         <!-- 需求标题 -->
-        <el-form-item label="需求标题：" prop="infoTitle">
-          <el-input
-            v-model="demandInfo.infoTitle"
-            type="text"
-            class="input-title"
-            placeholder="请输入需求标题"
-            maxlength="20"
-            show-word-limit
-          />
+        <el-form-item label="需求标题：" prop="title">
+          <el-input v-model="demandInfo.title" type="text" class="input-title" placeholder="请输入需求标题" maxlength="20"
+            show-word-limit />
         </el-form-item>
         <!-- 维修区域 -->
-        <el-form-item label="维修区域：" prop="areaValue">
-          <el-cascader v-model="demandInfo.areaValue" :options="cities" :props="{value: 'Id',label: 'name'}" />
+        <el-form-item label="维修区域：" prop="regionId">
+          <el-cascader v-model="demandInfo.regionId" :options="cities"  @change="changeFormat" ref="cascaderRegion"/>
         </el-form-item>
         <!-- 个人图片 -->
         <el-form-item label="个人图片：" class="product-images">
@@ -106,22 +92,22 @@
         </el-form-item>
         <!-- 个人简述 -->
         <el-form-item label="个人简述：" class="product-detail">
-          <edit class="edit" />
+          <edit class="edit" :description="demandInfo.description" @getContent="getDescription" />
         </el-form-item>
       </div>
       <!-- 联系信息 -->
       <div class="demand-item-title">联系信息</div>
       <div class="item3">
-        <el-form-item label="联系人员：" class="demandInfo-item" prop="contactPerson">
-          <el-input v-model="demandInfo.contactPerson" type="text" placeholder="请输入联系人员" show-word-limit />
+        <el-form-item label="联系人员：" class="demandInfo-item" prop="linkMan">
+          <el-input v-model="demandInfo.linkMan" type="text" placeholder="请输入联系人员" show-word-limit />
         </el-form-item>
-        <el-form-item label="联系手机：" class="demandInfo-item" prop="contactPhone">
-          <el-input v-model="demandInfo.contactPhone" type="text" placeholder="请输入联系手机" show-word-limit />
+        <el-form-item label="联系手机：" class="demandInfo-item" prop="linkTel">
+          <el-input v-model="demandInfo.linkTel" type="text" placeholder="请输入联系手机" show-word-limit />
         </el-form-item>
       </div>
 
       <div class="submit">
-        <el-button type="primary" class="public-el-submit-btn">发布</el-button>
+        <el-button type="primary" class="public-el-submit-btn" @click="publish">发布</el-button>
       </div>
     </el-form>
 
@@ -129,188 +115,201 @@
 </template>
 
 <script>
-const a = require('../../../src/json/citys.json')
-import axios from 'axios'
-import edit from '../utils/edit.vue'
-import DragUpload from '../utils/DragUpload.vue' // 引入vue-draggable
-export default {
-  components: {
-    DragUpload,
-    edit
-  },
+  import {
+    brandList,createDemand
+  } from '@/api/demand'
+  const city = require('../../../src/json/citys.json')
+  import axios from 'axios'
+  import edit from '../utils/edit.vue'
+  import DragUpload from '../utils/DragUpload.vue' // 引入vue-draggable
+  export default {
+    components: {
+      DragUpload,
+      edit
+    },
+    data() {
+      var checkphone = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请输入手机号'))
+        } else if (!this.isCellPhone(value)) { // 引入methods中封装的检查手机格式的方法 callback(new Error('请输入正确的手机号!'))          } else {
+          callback(new Error('请输入正确的手机号!'))
+        }else {
+          callback()
+        }
+      }
+      // 地区选择验证
+      var validArea = (rule, value, callback) => {
+        // 直接用value 获取不到选中的值
+        // 所以直接 用HTML中 v-model 绑定的值来判断 是否有值
+        if (this.demandInfo.areaValue.length == 0) {
+          callback(new Error('请选择维修区域'))
+        } else {
+          callback()
+        }
+      }
+      return {
+        cities: [],
+        areaValue: [],
+        limit: 5,
+        // 发布信息
+        demandInfo: {
+          articleType: 1, // 信息类型
+          equipmentName: '', // 设备名称
+          brandId: '', // 品牌ID
+          brandName: '', //品牌名称,示例值(联影)
+          description: '', //详情描述
+          equipmentType: '', // P/N码（后端采用‘设备类型’字段代替）
+          linkMan: '', // 联系人员
+          linkTel: '', // 联系电话,示例值(18899990000)
+          regionId: '', //维修区域
+          region: '', //维修区域
+          title: '', // 需求标题,示例值(需求标题)
 
-  data() {
-    var checkphone = (rule, value, callback) => {
-      if (value === '') {
-        // let phoneReg = /(^1[3|4|5|6|7|8|9]\d{9}$)|(^09\d{8}$)/; if (value === '') {
-        callback(new Error('请输入手机号'))
-      } else if (!this.isCellPhone(value)) { // 引入methods中封装的检查手机格式的方法 callback(new Error('请输入正确的手机号!'))          } else {
-        callback()
+          // areaValue: ['120000','120100','120102'], // 维修区域
+        },
+        brandsOptions: [],
+        demandInfoRules: {
+          linkTel: [{
+            required: true,
+            validator: checkphone,
+            trigger: 'blur'
+          }]
+        },
+        ruleForm: {
+          imgUrl: '',
+          trialImgs: []
+        }
       }
-    }
-    // 地区选择验证
-    var validArea = (rule, value, callback) => {
-      // 直接用value 获取不到选中的值
-      // 所以直接 用HTML中 v-model 绑定的值来判断 是否有值
-      if (this.demandInfo.areaValue.length == 0) {
-        callback(new Error('请选择维修区域'))
-      } else {
-        callback()
-      }
-    }
-    return {
-      cities: [],
-      areaValue: [],
-      // chosedType: 1,
-      limit: 5,
-      // 发布信息
-      demandInfo: {
-        equipmentName: '', // 设备名称
-        infoType: 1, // 信息类型
-        infoBrand: '', // 设备品牌
-        infoModel: '', // 设备型号
-        infoTitle: '', // 信息标题
-        pn: '', // P/N码
-        areaValue: [], // 维修区域
-        contactPerson: '', // 联系人员
-        contactPhone: '' // 联系手机
-      },
-      demandInfoRules: {
-        infoTitle: [{
-          required: true,
-          message: '请输入标题',
-          trigger: 'blur'
-        },
-        {
-          min: 3,
-          max: 20,
-          message: '长度在 3 到 20 个字符',
-          trigger: 'blur'
-        }
-        ],
-        infoType: [{
-          required: true,
-          message: '请选择信息类型',
-          trigger: 'change'
-        }],
-        equipmentName: [{
-          required: true,
-          message: '请输入设备名称',
-          trigger: 'blur'
-        },
-        {
-          min: 3,
-          max: 20,
-          message: '长度在 3 到 20 个字符',
-          trigger: 'blur'
-        }
-        ],
-        infoBrand: [{
-          required: true,
-          message: '请输入设备品牌',
-          trigger: 'blur'
-        },
-        {
-          min: 3,
-          max: 20,
-          message: '长度在 3 到 20 个字符',
-          trigger: 'blur'
-        }
-        ],
-        areaValue: [{
-          required: true,
-          validator: validArea,
-          tirgger: 'blur'
-        },
-        {
-          type: 'array',
-          message: '请选择维修区域'
-        }
-        ],
-        contactPerson: [{
-          required: true,
-          message: '请输入联系人',
-          trigger: 'blur'
-        },
-        {
-          min: 0,
-          max: 10,
-          message: '长度在 0 到 10 个字符',
-          trigger: 'blur'
-        }
-        ],
-        contactPhone: [{
-          required: true,
-          validator: checkphone,
-          trigger: 'blur'
-        }]
-      },
-      // 信息类型
-      infoTypeOptions: [{
-        value: '1',
-        label: '类型一'
-      }, {
-        value: '2',
-        label: '类型二'
-      }],
-      infoModelOptions: [{
-        value: '1',
-        label: '型号一'
-      }, {
-        value: '2',
-        label: '型号二'
-      }],
-      ruleForm: {
-        imgUrl: '',
-        trialImgs: []
-      }
-    }
-  },
-  // mounted(){
-  //   this.getData()
-  //   // this.cities = a;
-  //   // axios.get("../../../static/testData/citys.json").then(res => {
-  //   //   console.log(res);
-  //   //   if (res.status == 200) {
-  //   //     this.cities = res.data
-  //   //   } else {
-  //   //     this.$message.error("数据请求失败，请稍后再试！")
-  //   //   }
-  //   // })
-  // },
-  mounted() {
-    this.getParams()
-  },
-  methods: {
-    getParams() {
-      //编辑商品 跳转过来 传递的数据
-      var editDemandData = this.$route.query.eidtData //要编辑需求的数据
-      if (editDemandData != undefined) {
-        this.$message({
-          type: 'info',
-          message: '此处应该根据需求ID去请求后端接口，获取需求数据，填充页面'
+    },
+    mounted() {
+      this.initData()
+      this.getParams()
+    },
+    methods: {
+      initData() {
+        brandList().then(response => {
+          this.brandsOptions = response.data.data
         })
-      }
-
-    },
-    getData() {
-      this.cities = a
-    },
-
-    isCellPhone(val) {
-      if (!/^1(3|4|5|6|7|8)\d{9}$/.test(val)) {
-        return false
-      } else {
+        this.cities = city
+      },
+      selectBrand(value) {
+        console.log(value);
+        let obj = {};
+        obj = this.brandsOptions.find((item) => {
+          return item.brandId === value;
+        });
+        console.log(obj.brandName);
+        this.demandInfo.brandName = obj.brandName
+      },
+      getDescription(val) {
+        this.demandInfo.description = val
+      },
+      publish() {
+        this.$refs['demandInfo'].validate((valid) => {
+          if (valid) {
+            if(this.checkData()){
+             this.submitDemand()
+            }
+          } else {
+            console.log('error submit!!')
+            return false
+          }
+        })
+      },
+      changeFormat() {
+        console.log(this.$refs["cascaderRegion"].getCheckedNodes()[0])
+        if(this.$refs["cascaderRegion"].getCheckedNodes()[0] != undefined){
+          let regionName = this.$refs["cascaderRegion"].getCheckedNodes()[0].pathLabels
+          // this.demandInfo.regionId = this.$refs["cascaderRegion"].getCheckedNodes()[0].path.join("/")
+          this.demandInfo.regionId = this.$refs["cascaderRegion"].getCheckedNodes()[0].path
+          this.demandInfo.region = regionName.join("/")
+          console.log("this.demandInfo.regionId:",this.demandInfo.regionId)
+          console.log("this.demandInfo.region:",this.demandInfo.region)
+          console.log("fghtdh", JSON.stringify(this.demandInfo.region))
+        }
+      },
+      submitDemand(){
+        console.log("发送的数据：",JSON.stringify(this.demandInfo))
+        createDemand(JSON.stringify(this.demandInfo)).then(response=>{
+          console.log(response.data.data)
+          if(response.data.code == 10000){
+            this.$message.success("发布成功！")
+            this.$router.replace({
+              path: 'demandManage'
+            })
+          }else{
+            this.$message.error(response.data.message)
+          }
+        })
+      },
+      checkData(){
+        if(this.demandInfo.articleType == null || this.demandInfo.articleType == ""){
+          this.$message.error("请选择信息类型")
+          return false
+        }
+        if(this.demandInfo.title == null || this.demandInfo.title == ""){
+          this.$message.error("请输入需求标题")
+          return false
+        }
+        if(this.demandInfo.equipmentName == null || this.demandInfo.equipmentName == ""){
+          this.$message.error("请输入设备名称")
+          return false
+        }
+        if(this.demandInfo.brandName == null || this.demandInfo.brandName == ""){
+          this.$message.error("请选择设备品牌")
+          return false
+        }
+        if(this.demandInfo.equipmentType == null || this.demandInfo.equipmentType == ""){
+          this.$message.error("请输入P/N码")
+          return false
+        }
+        if(this.demandInfo.linkMan == null || this.demandInfo.linkMan == ""){
+          this.$message.error("请输入联系人")
+          return false
+        }
+        if(this.demandInfo.linkTel == null || this.demandInfo.linkTel == ""){
+          this.$message.error("请输入联系电话")
+          return false
+        }
         return true
-      }
-    },
-    // 图片可拖曳排序
-    trialImgs(allList) {
-      this.ruleForm.trialImgs = allList
-    }
+      },
+      // changeFormat() {
+      //   console.log(this.$refs["cascaderRegion"].getCheckedNodes()[0])
+      //   if (this.$refs["cascaderRegion"].getCheckedNodes()[0] != undefined) {
+      //     let regionName = this.$refs["cascaderRegion"].getCheckedNodes()[0].pathLabels
+      //     this.demandInfo.region = regionName.join("/")
+      //     console.log("jjj", JSON.stringify(this.demandInfo.region))
+      //   }
+      // },
+      getParams() {
+        //编辑商品 跳转过来 传递的数据
+        var editDemandData = this.$route.query.eidtData //要编辑需求的数据
+        if (editDemandData != undefined) {
+          this.$message({
+            type: 'info',
+            message: '此处应该根据需求ID去请求后端接口，获取需求数据，填充页面'
+          })
+        }
 
+      },
+      getData() {
+        this.cities = a
+      },
+
+      isCellPhone(val) {
+        if (!/^1(3|4|5|6|7|8)\d{9}$/.test(val)) {
+          return false
+        } else {
+          return true
+        }
+      },
+      // 图片可拖曳排序
+      trialImgs(allList) {
+        this.ruleForm.trialImgs = allList
+      }
+
+    }
   }
-}
 </script>
 
 <style scoped lang="less">
@@ -443,6 +442,11 @@ export default {
     /deep/.el-input__inner {
       height: 34px;
       font-size: 12px;
+    }
+
+    //设备品牌
+    /deep/ .el-select>.el-input {
+      width: 260px;
     }
 
     //需求标题

@@ -1,14 +1,20 @@
 <template>
   <div class="app-container">
-    <el-table ref="multipleTable" :data="currentPageData" tooltip-effect="dark" style="width: 100%;min-height:200px" :height="tableHeight"
-      @selection-change="handleSelectionChange">
+    <el-table ref="multipleTable" :data="currentPageData" tooltip-effect="dark" style="width: 100%;min-height:200px"
+      :height="tableHeight" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55">
       </el-table-column>
-      <el-table-column prop="infoType" label="信息类型"></el-table-column>
-      <el-table-column prop="infoTitle" label="信息标题"></el-table-column>
-      <el-table-column prop="brand" label="设备品牌"></el-table-column>
-      <el-table-column prop="model" label="设备型号"></el-table-column>
-      <el-table-column prop="publishTime" label="发布时间"></el-table-column>
+      <el-table-column label="信息类型">
+        <template slot-scope="scope">
+          <span v-if="scope.row.articleType == 1">求购设备</span>
+          <span v-else-if="scope.row.articleType == 2">项目外包</span>
+          <span v-else-if="scope.row.articleType == 3">灵活兼职</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="title" label="信息标题"></el-table-column>
+      <el-table-column prop="brandName" label="设备品牌"></el-table-column>
+      <el-table-column prop="equipmentName" label="设备名称"></el-table-column>
+      <el-table-column prop="createdAt" label="发布时间"></el-table-column>
       <el-table-column fixed="right" label="操作" width="120">
         <template slot-scope="scope">
           <el-button @click.native.prevent="editRow(scope.$index, currentPageData)" type="text" size="small">
@@ -23,21 +29,14 @@
     <div class="bottoms-box">
       <div class="left">
         <el-checkbox v-model="isAddAllTerminalStatus" @change="allSelectTerminal">全选</el-checkbox>
-        <!-- <button @click="deleteChoosed" class="pl-delete-btn">
-          取消任务
-        </button> -->
-        <el-button type="danger" class="public-el-btn"  @click="deleteChoosed"> 取消任务</el-button>
+        <el-button type="danger" class="public-el-btn" @click="deleteChoosed"> 取消任务</el-button>
       </div>
-
       <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange"
-        :page-sizes="[1,5,10, 15, 20, 25]" :page-size="pageSize" :current-page.sync="currentPage" :pager-count="5"
-        :background="false" layout="total, sizes, prev, pager, next, jumper" :total="totalNum">
+        :page-sizes="[1,5,10, 15, 20, 25]" :page-size="currentSize" :current-page.sync="pageNum" :pager-count="5"
+        :background="false" layout="total, sizes, prev, pager, next, jumper" :total="totalCount">
       </el-pagination>
-
     </div>
-
   </div>
-
 </template>
 
 <script>
@@ -45,33 +44,47 @@
     getDynamicHeight,
     debounce
   } from "../utils/elTableAutoHeight.js";
-  const a = require("../../../src/json/demands.json")
+  import {
+    demandList
+  } from '@/api/demand'
   import axios from 'axios';
   export default {
+    props: ['demandList', 'currentPage', 'pageSize', 'totalPage', 'totalNum'],
     data() {
       return {
         tableHeight: 0,
         pagerCount: 4, //设置页码显示最多的数量
-        isAddAllTerminalStatus: false,
-        currentPage: 1, //当前页
-        totalPage: 0, //总页数
-        totalNum: 0, //总条数
-        pageSize: 10, //当前显示条数
-        tableData: [], //总数据内容
+        isAddAllTerminalStatus: false, //是否全选
+        pageNum: 1, //当前页
+        currentSize: 10, //当前显示条数
+        pageCount: 0, //总页数
+        totalCount: 0, //总条数
         currentPageData: [], //当前页显示内容
         multipleSelection: []
       }
     },
-    created() {
-
+    watch: {
+      demandList(val) { //列表数据
+        this.currentPageData = val
+      },
+      currentPage(val) { //当前页
+        this.pageNum = val
+      },
+      pageSize(val) { //当前显示条数
+        this.currentSize = val
+      },
+      totalPage(val) { //总页数
+        this.pageCount = val
+      },
+      totalNum(val) { //总条数
+        this.totalCount = val
+      }
     },
     mounted() {
       // 初始化给table高度赋值
       this.getHeight();
       // 屏幕resize监听方法
       this.screenMonitor();
-      this.loadData()
-
     },
     methods: {
       screenMonitor() {
@@ -94,44 +107,14 @@
           this.tableHeight = getDynamicHeight(200).height;
         }, 400);
       },
-      // 计算页码等
-      computeSize() {
-        this.totalNum = this.tableData.length
-        this.totalPage = Math.ceil(this.totalNum / this.pageSize);
-        // 计算得0时设置为1
-        this.totalPage = this.totalPage == 0 ? 1 : this.totalPage;
-        this.setCurrentPageData();
-      },
-      // 设置当前页面数据，对数组操作的截取规则为[0~10],[10~20]...,
-      setCurrentPageData() {
-        let begin = (this.currentPage - 1) * this.pageSize;
-        let end = this.currentPage * this.pageSize;
-        this.currentPageData = this.tableData.slice(
-          begin,
-          end
-        );
-      },
-      async loadData() {
-        this.tableData = a.demandsData
-        this.computeSize()
-        // await axios.get("http://192.168.0.110:8080/static/testData/demands.json").then(res => {
-        //   console.log(res);
-        //   if (res.status == 200) {
-        //     this.tableData = res.data.demandsData
-        //     console.log(this.tableData)
-        //     console.log(this.tableData.length)
-        //   } else {
-        //     this.$message.error("数据请求失败，请稍后再试！")
-        //   }
-        //   this.computeSize()
-        // })
-      },
+      //改变一页显示数量
       handleSizeChange(val) {
-        this.pageSize = val
-        this.loadData();
+        this.currentSize = val
+        this.$emit("changePageSize", val)
       },
+      //换页
       handleCurrentChange(val) {
-        this.setCurrentPageData();
+        this.$emit("changePage", val)
       },
       allSelectTerminal(e) {
         if (e === true) {
@@ -160,7 +143,6 @@
             message: '已取消删除'
           });
         });
-
       },
       editRow(index, rows) {
         console.log("index", index)
@@ -177,22 +159,6 @@
         console.log(this.multipleSelection)
         // rows.splice(index, 1);
       },
-      //改变上架状态
-      changePutState(index, rows) {
-        console.log(rows[index].id)
-        rows[index].isPut = !rows[index].isPut;
-        //数据提交给后台保存
-      },
-      //改变推荐状态
-      changeRecommendState(index, rows) {
-        rows[index].isRecommend = !rows[index].isRecommend;
-        //数据提交给后台保存
-      },
-      //改变禁售状态
-      changeForbidState(index, rows) {
-        rows[index].isForbid = !rows[index].isForbid;
-        //数据提交给后台保存
-      },
     }
   }
 </script>
@@ -200,6 +166,7 @@
   .app-container {
     box-shadow: 0px 2px 10px 1px rgba(0, 0, 0, 0.06);
   }
+
   .el-table {
     font-size: 12px;
     box-sizing: border-box;
