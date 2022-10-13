@@ -48,7 +48,7 @@
             </el-select>
           </el-form-item>
           <el-form-item label="P/N码：" class="demandInfo-item">
-            <el-input v-model="demandInfo.equipmentType" type="text" placeholder="请输入P/N码" show-word-limit />
+            <el-input v-model="demandInfo.pnCode" type="text" placeholder="请输入P/N码" show-word-limit />
           </el-form-item>
         </div>
         <!-- 商品图片 -->
@@ -67,8 +67,8 @@
       </div>
       <div v-show="demandInfo.articleType ==2">
         <!-- 维修区域 -->
-        <el-form-item label="维修区域：" prop="regionId">
-          <el-cascader v-model="demandInfo.regionId" :options="cities"  @change="changeFormat" ref="cascaderRegion"/>
+        <el-form-item label="维修区域：" prop="regionIdList">
+          <el-cascader v-model="demandInfo.regionIdList" :options="cities"  @change="changeFormat" ref="cascaderRegion"/>
         </el-form-item>
       </div>
       <div v-show="demandInfo.articleType ==3">
@@ -78,8 +78,8 @@
             show-word-limit />
         </el-form-item>
         <!-- 维修区域 -->
-        <el-form-item label="维修区域：" prop="regionId">
-          <el-cascader v-model="demandInfo.regionId" :options="cities"  @change="changeFormat" ref="cascaderRegion"/>
+        <el-form-item label="维修区域：" prop="regionIdList">
+          <el-cascader v-model="demandInfo.regionIdList" :options="cities"  @change="changeFormat" ref="cascaderRegion"/>
         </el-form-item>
         <!-- 个人图片 -->
         <el-form-item label="个人图片：" class="product-images">
@@ -116,7 +116,7 @@
 
 <script>
   import {
-    brandList,createDemand
+    brandList,createDemand,demandDetail
   } from '@/api/demand'
   const city = require('../../../src/json/citys.json')
   import axios from 'axios'
@@ -158,10 +158,10 @@
           brandId: '', // 品牌ID
           brandName: '', //品牌名称,示例值(联影)
           description: '', //详情描述
-          equipmentType: '', // P/N码（后端采用‘设备类型’字段代替）
+          pnCode: '', // P/N码
           linkMan: '', // 联系人员
           linkTel: '', // 联系电话,示例值(18899990000)
-          regionId: '', //维修区域
+          regionIdList: '', //维修区域
           region: '', //维修区域
           title: '', // 需求标题,示例值(需求标题)
 
@@ -220,12 +220,12 @@
         console.log(this.$refs["cascaderRegion"].getCheckedNodes()[0])
         if(this.$refs["cascaderRegion"].getCheckedNodes()[0] != undefined){
           let regionName = this.$refs["cascaderRegion"].getCheckedNodes()[0].pathLabels
-          // this.demandInfo.regionId = this.$refs["cascaderRegion"].getCheckedNodes()[0].path.join("/")
-          this.demandInfo.regionId = this.$refs["cascaderRegion"].getCheckedNodes()[0].path
+          // this.demandInfo.regionIdList = this.$refs["cascaderRegion"].getCheckedNodes()[0].path.join("/")
+          this.demandInfo.regionIdList = this.$refs["cascaderRegion"].getCheckedNodes()[0].path
+          this.demandInfo.regionIdList =  this.demandInfo.regionIdList.map(Number)
           this.demandInfo.region = regionName.join("/")
-          console.log("this.demandInfo.regionId:",this.demandInfo.regionId)
+          console.log("this.demandInfo.regionIdList:",this.demandInfo.regionIdList)
           console.log("this.demandInfo.region:",this.demandInfo.region)
-          console.log("fghtdh", JSON.stringify(this.demandInfo.region))
         }
       },
       submitDemand(){
@@ -251,17 +251,25 @@
           this.$message.error("请输入需求标题")
           return false
         }
-        if(this.demandInfo.equipmentName == null || this.demandInfo.equipmentName == ""){
-          this.$message.error("请输入设备名称")
-          return false
+        if(this.demandInfo.articleType !=3){
+          if(this.demandInfo.equipmentName == null || this.demandInfo.equipmentName == ""){
+            this.$message.error("请输入设备名称")
+            return false
+          }
+          if(this.demandInfo.brandName == null || this.demandInfo.brandName == ""){
+            this.$message.error("请选择设备品牌")
+            return false
+          }
+          if(this.demandInfo.pnCode == null || this.demandInfo.pnCode == ""){
+            this.$message.error("请输入P/N码")
+            return false
+          }
         }
-        if(this.demandInfo.brandName == null || this.demandInfo.brandName == ""){
-          this.$message.error("请选择设备品牌")
-          return false
-        }
-        if(this.demandInfo.equipmentType == null || this.demandInfo.equipmentType == ""){
-          this.$message.error("请输入P/N码")
-          return false
+        if(this.demandInfo.articleType !=1){
+          if(this.demandInfo.regionIdList == null ||  this.demandInfo.regionIdList.length<1){
+            this.$message.error("请选择维修区域")
+            return false
+          }
         }
         if(this.demandInfo.linkMan == null || this.demandInfo.linkMan == ""){
           this.$message.error("请输入联系人")
@@ -284,11 +292,15 @@
       getParams() {
         //编辑商品 跳转过来 传递的数据
         var editDemandData = this.$route.query.eidtData //要编辑需求的数据
+        console.log("this.$route.query.eidtData:",this.$route.query.eidtData)
         if (editDemandData != undefined) {
-          this.$message({
-            type: 'info',
-            message: '此处应该根据需求ID去请求后端接口，获取需求数据，填充页面'
+          demandDetail({id:editDemandData.id}).then(response=>{
+            console.log(response.data.data)
           })
+          // this.$message({
+          //   type: 'info',
+          //   message: '此处应该根据需求ID去请求后端接口，获取需求数据，填充页面'
+          // })
         }
 
       },

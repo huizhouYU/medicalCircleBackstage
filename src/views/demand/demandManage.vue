@@ -11,13 +11,13 @@
           </el-option>
         </el-select>
         <!-- 输入关键字 -->
-        <el-input placeholder="请输入信息标题/设备名称关键字" v-model="inputKey"
+        <el-input placeholder="请输入信息标题/设备名称关键字" v-model="keyword"
           class="input-with-select search-select-input public-interval">
-          <el-select v-model="inputKeyType" slot="prepend" placeholder="请选择">
-            <el-option v-for="item in inputKeyOptions" :key="item.value" :label="item.label" :value="item.value">
+          <el-select v-model="keyType" slot="prepend" placeholder="请选择">
+            <el-option v-for="item in keyTypeOptions" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
-          <el-button slot="append" icon="el-icon-search"></el-button>
+          <el-button slot="append" icon="el-icon-search" @click="initData"></el-button>
         </el-input>
       </div>
       <!-- 添加商品 -->
@@ -40,30 +40,30 @@
     data() {
       return {
         ///搜索关键字类型
-        inputKeyOptions: [{
-          value: '1',
+        keyTypeOptions: [{
+          value: 'title',
           label: '信息标题'
         }, {
-          value: '2',
+          value: 'equipmentName',
           label: '设备名称'
         }],
-        inputKeyType: '', //选择的搜索关键字类型
+        keyType: '', //选择的搜索关键字类型
         //输入的标题/设备型号 关键字
-        inputKey: '',
+        keyword: '',
         //选择的信息类型
         articleType: '',
         demandList:'',
         //信息类型
         infoOptions: [{
-            value: '1',
+            value: 1,
             label: '求购设备'
           },
           {
-            value: '2',
+            value: 2,
             label: '项目外包'
           },
           {
-            value: '3',
+            value: 3,
             label: '灵活兼职'
           }
         ],
@@ -82,20 +82,22 @@
         let data = {
           pageNo: this.currentPage,
           pageSize: this.pageSize,
-          articleType:this.articleType
+          articleType:this.articleType,
+          keyType:this.keyType,
+          keyword:this.keyword
         }
         demandList(data).then(response => {
           console.log(response.data.data)
-          // this.demandList = response.data.data.list
-          // this.currentPage = response.data.data.pageNum //当前页
-          // this.totalPage = response.data.data.pageCount //总页面数
-          // this.pageSize = response.data.data.pageSize //当前页面条数
-          // this.totalNum = response.data.data.totalCount //数据总数
+          this.demandList = response.data.data.list
+          this.currentPage = response.data.data.pageNum //当前页
+          this.totalPage = response.data.data.pageCount //总页面数
+          this.pageSize = response.data.data.pageSize //当前页面条数
+          this.totalNum = response.data.data.totalCount //数据总数
 
-          this.currentPage = 1 //当前页
-          this.totalPage = 10 //总页面数
-          // this.pageSize = 7 //当前页面条数
-          this.totalNum = 66 //数据总数
+          // this.currentPage = 1 //当前页
+          // this.totalPage = 10 //总页面数
+          // // this.pageSize = 7 //当前页面条数
+          // this.totalNum = 66 //数据总数
         })
       },
       changePageSize(val){

@@ -28,8 +28,8 @@
     </el-table>
     <div class="bottoms-box">
       <div class="left">
-        <el-checkbox v-model="isAddAllTerminalStatus" @change="allSelectTerminal">全选</el-checkbox>
-        <el-button type="danger" class="public-el-btn" @click="deleteChoosed"> 取消任务</el-button>
+        <!-- <el-checkbox v-model="isAddAllTerminalStatus" @change="allSelectTerminal">全选</el-checkbox> -->
+        <!-- <el-button type="danger" class="public-el-btn" @click="deleteChoosed"> 取消任务</el-button> -->
       </div>
       <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange"
         :page-sizes="[1,5,10, 15, 20, 25]" :page-size="currentSize" :current-page.sync="pageNum" :pager-count="5"
@@ -132,11 +132,17 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          rows.splice(index, 1);
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          });
+          
+          demandDelete({id: rows[index].id}).then(response => {
+            if (response.data.code == 10000) {
+              rows.splice(index, 1);
+              this.$message({
+                type: 'success',
+                message: '删除成功!'
+              });
+            }
+          })
+
         }).catch(() => {
           this.$message({
             type: 'info',
