@@ -229,6 +229,9 @@
         }
       },
       submitDemand(){
+        if(this.demandInfo.regionIdList == '' || this.demandInfo.regionIdList.length<0){
+          this.demandInfo.regionIdList = null
+        }
         console.log("发送的数据：",JSON.stringify(this.demandInfo))
         createDemand(JSON.stringify(this.demandInfo)).then(response=>{
           console.log(response.data.data)
