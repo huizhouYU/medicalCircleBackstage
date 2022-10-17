@@ -239,6 +239,38 @@ export const constantRoutes = [{
       }
     ]
   },
+  {
+
+      path: '/member',
+      component: Layout,
+      redirect: '/member/demandManage',
+      name: 'Member',
+      meta: {
+        title: '会员中心',
+        // icon: 'guide'
+        icon:'more-four'
+      },
+      children: [
+        {
+          path: 'invitation',
+          component: () => import('@/views/member/invitation'),
+          name: 'Invitation',
+          meta: {
+            title: '邀请信息',
+            // icon: 'edit'
+          },
+          // hidden: true
+        },{
+          path: 'contractList',
+          component: () => import('@/views/member/contractList'),
+          name: 'ContractList',
+          meta: {
+            title: '合同详情',
+          }
+        }
+
+      ]
+  },
   // {
   //   path: '/',
   //   component: Layout,
