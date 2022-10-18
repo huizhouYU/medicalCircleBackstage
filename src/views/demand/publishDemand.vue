@@ -297,8 +297,10 @@
         var editDemandData = this.$route.query.eidtData //要编辑需求的数据
         console.log("this.$route.query.eidtData:",this.$route.query.eidtData)
         if (editDemandData != undefined) {
-          demandDetail({id:editDemandData.id}).then(response=>{
+          console.log(editDemandData.articleId)
+          demandDetail({id:editDemandData.articleId}).then(response=>{
             console.log(response.data.data)
+            this.demandInfo = response.data.data
           })
           // this.$message({
           //   type: 'info',

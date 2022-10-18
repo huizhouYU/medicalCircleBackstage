@@ -1,18 +1,25 @@
 <template>
   <div class="app-container">
     <el-table ref="multipleTable" :data="tableData" tooltip-effect="dark" style="width: 100%;min-height:200px"
-      :height="tableHeight" class="el-table-box">
-      <el-table-column width="55">
+      :height="tableHeight"  class="el-table-box" >
+      <el-table-column  width="55">
       </el-table-column>
-      <el-table-column prop="contractNo" label="合同编号" min-width="120"></el-table-column>
-      <el-table-column prop="time" label="合同日期" min-width="200"></el-table-column>
-      <el-table-column prop="amount" label="合同金额" min-width="120"></el-table-column>
+      <el-table-column prop="name" label="邀请名单" min-width="120"></el-table-column>
+      <el-table-column prop="username" label="用户名" min-width="200"></el-table-column>
+      <el-table-column prop="time" label="邀请时间" min-width="120"></el-table-column>
+      <el-table-column fixed="right" label="操作" min-width="120">
+        <template slot-scope="scope">
+          <el-button @click.native.prevent="editRow(scope.$index, tableData)" type="text" size="small">
+            成交信息
+          </el-button>
+        </template>
+      </el-table-column>
     </el-table>
     <div class="bottoms-box">
       <div class="left"></div>
       <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange"
-        :page-sizes="[1,5,10, 15, 20, 25]" :pager-count="5" :page-size="currentSize.pageSize" :background="false"
-        layout="total, sizes, prev, pager, next, jumper" :total="total">
+        :page-sizes="[1,5,10, 15, 20, 25]" :pager-count="5" :page-size="currentSize.pageSize"
+        :background="false" layout="total, sizes, prev, pager, next, jumper" :total="total">
       </el-pagination>
     </div>
   </div>
@@ -42,59 +49,35 @@
         return statusMap[status]
       }
     },
-    watch: {},
+    watch: {
+    },
     data() {
       return {
-        tableData: [{
-            id: '1',
-            contractNo: 'FM8855184165345623',
-            time: '2021-10-28',
-            amount: '99999.99'
-          },
-          {
-            id: '1',
-            contractNo: 'FM8855184165345623',
-            time: '2021-10-28',
-            amount: '99999.99'
-          },
-          {
-            id: '1',
-            contractNo: 'FM8855184165345623',
-            time: '2021-10-28',
-            amount: '99999.99'
-          },
-          {
-            id: '1',
-            contractNo: 'FM8855184165345623',
-            time: '2021-10-28',
-            amount: '99999.99'
-          },
-          {
-            id: '1',
-            contractNo: 'FM8855184165345623',
-            time: '2021-10-28',
-            amount: '99999.99'
-          },
-          {
-            id: '1',
-            contractNo: 'FM8855184165345623',
-            time: '2021-10-28',
-            amount: '99999.99'
-          },
-          {
-            id: '1',
-            contractNo: 'FM8855184165345623',
-            time: '2021-10-28',
-            amount: '99999.99'
-          },
-          {
-            id: '1',
-            contractNo: 'FM8855184165345623',
-            time: '2021-10-28',
-            amount: '99999.99'
-          }
-        ],
-        total: 100,
+        tableData:[{
+          id:'1',
+          name:'张楚岚',
+          username:'血糯米奶茶',
+          time:'2021-10-28  16:28:56'
+        },
+        {
+          id:'2',
+          name:'杨岚',
+          username:'生椰拿铁',
+          time:'2021-10-28  16:28:56'
+        },
+        {
+          id:'3',
+          name:'王浩',
+          username:'皮蛋',
+          time:'2021-10-28  16:28:56'
+        },
+        {
+          id:'4',
+          name:'陶名',
+          username:'卡布奇洛',
+          time:'2021-10-28  16:28:56'
+        }],
+        total:100,
         tableHeight: 0,
         pagerCount: 4, //设置页码显示最多的数量
         isAddAllTerminalStatus: false,
@@ -106,7 +89,8 @@
         }
       }
     },
-    created() {},
+    created() {
+    },
     mounted() {
       // 初始化给table高度赋值
       this.getHeight();
@@ -135,14 +119,24 @@
         }, 400);
       },
       handleSizeChange(val) {
-        console.log("handleSizeChange:", val)
+        console.log("handleSizeChange:",val)
         this.currentSize.pageSize = val
-        this.$emit("getList", this.currentSize)
+        this.$emit("getList",this.currentSize)
       },
       handleCurrentChange(val) {
         this.currentSize.page = val
-        this.$emit("getList", this.currentSize)
-        console.log("handleCurrentChange:", val)
+        this.$emit("getList",this.currentSize)
+        console.log("handleCurrentChange:",val)
+      },
+      editRow(index, rows) {
+        console.log("index", index)
+        console.log("rows", rows[index])
+        this.$router.replace({
+          path: 'contractList',
+          query: {
+            eidtData: rows[index]
+          }
+        })
       },
     }
   }

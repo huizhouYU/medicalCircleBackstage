@@ -38,15 +38,16 @@ import nestedRouter from './modules/nested'
  * a base page that does not have permission requirements
  * all roles can be accessed
  */
-export const constantRoutes = [{
-    path: '/redirect',
-    component: Layout,
-    hidden: true,
-    children: [{
-      path: '/redirect/:path(.*)',
-      component: () => import('@/views/redirect/index')
-    }]
-  },
+export const constantRoutes = [
+  // {
+  //   path: '/redirect',
+  //   component: Layout,
+  //   hidden: true,
+  //   children: [{
+  //     path: '/redirect/:path(.*)',
+  //     component: () => import('@/views/redirect/index')
+  //   }]
+  // },
   {
     path: '/login',
     component: () => import('@/views/login/index'),
@@ -243,22 +244,45 @@ export const constantRoutes = [{
 
       path: '/member',
       component: Layout,
-      redirect: '/member/demandManage',
+      redirect: '/invitationList',
       name: 'Member',
       meta: {
         title: '会员中心',
-        // icon: 'guide'
         icon:'more-four'
       },
       children: [
         {
-          path: 'invitation',
+          path: '/invitation',
           component: () => import('@/views/member/invitation'),
           name: 'Invitation',
+          redirect: '/invitationList',
           meta: {
             title: '邀请信息',
-            // icon: 'edit'
           },
+          children:[
+            {
+                path: '/invitationList',
+                component: () => import('@/views/member/invitationList'),
+                name: 'InvitationList',
+                hidden: true,
+                meta: {
+                  title: '邀请信息',
+                  // showZj: false
+                  // icon: 'edit'
+                },
+            },
+            {
+                path: '/contractList',
+                component: () => import('@/views/member/contractList'),
+                name: 'Invitation/ContractList',
+                hidden: true,
+                meta: {
+                  title: '合同详情',
+                  showZj: false
+                  // icon: 'edit'
+                },
+            }
+          ]
           // hidden: true
         },{
           path: 'contractList',

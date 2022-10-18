@@ -62,7 +62,16 @@
     },
     methods: {
       isActive(route) {
-        return route.path === this.$route.path
+        let path = this.$route.path
+        // console.log("呼呼：",this.$route)
+        if(this.$route.meta.showZj != undefined){
+          if(!this.$route.meta.showZj){
+            console.log("sdffsd")
+            console.log(route.path)
+            path = '/invitationList'
+          }
+        }
+        return route.path === path
       },
       isAffix(tag) {
         return tag.meta && tag.meta.affix
@@ -101,8 +110,11 @@
       },
       addTags() {
         const {
-          name
+          name,meta
         } = this.$route
+        if(meta.showZj != undefined){
+          if(!meta.showZj) return
+        }
         if (name) {
           this.$store.dispatch('tagsView/addView', this.$route)
         }
@@ -130,7 +142,8 @@
           } = view
           this.$nextTick(() => {
             this.$router.replace({
-              path: '/redirect' + fullPath
+              // path: '/redirect' + fullPath
+              path: fullPath
             })
           })
         })

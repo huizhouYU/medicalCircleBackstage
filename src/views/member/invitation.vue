@@ -5,13 +5,36 @@
       <div class="invitation">
         <span class="title">邀请链接：</span>
         <div class="content">
-          <div class="link">www.yijiequan.cn</div>
-          <div class="copy">复制链接</div>
+          <div class="link">{{link}}</div>
+          <div class="copy" @click="copy">复制链接</div>
         </div>
       </div>
       <!-- 添加商品 -->
-      <el-button type="primary" class="apply-withdrawal" @click="toAddGoods">申请提款</el-button>
+      <el-button type="primary" class="apply-withdrawal" @click="applyWithdrawal">申请提款</el-button>
     </div>
+    <router-view></router-view>
+    <!--申请提款 弹框 -->
+    <el-dialog title="申请提款" :close-on-click-modal="false" :visible.sync="applyDialogVisible" width="600px"
+      class="el-dialog-box">
+      <el-form :model="applyForm" label-position="right" ref="applyForm" :rules="applyRules">
+        <el-form-item label="可提取余额:" :label-width="formLabelWidth">
+          <el-input v-model="applyForm.balance" placeholder="--" :disabled="true" />
+        </el-form-item>
+        <el-form-item label="银行卡号:" :label-width="formLabelWidth" prop="bankCardNo">
+          <el-input v-model="applyForm.bankCardNo" autocomplete="off" size="medium" placeholder="请输入本人的银行卡号" />
+        </el-form-item>
+        <el-form-item label="真实姓名:" :label-width="formLabelWidth" prop="name">
+          <el-input v-model="applyForm.name" autocomplete="off" size="medium" placeholder="请输入真实姓名" />
+        </el-form-item>
+        <el-form-item label="开户行:" :label-width="formLabelWidth" prop="deposit">
+          <el-input v-model="applyForm.deposit" autocomplete="off" size="medium" placeholder="请输入" />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button size="medium" @click="closeApplyDialog">取 消</el-button>
+        <el-button size="medium" type="primary" @click="sureApplyDialog">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -19,20 +42,75 @@
   export default {
     data() {
       return {
+        link: 'www.yijiequan.cn',
+        formLabelWidth: '100px',
+        applyDialogVisible: false,
+        applyForm: {
+          balance: '9999.99',
+          bankCardNo: '',
+          name: '',
+          deposit: ''
+        },
+        applyRules: {
+          bankCardNo: [{
+            required: true,
+            message: '请输入本人的银行卡号',
+            trigger: 'blur',
 
+          }],
+          name: [{
+            required: true,
+            message: '请输入真实姓名',
+            trigger: 'blur'
+          }],
+          deposit: [{
+            required: true,
+            message: '请输入开户行',
+            trigger: 'blur'
+          }]
+        },
       }
     },
+    mounted() {
+      this.$router.push({
+        path: '/invitationList'
+      })
+    },
     methods: {
-      toAddGoods() {
-
-      }
+      // 复制操作
+      copy() {
+        // 创建输入框元素
+        let oInput = document.createElement('input');
+        // 将想要复制的值
+        oInput.value = this.link;
+        // 页面底部追加输入框
+        document.body.appendChild(oInput);
+        // 选中输入框
+        oInput.select();
+        // 执行浏览器复制命令
+        document.execCommand('Copy');
+        // 弹出复制成功信息
+        this.$message.success('复制成功');
+        // 复制后移除输入框
+        oInput.remove();
+      },
+      applyWithdrawal() {
+        this.applyDialogVisible = true
+      },
+      closeApplyDialog() {
+        this.applyDialogVisible = false
+      },
+      sureApplyDialog() {
+        // 请求后端接口数据，保存信息
+        this.closeApplyDialog()
+      },
     }
   }
 </script>
 
 <style lang="less" scoped>
   .invitation-info {
-    margin: 16px 20px 20px 20px;
+    margin-bottom: 20px;
     height: 74px;
     background: #FFFFFF;
     box-shadow: 0px 2px 10px 1px rgba(0, 0, 0, 0.06);
@@ -75,6 +153,7 @@
         }
 
         .copy {
+          cursor: pointer;
           width: 88px;
           height: 34px;
           background: #1890FF;
