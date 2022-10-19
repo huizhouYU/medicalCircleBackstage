@@ -21,16 +21,18 @@
         </el-input>
       </div>
       <!-- 添加商品 -->
-      <el-button type="primary" class="public-el-btn"  @click="toAddDemand">发布需求</el-button>
+      <el-button type="primary" class="public-el-btn" @click="toAddDemand">发布需求</el-button>
     </div>
     <!-- 模块三 需求列表 -->
-    <demands-items class="items" @changePageSize="changePageSize" @changePage= "changePage" :demandList="demandList" :currentPage="currentPage" :pageSize="pageSize" :totalPage="totalPage" :totalNum="totalNum"></demands-items>
+    <demands-items class="items" @changePageSize="changePageSize" @changePage="changePage" :demandList="demandList"
+      :currentPage="currentPage" :pageSize="pageSize" :totalPage="totalPage" :totalNum="totalNum"></demands-items>
   </div>
 </template>
 
 <script>
   import {
-    brandList,demandList
+    brandList,
+    demandList
   } from '@/api/demand'
   import DemandsItems from '../demand/demandsItems.vue'
   export default {
@@ -52,7 +54,7 @@
         keyword: '',
         //选择的信息类型
         articleType: '',
-        demandList:'',
+        demandList: '',
         //信息类型
         infoOptions: [{
             value: 1,
@@ -78,13 +80,13 @@
       this.initData()
     },
     methods: {
-      initData(){
+      initData() {
         let data = {
           pageNo: this.currentPage,
           pageSize: this.pageSize,
-          articleType:this.articleType,
-          keyType:this.keyType,
-          keyword:this.keyword
+          articleType: this.articleType,
+          keyType: this.keyType,
+          keyword: this.keyword
         }
         demandList(data).then(response => {
           console.log(response.data.data)
@@ -93,19 +95,14 @@
           this.totalPage = response.data.data.pageCount //总页面数
           this.pageSize = response.data.data.pageSize //当前页面条数
           this.totalNum = response.data.data.totalCount //数据总数
-
-          // this.currentPage = 1 //当前页
-          // this.totalPage = 10 //总页面数
-          // // this.pageSize = 7 //当前页面条数
-          // this.totalNum = 66 //数据总数
         })
       },
-      changePageSize(val){
+      changePageSize(val) {
         this.pageSize = val
         this.initData()
       },
-      changePage(val){
-        this.pageNo = val
+      changePage(val) {
+        this.currentPage = val
         this.initData()
       },
       //发布需求
@@ -117,7 +114,6 @@
 </script>
 
 <style scoped lang="less">
-
   // 模块二 搜索条件 + 发布需求
   .search-add {
     background-color: #fff;

@@ -20,7 +20,6 @@
         <input type="file" id="inputFile" accept="image/png, image/jpeg, image/gif, image/jpg" @change="previewFile"
           style="display: none; " class="hiddenInput" multiple="multiple">
       </div>
-
     </label>
     <!-- 原图显示弹框 -->
     <el-dialog :visible.sync="dialogVisible">

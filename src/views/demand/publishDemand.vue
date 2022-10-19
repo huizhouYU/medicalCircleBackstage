@@ -38,7 +38,8 @@
         </el-form-item>
         <div class="item3">
           <el-form-item label="设备名称：" class="demandInfo-item" prop="equipmentName">
-            <el-input v-model="demandInfo.equipmentName" type="text" placeholder="请输入设备名称" maxlength="20" show-word-limit />
+            <el-input v-model="demandInfo.equipmentName" type="text" placeholder="请输入设备名称" maxlength="20"
+              show-word-limit />
           </el-form-item>
           <el-form-item label="设备品牌：" class="demandInfo-item" prop="brandId">
             <el-select v-model="demandInfo.brandId" class="select-brand" @change="selectBrand">
@@ -46,6 +47,9 @@
                 ref="brandSelect">
               </el-option>
             </el-select>
+          </el-form-item>
+          <el-form-item label="设备类型：" class="demandInfo-item">
+            <el-input v-model="demandInfo.equipmentType" type="text" placeholder="请输入设备类型" />
           </el-form-item>
           <el-form-item label="P/N码：" class="demandInfo-item">
             <el-input v-model="demandInfo.pnCode" type="text" placeholder="请输入P/N码" show-word-limit />
@@ -55,7 +59,7 @@
         <el-form-item label="商品图片：" class="product-images">
           <div label="图片可拖曳排序：" prop="trialImgs" class="content-images">
             <div class="row">
-              <DragUpload :all-list="ruleForm.trialImgs" :limit="limit" @allList="trialImgs" />
+              <DragUpload :limit="limit" @allList="trialImgs" :imgList="imgList" />
               <div class="el-upload__tip gray-tip">请：图片上传不超过5张，图片支持jpg/png格式，不超过500kb，尺寸为800*800</div>
             </div>
           </div>
@@ -68,7 +72,8 @@
       <div v-show="demandInfo.articleType ==2">
         <!-- 维修区域 -->
         <el-form-item label="维修区域：" prop="regionIdList">
-          <el-cascader v-model="demandInfo.regionIdList" :options="cities"  @change="changeFormat" ref="cascaderRegion"/>
+          <el-cascader v-model="demandInfo.regionIdList" :options="cities" @change="changeFormat"
+            ref="cascaderRegion" />
         </el-form-item>
       </div>
       <div v-show="demandInfo.articleType ==3">
@@ -79,13 +84,14 @@
         </el-form-item>
         <!-- 维修区域 -->
         <el-form-item label="维修区域：" prop="regionIdList">
-          <el-cascader v-model="demandInfo.regionIdList" :options="cities"  @change="changeFormat" ref="cascaderRegion"/>
+          <el-cascader v-model="demandInfo.regionIdList" :options="cities" @change="changeFormat"
+            ref="cascaderRegion" />
         </el-form-item>
         <!-- 个人图片 -->
         <el-form-item label="个人图片：" class="product-images">
           <div label="图片可拖曳排序：" prop="trialImgs" class="content-images">
             <div class="row">
-              <DragUpload :all-list="ruleForm.trialImgs" :limit="limit" @allList="trialImgs" />
+              <DragUpload :limit="limit" @allList="trialImgs" :imgList="imgList" />
               <div class="el-upload__tip gray-tip">请：图片上传不超过5张，图片支持jpg/png格式，不超过500kb，尺寸为800*800</div>
             </div>
           </div>
@@ -116,8 +122,14 @@
 
 <script>
   import {
-    brandList,createDemand,demandDetail
+    brandList,
+    createDemand,
+    demandDetail,
+    updateDemand
   } from '@/api/demand'
+  import {
+    uploadImage
+  } from '@/api/public'
   const city = require('../../../src/json/citys.json')
   import axios from 'axios'
   import edit from '../utils/edit.vue'
@@ -131,25 +143,17 @@
       var checkphone = (rule, value, callback) => {
         if (value === '') {
           callback(new Error('请输入手机号'))
-        } else if (!this.isCellPhone(value)) { // 引入methods中封装的检查手机格式的方法 callback(new Error('请输入正确的手机号!'))          } else {
+        } else if (!this.isCellPhone(
+            value)) { // 引入methods中封装的检查手机格式的方法 callback(new Error('请输入正确的手机号!'))          } else {
           callback(new Error('请输入正确的手机号!'))
-        }else {
-          callback()
-        }
-      }
-      // 地区选择验证
-      var validArea = (rule, value, callback) => {
-        // 直接用value 获取不到选中的值
-        // 所以直接 用HTML中 v-model 绑定的值来判断 是否有值
-        if (this.demandInfo.areaValue.length == 0) {
-          callback(new Error('请选择维修区域'))
         } else {
           callback()
         }
       }
       return {
+        isUpdate: false,
         cities: [],
-        areaValue: [],
+        imgList: [],
         limit: 5,
         // 发布信息
         demandInfo: {
@@ -164,8 +168,7 @@
           regionIdList: '', //维修区域
           region: '', //维修区域
           title: '', // 需求标题,示例值(需求标题)
-
-          // areaValue: ['120000','120100','120102'], // 维修区域
+          imageList: [], //图片列表
         },
         brandsOptions: [],
         demandInfoRules: {
@@ -186,29 +189,31 @@
       this.getParams()
     },
     methods: {
+      //初始化数据
       initData() {
         brandList().then(response => {
           this.brandsOptions = response.data.data
         })
         this.cities = city
       },
+      //选择 设备品牌
       selectBrand(value) {
-        console.log(value);
         let obj = {};
         obj = this.brandsOptions.find((item) => {
           return item.brandId === value;
         });
-        console.log(obj.brandName);
         this.demandInfo.brandName = obj.brandName
       },
+      //获取详情 内容
       getDescription(val) {
         this.demandInfo.description = val
       },
+      //发布
       publish() {
         this.$refs['demandInfo'].validate((valid) => {
           if (valid) {
-            if(this.checkData()){
-             this.submitDemand()
+            if (this.checkData()) {
+              this.submitDemand()
             }
           } else {
             console.log('error submit!!')
@@ -216,103 +221,123 @@
           }
         })
       },
+      //区域 转换格式
       changeFormat() {
-        console.log(this.$refs["cascaderRegion"].getCheckedNodes()[0])
-        if(this.$refs["cascaderRegion"].getCheckedNodes()[0] != undefined){
+        if (this.$refs["cascaderRegion"].getCheckedNodes()[0] != undefined) {
           let regionName = this.$refs["cascaderRegion"].getCheckedNodes()[0].pathLabels
           // this.demandInfo.regionIdList = this.$refs["cascaderRegion"].getCheckedNodes()[0].path.join("/")
           this.demandInfo.regionIdList = this.$refs["cascaderRegion"].getCheckedNodes()[0].path
-          this.demandInfo.regionIdList =  this.demandInfo.regionIdList.map(Number)
+          this.demandInfo.regionIdList = this.demandInfo.regionIdList.map(Number)
           this.demandInfo.region = regionName.join("/")
-          console.log("this.demandInfo.regionIdList:",this.demandInfo.regionIdList)
-          console.log("this.demandInfo.region:",this.demandInfo.region)
         }
       },
-      submitDemand(){
-        if(this.demandInfo.regionIdList == '' || this.demandInfo.regionIdList.length<0){
+      //发布请求接口
+      async submitDemand() {
+        if (this.demandInfo.regionIdList == null || this.demandInfo.regionIdList == '' || this.demandInfo.regionIdList
+          .length < 0) {
           this.demandInfo.regionIdList = null
         }
-        console.log("发送的数据：",JSON.stringify(this.demandInfo))
-        createDemand(JSON.stringify(this.demandInfo)).then(response=>{
-          console.log(response.data.data)
-          if(response.data.code == 10000){
-            this.$message.success("发布成功！")
-            this.$router.replace({
-              path: 'demandManage'
+        this.demandInfo.imageList = []
+        for (var item of this.ruleForm.trialImgs) {
+          if (item.file != '') {
+            let param = new FormData(); //创建form对象
+            param.append('file', item.file); //通过append向form对象添加数据
+            await uploadImage(param).then(response => {
+              console.log(response.data.data)
+              this.demandInfo.imageList.push(response.data.data)
             })
-          }else{
-            this.$message.error(response.data.message)
+          } else {
+            var newImgUrl = item.imgUrl.split("https://images.weserv.nl/?url=").join("");
+            console.log("newImgUrl：", newImgUrl)
+            this.demandInfo.imageList.push(newImgUrl)
           }
-        })
+        }
+        console.log("发送的数据：", JSON.stringify(this.demandInfo))
+        // 编辑
+        if (this.isUpdate) {
+          await updateDemand(JSON.stringify(this.demandInfo)).then(response => {
+            console.log(response.data.data)
+            if (response.data.code == 10000) {
+              this.$message.success("更新成功！")
+              this.$router.replace({
+                path: 'demandManage'
+              })
+            } else {
+              this.$message.error(response.data.message)
+            }
+          })
+        } else { //新建
+          await createDemand(JSON.stringify(this.demandInfo)).then(response => {
+            if (response.data.code == 10000) {
+              this.$message.success("发布成功！")
+              this.$router.replace({
+                path: 'demandManage'
+              })
+            } else {
+              this.$message.error(response.data.message)
+            }
+          })
+        }
       },
-      checkData(){
-        if(this.demandInfo.articleType == null || this.demandInfo.articleType == ""){
+      //检查必填项
+      checkData() {
+        if (this.demandInfo.articleType == null || this.demandInfo.articleType == "") {
           this.$message.error("请选择信息类型")
           return false
         }
-        if(this.demandInfo.title == null || this.demandInfo.title == ""){
+        if (this.demandInfo.title == null || this.demandInfo.title == "") {
           this.$message.error("请输入需求标题")
           return false
         }
-        if(this.demandInfo.articleType !=3){
-          if(this.demandInfo.equipmentName == null || this.demandInfo.equipmentName == ""){
+        if (this.demandInfo.articleType != 3) {
+          if (this.demandInfo.equipmentName == null || this.demandInfo.equipmentName == "") {
             this.$message.error("请输入设备名称")
             return false
           }
-          if(this.demandInfo.brandName == null || this.demandInfo.brandName == ""){
-            this.$message.error("请选择设备品牌")
+          if (this.demandInfo.equipmentType == null || this.demandInfo.equipmentType == "") {
+            this.$message.error("请选择设备类型")
             return false
           }
-          if(this.demandInfo.pnCode == null || this.demandInfo.pnCode == ""){
+          if (this.demandInfo.pnCode == null || this.demandInfo.pnCode == "") {
+            this.$message.error("请输入P/N码")
+            return false
+          }
+          if (this.demandInfo.pnCode == null || this.demandInfo.pnCode == "") {
             this.$message.error("请输入P/N码")
             return false
           }
         }
-        if(this.demandInfo.articleType !=1){
-          if(this.demandInfo.regionIdList == null ||  this.demandInfo.regionIdList.length<1){
+        if (this.demandInfo.articleType != 1) {
+          if (this.demandInfo.regionIdList == null || this.demandInfo.regionIdList.length < 1) {
             this.$message.error("请选择维修区域")
             return false
           }
         }
-        if(this.demandInfo.linkMan == null || this.demandInfo.linkMan == ""){
+        if (this.demandInfo.linkMan == null || this.demandInfo.linkMan == "") {
           this.$message.error("请输入联系人")
           return false
         }
-        if(this.demandInfo.linkTel == null || this.demandInfo.linkTel == ""){
+        if (this.demandInfo.linkTel == null || this.demandInfo.linkTel == "") {
           this.$message.error("请输入联系电话")
           return false
         }
         return true
       },
-      // changeFormat() {
-      //   console.log(this.$refs["cascaderRegion"].getCheckedNodes()[0])
-      //   if (this.$refs["cascaderRegion"].getCheckedNodes()[0] != undefined) {
-      //     let regionName = this.$refs["cascaderRegion"].getCheckedNodes()[0].pathLabels
-      //     this.demandInfo.region = regionName.join("/")
-      //     console.log("jjj", JSON.stringify(this.demandInfo.region))
-      //   }
-      // },
-      getParams() {
-        //编辑商品 跳转过来 传递的数据
+    //获取要编辑的需求id来获取需求详情
+      async getParams() {
+        //编辑需求 跳转过来 传递的数据
         var editDemandData = this.$route.query.eidtData //要编辑需求的数据
-        console.log("this.$route.query.eidtData:",this.$route.query.eidtData)
         if (editDemandData != undefined) {
-          console.log(editDemandData.articleId)
-          demandDetail({id:editDemandData.articleId}).then(response=>{
-            console.log(response.data.data)
+          await demandDetail({
+            id: editDemandData.articleId
+          }).then(response => {
+            this.isUpdate = true
             this.demandInfo = response.data.data
+            this.imgList = this.demandInfo.imageList
           })
-          // this.$message({
-          //   type: 'info',
-          //   message: '此处应该根据需求ID去请求后端接口，获取需求数据，填充页面'
-          // })
         }
-
       },
-      getData() {
-        this.cities = a
-      },
-
+      //校验手机号码
       isCellPhone(val) {
         if (!/^1(3|4|5|6|7|8)\d{9}$/.test(val)) {
           return false
@@ -527,9 +552,6 @@
         margin-left: 0px !important;
       }
 
-      .edit {
-        // height: 400px;
-      }
     }
   }
 
@@ -539,18 +561,5 @@
     justify-content: center;
     align-items: center;
     margin-top: 30px;
-
-    // .but-submit {
-    //   width: 92px;
-    //   height: 34px;
-    //   background: #1890FF;
-    //   border-radius: 6px 6px 6px 6px;
-    //   font-size: 12px;
-    //   font-family: Microsoft YaHei-Regular, Microsoft YaHei;
-    //   font-weight: 400;
-    //   color: #FFFFFF;
-    //   border: none;
-    //   outline: none;
-    // }
   }
 </style>

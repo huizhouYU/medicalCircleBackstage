@@ -32,14 +32,23 @@ export function demandDetail(query) {
     params:query
   })
 }
-//根据id删除需求
-export function demandDelete(data) {
+//编辑需求  提交
+export function updateDemand(data) {
   return request({
-    url: 'article/detail',
+    url: '/article/update',
     method: 'post',
     data
   })
 }
+//根据id删除需求
+export function demandDelete(data) {
+  return request({
+    url: 'article/delete',
+    method: 'post',
+    data
+  })
+}
+
 
 // export function fetchPv(pv) {
 //   return request({

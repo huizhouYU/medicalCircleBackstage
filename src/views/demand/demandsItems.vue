@@ -45,6 +45,9 @@
     debounce
   } from "../utils/elTableAutoHeight.js";
   import {
+    demandDelete
+  } from '@/api/demand'
+  import {
     demandList
   } from '@/api/demand'
   import axios from 'axios';
@@ -126,14 +129,17 @@
       handleSelectionChange(val) {
         this.multipleSelection = val;
       },
+      //删除需求
       deleteRow(index, rows) {
-        this.$confirm('该条数据删除后将无法找回, 是否继续?', '提示', {
+        this.$confirm('该条数据删除后将无法找回, 是否继续q?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          
-          demandDelete({id: rows[index].id}).then(response => {
+          let param={
+            id:rows[index].articleId
+          }
+          demandDelete(JSON.stringify(param)).then(response => {
             if (response.data.code == 10000) {
               rows.splice(index, 1);
               this.$message({
@@ -142,7 +148,6 @@
               });
             }
           })
-
         }).catch(() => {
           this.$message({
             type: 'info',
@@ -150,9 +155,8 @@
           });
         });
       },
+      //编辑需求
       editRow(index, rows) {
-        console.log("index", index)
-        console.log("rows", rows)
         this.$router.replace({
           path: 'publishDemand',
           query: {
