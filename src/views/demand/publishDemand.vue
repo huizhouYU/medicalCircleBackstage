@@ -116,7 +116,6 @@
         <el-button type="primary" class="public-el-submit-btn" @click="publish">发布</el-button>
       </div>
     </el-form>
-
   </div>
 </template>
 
@@ -237,6 +236,12 @@
           .length < 0) {
           this.demandInfo.regionIdList = null
         }
+        if(this.demandInfo.regionIdList != null && this.demandInfo.regionIdList != ''){
+          this.demandInfo.regionIdList = this.demandInfo.regionIdList.map(Number)
+        }
+        if(this.demandInfo.brandId == ''){
+          this.demandInfo.brandId=0
+        }
         this.demandInfo.imageList = []
         for (var item of this.ruleForm.trialImgs) {
           if (item.file != '') {
@@ -333,6 +338,9 @@
           }).then(response => {
             this.isUpdate = true
             this.demandInfo = response.data.data
+            if(this.demandInfo.regionIdList != null){
+               this.demandInfo.regionIdList = this.demandInfo.regionIdList.map(String)
+            }
             this.imgList = this.demandInfo.imageList
           })
         }

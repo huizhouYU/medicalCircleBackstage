@@ -48,14 +48,6 @@
         dialogImageUrl: ''
       };
     },
-    created() {
-      console.log("created")
-      console.log("created  allListChild:", this.allListChild)
-    },
-    mounted() {
-      console.log("mounted")
-      console.log("mounted  allListChild:", this.allListChild)
-    },
     methods: {
 
       // beforeAvatarUpload(file) {
@@ -162,7 +154,6 @@
     watch: {
       //监听 需求  商品图片  或者  个人图片
       imgList(newVal) {
-        console.log("newVal:", newVal)
         if (newVal != null) {
           for (var item of newVal) {
             var temp = {
