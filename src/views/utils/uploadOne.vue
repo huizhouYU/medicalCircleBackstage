@@ -30,7 +30,7 @@
 
 <script>
   export default {
-    props: ["mrSrc", "isWhole"],
+    props: ["mrSrc", "isWhole","limitWidth","limitHeight"],
     data() {
       return {
         cardImgUrl: "",
@@ -38,7 +38,21 @@
         chosedImgUrl: '',
         dialogVisible: false,
         dialogImageUrl: '',
+        limitImgWidth:'',
+        limitImgHeight:''
       }
+    },
+    watch:{
+      limitWidth(val){
+        this.limitImgWidth = val
+      },
+      limitHeight(val){
+        this.limitImgHeight = val
+      },
+    },
+    mounted() {
+      this.limitImgWidth = this.limitWidth
+      this.limitImgHeight = this.limitHeight
     },
     methods: {
       showCardDiv() {
@@ -79,12 +93,49 @@
           fr.readAsDataURL(files[0])
           // 3.监听 fr 的 onload 事件
           fr.onload = (e) => {
-            // 通过 e.target.result 获取到读取的结果，值是 BASE64 格式的字符串
-            // 法1
-            // this.$refs.imgRef.src = e.target.result
-            // 法2
-            this.cardImgUrl = e.target.result
-            this.$emit("getImgFile", files[0])
+            let _this = this;
+            const isLt2M = files[0].size / 1024 / 1024 < 2;
+            if(isLt2M){
+              let imgWidth = "";
+              let imgHight = "";
+              const isSize = new Promise(function(resolve, reject) {
+                // let width = 300;
+                // let height = 300;
+                let _URL = window.URL || window.webkitURL;
+                let img = new Image();
+                img.src = _URL.createObjectURL(files[0]);
+                img.onload = function() {
+                  imgWidth = img.width;
+                  imgHight = img.height;
+                  let valid = img.width == _this.limitImgWidth && img.height == _this.limitImgHeight;
+                  // console.log('当前上传图片的宽高分别为：' + imgWidth + 'px和' + imgHight + 'px')
+                  console.log("valid:",valid)
+                  valid ? resolve() : reject();
+                }
+              }).then(() => {
+                // 通过 e.target.result 获取到读取的结果，值是 BASE64 格式的字符串
+                // 法1
+                // this.$refs.imgRef.src = e.target.result
+                // 法2
+                this.cardImgUrl = e.target.result
+                this.$emit("getImgFile", files[0])
+                return files[0]
+              }, () => {
+                _this.$message.warning({
+                  message: '上传文件的图片大小不合符标准,宽需要为'+this.limitImgWidth+'px，高需要为'+this.limitImgHeight+'px。当前上传图片的宽高分别为：' + imgWidth + 'px和' + imgHight + 'px',
+                  btn: false
+                })
+                return Promise.reject();
+              });
+            }else{
+              _this.$message.warning({
+                message: '上传文件的图片大小不能超过2M!' ,
+                btn: false
+              })
+            }
+
+
+
           }
         }
       }

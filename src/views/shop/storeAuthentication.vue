@@ -308,7 +308,7 @@
         storeDetail().then(response => {
           if(response.data.data != null){
             this.ruleForm = response.data.data
-            // this.isLook = true
+            this.isLook = true
             // 店铺状态 0-待审核 1-审核成功 2-审核失败
             this.examineResult = response.data.data.state
           }

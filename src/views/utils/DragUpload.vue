@@ -34,7 +34,7 @@
   import draggable from "vuedraggable";
   export default {
     name: "DragUpload",
-    props: ['imgList', 'limit'],
+    props: ['imgList', 'limit', 'limitWidth', 'limitHeight'],
     components: {
       draggable,
     },
@@ -50,48 +50,11 @@
     },
     methods: {
 
-      // beforeAvatarUpload(file) {
-      //   this.loading = true;
-      //   const isLt10M = file.size / 1024 / 1024 < 10;
-      //   // if (!isLt10M) {
-      //   //   this.$message.error('图片大小不超过10M')
-      //   //   return
-      //   // }
-      //   let _this = this
-      //    const is1M = file.size / 1024 / 1024 < 1; // 限制小于1M
-      //   const isSize = new Promise(function(resolve, reject) {
-      //      let width = 654; // 限制图片尺寸为654X270            let height = 270;
-      //     let _URL = window.URL || window.webkitURL;
-      //      let img = new Image();
-      //      console.log("上传图片:", new Image())
-      //      console.log(_URL)
-      //      img.onload = function() {
-      //        let valid = img.width === width && img.height === height;              valid ? resolve() : reject();
-      //     }
-      //     img.src = _URL.createObjectURL(file);          }).then(() => {
-      //      return file;
-      //    }, () => {            _this.$message.error('图片尺寸限制为654 x 270，大小不可超过1MB')
-      //      return Promise.reject();          });
-      //   if (!is1M) {
-      //      _this.$message.error('图片尺寸限制为654 x 270，大小不可超过1MB')
-      //    }          return isSize & is1M
-      //   // return api.getQiniuToken().then((res) => {   // 这里需要配置自己的七牛云api接口
-      //   //   // 配置上传的七牛token
-      //   //   this.qiniuUploadForm = {
-      //   //     token: res.retInfo,
-      //   //     name: file.name,
-      //   //     key: Math.floor(Math.random() * 10 + 1) + file.name,
-      //   //   };
-      //   // });
-      // },
-
       handlePictureCardPreview(file) {
         this.dialogImageUrl = file;
         this.dialogVisible = true;
       },
       previewFile(e) {
-        console.log("上传图片")
-        console.log("this.allListChild:", this.allListChild)
         // 1.获取用户选择的文件对象
         const files = e.target.files
         if (files.length === 0) {
@@ -105,20 +68,52 @@
           fr.readAsDataURL(files[0])
           // 3.监听 fr 的 onload 事件
           fr.onload = (e) => {
-            // 通过 e.target.result 获取到读取的结果，值是 BASE64 格式的字符串
-            // 法1
-            // this.$refs.imgRef.src = e.target.result
-            // 法2
-            var temp = {
-              file: files[0],
-              imgUrl: e.target.result,
-              orderNumber: this.allListChild.length
-            };
-            this.allListChild.push(temp) // 启动拖拽功能
-            if (this.allListChild.length >= this.limit) {
-              this.isShowUpload = false;
+            let _this = this;
+            const isLt2M = files[0].size / 1024  < 500;
+            if (isLt2M) {
+              let imgWidth = "";
+              let imgHight = "";
+              new Promise(function(resolve, reject) {
+                let _URL = window.URL || window.webkitURL;
+                let img = new Image();
+                img.src = _URL.createObjectURL(files[0]);
+                img.onload = function() {
+                  imgWidth = img.width;
+                  imgHight = img.height;
+                  let valid = img.width == _this.limitWidth && img.height == _this.limitHeight;
+                  valid ? resolve() : reject();
+                }
+              }).then(() => {
+                // 通过 e.target.result 获取到读取的结果，值是 BASE64 格式的字符串
+                // 法1
+                // this.$refs.imgRef.src = e.target.result
+                // 法2
+                var temp = {
+                  file: files[0],
+                  imgUrl: e.target.result,
+                  orderNumber: _this.allListChild.length
+                };
+                _this.allListChild.push(temp) // 启动拖拽功能
+                if (_this.allListChild.length >= _this.limit) {
+                  _this.isShowUpload = false;
+                }
+                _this.$emit('allList', _this.allListChild)
+
+                return files[0]
+              }, () => {
+                _this.$message.warning({
+                  message: '上传文件的图片大小不合符标准,宽需要为' + this.limitWidth + 'px，高需要为' + this.limitHeight +'px。当前上传图片的宽高分别为：' + imgWidth + 'px和' + imgHight + 'px',
+                  btn: false
+                })
+                return Promise.reject();
+              });
+            } else {
+              _this.$message.warning({
+                message: '上传文件的图片大小不能超过500kb!',
+                btn: false
+              })
             }
-            this.$emit('allList', this.allListChild)
+
           }
         }
       },
@@ -127,8 +122,8 @@
         this.allListChild.splice(index, 1)
         if (this.allListChild.length >= this.limit) {
           this.isShowUpload = false;
-        }else{
-           this.isShowUpload = true;
+        } else {
+          this.isShowUpload = true;
         }
         this.$emit('allList', this.allListChild)
         // this.isShow()
@@ -173,17 +168,20 @@
   }
 </script>
 <style lang="less" scoped>
-  /deep/.el-dialog__body{
+  /deep/.el-dialog__body {
     background-color: #fff;
   }
+
   .images-content {
     display: flex;
     justify-content: flex-start;
     align-items: center;
+
     ul {
       margin-left: 0px !important;
     }
   }
+
   .upload-img {
     width: 70px;
     height: 70px;
@@ -197,10 +195,12 @@
     position: relative;
     cursor: pointer;
     margin-right: 16px;
+
     img {
       width: 20px;
       height: 20px;
     }
+
     span {
       height: 12px;
       line-height: 12px;
@@ -209,6 +209,7 @@
       font-weight: 400;
       color: #BBBBBB;
     }
+
     .hiddenInput {
       position: absolute;
       width: 100%;
@@ -216,13 +217,16 @@
       display: none;
     }
   }
+
   .el-image {
     width: 100%;
     height: 100%;
   }
+
   .img-list {
     display: inline-block;
   }
+
   .img-wrapper {
     float: left;
     position: relative;
@@ -232,15 +236,18 @@
     width: 70px;
     height: 70px;
     overflow: hidden;
+
     &:hover {
       .operate-wrap {
         display: block;
       }
     }
   }
+
   .operate-wrap {
     display: none;
   }
+
   .operate-bg {
     background: #000000;
     width: 70px;
@@ -251,6 +258,7 @@
     left: 0;
     z-index: 8;
   }
+
   .del-icon {
     position: absolute;
     top: 0;
@@ -260,6 +268,7 @@
     color: #ffffff;
     z-index: 10;
   }
+
   .preview-icon {
     position: absolute;
     top: 0;
@@ -269,8 +278,10 @@
     color: #ffffff;
     z-index: 10;
   }
+
   .upload-add {
     margin-right: 15px;
+
     /deep/ .el-upload--picture-card {
       width: 70px;
       height: 70px;
@@ -282,10 +293,12 @@
       justify-content: center;
       align-items: center;
       line-height: normal;
+
       img {
         width: 20px;
         height: 20px;
       }
+
       span {
         margin-top: 8px;
         font-size: 12px;

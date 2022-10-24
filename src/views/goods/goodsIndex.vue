@@ -26,7 +26,9 @@
       <el-button type="primary" class="public-el-btn" @click="toAddGoods">添加商品</el-button>
     </div>
     <!-- 模块三 商品列表 -->
-    <goods-items class="items" :tableData="tableData" :total="total" @getList="getNewList" v-if="tableData&&flag"></goods-items>
+    <!-- <goods-items class="items" :tableData="tableData" :total="total" @getList="getNewList" v-if="tableData&&flag"></goods-items> -->
+    <goods-items class="items" :tableData="tableData" :total="total" @getList="getNewList"></goods-items>
+    
   </div>
 </template>
 
@@ -127,13 +129,14 @@
     methods: {
       getList() {
         this.listLoading = true
-       goodsList(this.listQuery).then(response => {
-         console.log("response.data.count:",response.data.count)
-          this.tableData = response.data.data
-          this.total = response.data.count
-          this.listLoading = false
-          this.flag = true
-        })
+        this.tableData= []
+       // goodsList(this.listQuery).then(response => {
+       //   console.log("response.data.count:",response.data.count)
+       //    this.tableData = response.data.data
+       //    this.total = response.data.count
+       //    this.listLoading = false
+       //    this.flag = true
+       //  })
       },
       getNewList(data) {
        console.log("data:",data)
