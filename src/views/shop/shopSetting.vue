@@ -235,7 +235,7 @@
             this.shopInfo.certificationList.push(newImgUrl)
           }
         }
-        console.log("this.shopInfo:", JSON.stringify(this.shopInfo))
+        // console.log("this.shopInfo:", JSON.stringify(this.shopInfo))
         await storeUpdate(JSON.stringify(this.shopInfo)).then(response => {
           console.log(response.data.data)
           if (response.data.code == 10000) {

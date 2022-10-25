@@ -1,6 +1,7 @@
 import {
   login,
   logout,
+  register,
   getInfo
 } from '@/api/user'
 import {
@@ -50,13 +51,40 @@ const actions = {
         username: username.trim(),
         password: password
       }).then(response => {
-        // console.log("response：",response)
+        console.log("sdresponse：",response)
         const {
           data
         } = response.data
         console.log("setToken:",data)
         commit('SET_TOKEN', data)
         setToken(data)
+        resolve()
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+
+  register({ commit }, registerInfo) {
+    const {
+      mobile,
+      captcha,
+      activation
+    } = registerInfo
+    return new Promise((resolve, reject) => {
+      register({
+        mobile: mobile.trim(),
+        captcha: captcha.trim(),
+        activation: activation.trim()
+      }).then(response => {
+        console.log("注册接口返回：",response)
+        console.log("将返回的token保存到store中")
+        // const {
+        //   data
+        // } = response.data
+        // console.log("setToken:",data)
+        // commit('SET_TOKEN', data)
+        // setToken(data)
         resolve()
       }).catch(error => {
         reject(error)

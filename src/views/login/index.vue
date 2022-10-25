@@ -1,32 +1,16 @@
 <template>
   <div class="login-container">
-    <vue-particles
-    class="login-bg"
-            color="#fff"
-            :particleOpacity="0.7"
-            :particlesNumber="60"
-            shapeType="circle"
-            :particleSize="4"
-            linesColor="#cfdbe3"
-            :linesWidth="1"
-            :lineLinked="true"
-            :lineOpacity="0.4"
-            :linesDistance="150"
-            :moveSpeed="3"
-            :hoverEffect="true"
-            hoverMode="grab"
-            :clickEffect="true"
-            clickMode="push"
-          >
+    <vue-particles class="login-bg" color="#fff" :particleOpacity="0.7" :particlesNumber="60" shapeType="circle"
+      :particleSize="4" linesColor="#cfdbe3" :linesWidth="1" :lineLinked="true" :lineOpacity="0.4" :linesDistance="150"
+      :moveSpeed="3" :hoverEffect="true" hoverMode="grab" :clickEffect="true" clickMode="push">
     </vue-particles>
     <div class="left">
-      <!-- <img src="../../../public/imgs/login/left-bg.png" alt=""> -->
-      <img src="../../../public/imgs/login/left-bg.png" alt="" :class="[{loginImg:isRegister},'loginBgImg']">
-      <img src="../../../public/imgs/login/register-bg.png" alt="" :class="[{registerImg:isRegister},'registerBgImg']">
+      <img src="../../../public/imgs/login/left-bg.png" alt="" class="loginBgImg ">
     </div>
     <div class="right">
       <!-- 登录 -->
-      <div :class="[{flipLogin:isRegister},'login-content','public-content']">
+      <div class="login-content public-content">
+        <!-- 猫头鹰 -->
         <div class="owl" id="owl" :class="[{password:isHide},'owl']">
           <div class="hand"></div>
           <div class="hand hand-r"></div>
@@ -37,6 +21,7 @@
         </div>
         <!-- 登录 -->
         <div v-show="!isForgotPassword">
+          <!-- 登录方式 -->
           <ul class="loginWay-div">
             <li :class="loginWay==1?'chosedWay':''" @click="loginWay=1">密码登录 <span></span> </li>
             <li :class="loginWay==2?'chosedWay':''" @click="loginWay=2">验证码登录<span></span> </li>
@@ -75,7 +60,6 @@
               </div>
               <el-button type="primary" round class="from-btn" @click="login('loginForm')">登录</el-button>
             </el-form>
-
           </div>
           <!-- 验证码登录 -->
           <div v-show="loginWay == 2">
@@ -102,11 +86,10 @@
               <div class="login-to-register">
                 <span @click="register()">立即注册</span>
               </div>
-
               <button class="from-btn code-login" @click="login('loginCodeForm')">登录</button>
             </el-form>
           </div>
-          <!-- 选择一下方式登录 -->
+          <!-- 选择一下其他方式登录 -->
           <div class="other">
             <span>无需注册，选择一下方式登录</span>
             <ul>
@@ -164,43 +147,6 @@
         </div>
       </div>
 
-      <!-- 注册 -->
-      <div :class="[{flipRegister:isRegister},'register-content','public-content']" v-show="!isForgotPassword">
-        <span class="form-title">欢迎注册</span>
-        <div class="checking">
-          <el-form label-position="top" label-width="80px" :model="registerForm" class="modular-form" ref="registerForm"
-            :rules="registerRules">
-            <el-form-item label="" class="form-label" prop="phone">
-              <el-input v-model="registerForm.phone" placeholder="请输入手机号" clearable>
-                <template #prefix>
-                  <div class="prefix"><img src="" alt=""></div>
-                </template>
-              </el-input>
-            </el-form-item>
-            <div class="getCode-item">
-              <el-form-item label="" class="form-label" prop="phoneCode">
-                <el-input v-model="registerForm.phoneCode" placeholder="请输入验证码" clearable>
-                  <template #prefix>
-                    <div class="prefix"><img src="" alt=""></div>
-                  </template>
-                </el-input>
-              </el-form-item>
-              <span v-show="showRegisterGetVCode" @click="getVCode">获取验证码</span>
-              <span v-show="!showRegisterGetVCode" class="countDown">{{registerCount}} s</span>
-            </div>
-            <!-- 《用户服务协议》 -->
-            <div class="agree-item">
-              <div class="agree-left">
-                <el-checkbox label="我已阅读同意" v-model="isAgree"></el-checkbox>
-                <span class="agreement" @click="lookAgreement">《用户服务协议》</span>
-              </div>
-              <span class="login-left" @click="flipLogin">立即登录</span>
-            </div>
-            <!-- :class="[{loginImg:isRegister},'loginBgImg']" -->
-            <el-button type="primary" round class="from-btn" :class="[{greyBtn:!isAgree},'from-btn']" @click="immedRegister('registerForm')">注册</el-button>
-          </el-form>
-        </div>
-      </div>
     </div>
   </div>
 </template>
@@ -209,24 +155,23 @@
   import {
     validUsername
   } from '@/utils/validate'
-  import SocialSign from './components/SocialSignin'
+  import {
+    sendMsg
+  } from '@/api/user'
 
   export default {
     name: 'Login',
-    components: {
-      SocialSign
-    },
     data() {
       const validateUsername = (rule, value, callback) => {
         // if (!validUsername(value)) {
-        if(value.trim().length<0){
+        if (value.trim().length < 0) {
           callback(new Error('请输入用户名'))
         } else {
           callback()
         }
       }
       const validatePassword = (rule, value, callback) => {
-        if (value.length < 6) {
+        if (value.length < 0) {
           callback(new Error('请输入密码'))
         } else {
           callback()
@@ -261,19 +206,17 @@
         isForgotPassword: false, //是否忘记密码
         loginCount: '', //获取验证码倒计时【登录页】
         showLoginGetVCode: true, //是否显示获取验证码【登录页】
-        registerCount: '', //获取验证码倒计时【注册页】
-        showRegisterGetVCode: true, //是否显示获取验证码【注册页】
         forgetCount: '', //获取验证码倒计时【忘记密码】
         showForgetGetVCode: true, //是否显示获取验证码【忘记密码】
         loginWay: 1, //登录方式【1：密码登录，2：短信登录】
-        active: 1,
-        isRegister: false, //是否在注册页面
-        isRememberPass: false, //记住密码
+        isRememberPass: '', //记住密码
         isHide: false,
         //登录
         loginForm: {
-          username: 'cuiqianming',
-          password: '123456',
+          // username: 'cuiqianming',
+          // password: '123456',
+          username: '',
+          password: '',
           verCode: ''
         },
         loginCodeForm: {
@@ -337,39 +280,11 @@
             trigger: 'change'
           }]
         },
-        registerForm: {
-          phone: '',
-          phoneCode: ''
-        },
-        registerRules: {
-          phone: [{
-            required: true,
-            trigger: 'blur',
-            validator: validatePhone
-          }],
-          phoneCode: [{
-            required: true,
-            message: '请输入短信验证码',
-            trigger: 'change'
-          }]
-        },
-        verifyCode: '',
         show_num: '',
         isAgree: false,
       }
     },
-    watch: {
-      // $route: {
-      //   handler: function(route) {
-      //     const query = route.query
-      //     if (query) {
-      //       this.redirect = query.redirect
-      //       this.otherQuery = this.getOtherQuery(query)
-      //     }
-      //   },
-      //   immediate: true
-      // }
-    },
+    watch: {},
     mounted() {
       this.draw();
       this.getCookie()
@@ -476,7 +391,7 @@
           }
           //是否记住密码
           if (this.isRememberPass) {
-            this.setCookie(this.loginForm.username, this.loginForm.password, 7)
+            this.setCookie(this.loginForm.username, this.loginForm.password)
           } else {
             this.clearCookie();
           }
@@ -509,94 +424,31 @@
                 })
                 this.loading = false
                 console.log("成功")
-              })
-              .catch(() => {
+              }).catch(() => {
                 this.loading = false
                 console.log("失败")
               })
-          }else{
+          } else {
             console.log("登录前验证失败")
           }
         }
-        // this.$refs.loginForm.validate(valid => {
-        //   if (valid) {
-        //     this.loading = true
-        //     this.$store.dispatch('user/login', this.loginForm)
-        //       .then(() => {
-        //         this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
-        //         this.loading = false
-        //       })
-        //       .catch(() => {
-        //         this.loading = false
-        //       })
-        //   } else {
-        //     console.log('error submit!!')
-        //     return false
-        //   }
-        // })
-
-        // this.$http.post('login', this.loginForm).then(res => {
-        //   console.log(res)
-        //   // 对象结构赋值
-        //   const {data, meta: {msg, status}} = res.data
-        //   if (msg === 200) {
-        //     // 登录成功 跳转首页
-        //     this.$router.push({
-        //       name: 'home'
-        //     })
-        //   }
-        // })
-
       },
-      // async newlogin() {
-      //   if (this.loginForm.username === '' && this.loginForm.password === '') {
-      //     this.$message.error('用户名和密码不能为空！')
-      //     return ''
-      //   }
-      //   const res = await this.$http.post('login', this.loginForm)
-      //   // 对象结构赋值
-      //   const {
-      //     data,
-      //     meta: {
-      //       msg,
-      //       status
-      //     }
-      //   } = res.data
-      //   if (msg === 200) {
-      //     // 保存token值
-      //     localStorage.setItem('token', data.token)
-      //     // 登录成功 跳转首页
-      //     this.$router.push({
-      //       name: 'home'
-      //     })
-      //   }
-      // },
+
       getCookie() {
-        if (document.cookie.length > 0) {
-          var arr = document.cookie.split(";");
-          for (var i = 0; i < arr.length; i++) {
-            var userKey = arr[i].split("=");
-            if (userKey[0].trim() == "userName") {
-              this.loginForm.username = userKey[1];
-            } else if (userKey[0].trim() == "userPws") {
-              this.loginForm.password = userKey[1];
-            } else if (userKey[0].trim() == "isRemember") {
-              this.isRememberPass = Boolean(userKey[1]);
-            }
-          }
-        }
+        this.loginForm.username = localStorage.getItem("yj_UserName")
+        this.loginForm.password = localStorage.getItem("yj_Pws")
+        this.isRememberPass = Boolean(localStorage.getItem("yj_isRemember"))
+
       },
       //存储
-      setCookie(userName, userPws, days) {
-        var curDate = new Date();
-        curDate.setTime(curDate.getTime() + 24 * 60 * 60 * 1000 * days); //设置cookie存储的有效时间
-        window.document.cookie = "userName" + "=" + userName + ";path=/;expires=" + curDate.toGMTString();
-        window.document.cookie = "userPws" + "=" + userPws + ";path=/;expires=" + curDate.toGMTString();
-        window.document.cookie = "isRemember" + "=" + this.isRemember + ";path=/;expires=" + curDate.toGMTString();
+      setCookie(userName, userPws) {
+        localStorage.setItem("yj_UserName",userName)
+        localStorage.setItem("yj_Pws",userPws)
+        localStorage.setItem("yj_isRemember",this.isRememberPass)
       },
       //如果用户不选择记住密码清除cookie
       clearCookie() {
-        this.setCookie("", "", -1);
+        this.setCookie("", "");
       },
       //忘记密码
       remberpass() {
@@ -605,11 +457,9 @@
       },
       //注册
       register() {
-        // alert("正在做呢，催啥？？？");
-        this.active = 1
-        this.isRegister = true
-        //还原登录页和注册页 获取短信验证码等信息
-        this.clearData()
+        this.$router.push({
+          path: '/register'
+        })
       },
       flipLogin() {
         this.isForgotPassword = false
@@ -623,70 +473,58 @@
         this.timer = null;
         this.loginCount = ''
         this.showLoginGetVCode = true
-        this.registerCount = ''
-        this.showRegisterGetVCode = true
       },
       //其他方式登录
       otherLogin(val) {
         alert("催啥？点啥？走走走...")
       },
-      nextStep() {
-        if (this.active++ > 3) this.active = 1
-      },
+      // 获取短信验证码
       getVCode() {
-        //登录页获取倒计时
-        if (!this.isRegister) {
-          //axios请求
-          if (!this.isForgotPassword) {
-            if (!this.isCellPhone(this.loginCodeForm.phone)) {
-              this.$message.error('请先输入正确的手机号码！')
-              return
-            }
-            // 验证码倒计时
-            if (!this.timer) {
-              this.loginCount = 60;
-              this.showLoginGetVCode = false;
-              this.timer = setInterval(() => {
-                if (this.loginCount > 0 && this.loginCount <= 60) {
-                  this.loginCount--;
-                } else {
-                  this.showLoginGetVCode = true;
-                  clearInterval(this.timer);
-                  this.timer = null;
-                }
-              }, 1000);
-            }
-          } else { //忘记密码
-            if (!this.isCellPhone(this.forgotForm.phone)) {
-              this.$message.error('请先输入正确的手机号码！')
-              return
-            }
-            // 验证码倒计时
-            if (!this.timer) {
-              this.forgetCount = 60;
-              this.showForgetGetVCode = false;
-              this.timer = setInterval(() => {
-                if (this.forgetCount > 0 && this.forgetCount <= 60) {
-                  this.forgetCount--;
-                } else {
-                  this.showForgetGetVCode = true;
-                  clearInterval(this.timer);
-                  this.timer = null;
-                }
-              }, 1000);
-            }
+        if (!this.isForgotPassword) {
+          if (!this.isCellPhone(this.loginCodeForm.phone)) {
+            this.$message.error('请先输入正确的手机号码！')
+            return
           }
-        } else {
-          //axios请求
+          let data = {
+            mobile: this.loginCodeForm.phone
+          }
+          sendMsg(data).then(response => {
+            console.log(response.data.data)
+          })
           // 验证码倒计时
           if (!this.timer) {
-            this.registerCount = 60;
-            this.showRegisterGetVCode = false;
+            this.loginCount = 60;
+            this.showLoginGetVCode = false;
             this.timer = setInterval(() => {
-              if (this.registerCount > 0 && this.registerCount <= 60) {
-                this.registerCount--;
+              if (this.loginCount > 0 && this.loginCount <= 60) {
+                this.loginCount--;
               } else {
-                this.showRegisterGetVCode = true;
+                this.showLoginGetVCode = true;
+                clearInterval(this.timer);
+                this.timer = null;
+              }
+            }, 1000);
+          }
+        } else { //忘记密码
+          if (!this.isCellPhone(this.forgotForm.phone)) {
+            this.$message.error('请先输入正确的手机号码！')
+            return
+          }
+          let data = {
+            mobile: this.forgotForm.phone
+          }
+          sendMsg(data).then(response => {
+            console.log(response.data.data)
+          })
+          // 验证码倒计时
+          if (!this.timer) {
+            this.forgetCount = 60;
+            this.showForgetGetVCode = false;
+            this.timer = setInterval(() => {
+              if (this.forgetCount > 0 && this.forgetCount <= 60) {
+                this.forgetCount--;
+              } else {
+                this.showForgetGetVCode = true;
                 clearInterval(this.timer);
                 this.timer = null;
               }
@@ -698,19 +536,12 @@
       lookAgreement() {
         alert("看协议吗？给链接啊！！！")
       },
-      immedRegister(formName) {
-        if (this.isAgree && this.validityForm(formName)) {
-          this.$message.success('注册成功，请重新登录！')
-          this.flipLogin()
-        }
-      },
       //忘记密码 提交
       updatePassWord(formName) {
         if (this.validityForm(formName)) {
           this.$message.success('密码修改成功，请重新登录！')
           this.flipLogin()
         }
-
       },
       validityForm(formName) {
         var result = false
@@ -731,7 +562,6 @@
 <style lang="scss">
   /* 修复input 背景不协调 和光标变色 */
   /* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
-
   $bg:#283443;
   $light_gray:#fff;
   $cursor: #fff;
@@ -755,7 +585,8 @@
     overflow: hidden;
     display: flex;
     position: relative;
-    .login-bg{
+
+    .login-bg {
       width: 100%;
       height: 100%;
       background-color: rgba(0, 0, 0, .02);
@@ -779,28 +610,12 @@
         height: 90%;
         transition: 1.5s ease-in-out;
         position: absolute;
-
       }
 
       .loginBgImg {
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-      }
-
-      .registerBgImg {
-        top: 1000px;
-      }
-
-      .loginImg {
-        top: -1000px;
-        opacity: 0;
-      }
-
-      .registerImg {
-        top: 50%;
-        transform: translate(0, -50%);
-        opacity: 1;
       }
     }
 
@@ -910,27 +725,6 @@
         font-family: Microsoft YaHei;
         font-weight: 400;
         color: #333333;
-        // -webkit-text-stroke: 1px black;
-        // -webkit-text-fill-color : transparent;
-
-        // text-shadow: 1px 1px #1890ff, -1px -1px #1890ff, 1px -1px #1890ff, -1px 1px #1890ff;
-        // font-size: 28px;
-        // color: #abdeff;
-
-        // text-shadow: 1px 1px black, -1px -1px black, 1px -1px black, -1px 1px black;
-        // font-size: 28px;
-        // color:#fff;
-
-        // color:#fefefe;
-        //  text-shadow:0px 1px 0px #c0c0c0,
-        //  0px 2px 0px #b0b0b0,
-        //  0px 3px 0px #a0a0a0,
-        //  0px 4px 0px #909090,
-        //  0px 5px 10px rgba(0, 0, 0, .9);
-
-        // color: #fefefe;
-        // text-shadow: 0 0 0.5em #1890ff, 0 0 0.2em #1890ff;
-
       }
     }
 
@@ -1067,59 +861,6 @@
       }
     }
 
-    //注册
-    .register-content {
-      z-index: 11;
-      transition: 1.5s ease-in-out;
-      transform: rotateY(-180deg);
-      backface-visibility: hidden;
-
-      // 用户服务协议 + 立即登录
-      .agree-item {
-        margin-top: 98px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-
-        .agree-left {
-          display: flex;
-          justify-content: flex-start;
-          align-items: center;
-
-          /deep/.el-checkbox__label {
-            font-size: 12px;
-            font-family: Microsoft YaHei;
-            font-weight: 400;
-            color: #DBDBDB;
-          }
-
-          .agreement {
-            font-size: 12px;
-            font-family: Microsoft YaHei;
-            font-weight: 400;
-            color: #1890FF;
-            cursor: pointer;
-          }
-        }
-
-        .login-left {
-          cursor: pointer;
-          font-size: 12px;
-          font-family: Microsoft YaHei;
-          font-weight: 400;
-          color: #1890FF;
-        }
-      }
-    }
-
-    .flipRegister {
-      transform: rotateY(-360deg);
-    }
-
-    .flipLogin {
-      transform: rotateY(180deg);
-    }
-
     //表单公共样式
     .modular-form {
       margin-top: 30px;
@@ -1168,7 +909,8 @@
         outline: none;
 
       }
-      .greyBtn{
+
+      .greyBtn {
         background: #bbbbbb !important;
       }
 
@@ -1179,9 +921,6 @@
         align-items: center;
         margin-bottom: 22px;
 
-        // /deep/.form-label {
-        //   margin-bottom: 0px;
-        // }
         /deep/ .el-form-item {
           margin-bottom: 0px;
         }
@@ -1229,6 +968,5 @@
         }
       }
     }
-
   }
 </style>
