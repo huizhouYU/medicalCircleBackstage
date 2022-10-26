@@ -9,3 +9,12 @@ export function activationUsers(query) {
     params:query
   })
 }
+
+//获取我推广的下级合同列表
+export function contractList(query) {
+  return request({
+    url: '/contract/activation',
+    method: 'get',
+    params:query
+  })
+}

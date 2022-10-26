@@ -48,6 +48,7 @@ service.interceptors.response.use(
     // if the custom code is not 20000, it is judged as an error.
     // if (res.code !== 20000) {
       //10000 ：成功
+      // console.log("请求接口：",response)
     if (response.status !== 200) {
       Message({
         message: response.statusText || 'Error',
@@ -74,7 +75,7 @@ service.interceptors.response.use(
     }
   },
   error => {
-    console.log('err' + error) // for debug
+    console.log('errsdf' + error) // for debug
     Message({
       message: error.message,
       type: 'error',

@@ -28,7 +28,7 @@
             <el-form-item label="" class="form-label" prop="mobile">
               <el-input v-model="registerForm.mobile" placeholder="请输入手机号" oninput ="value=value.replace(/[^\d]/g,'')" clearable>
                 <template #prefix>
-                  <div class="prefix"><img src="../../../dist/imgs/login/user.png" alt=""></div>
+                  <div class="prefix"><img src="../../../public/imgs/login/user.png" alt=""></div>
                 </template>
               </el-input>
             </el-form-item>
@@ -40,7 +40,7 @@
               <el-form-item label="" class="form-label" prop="captcha">
                 <el-input v-model="registerForm.captcha" placeholder="请输入验证码" oninput ="value=value.replace(/[^\d]/g,'')" clearable>
                   <template #prefix>
-                    <div class="prefix"><img src="../../../dist/imgs/login/shield.png" alt=""></div>
+                    <div class="prefix"><img src="../../../public/imgs/login/shield.png" alt=""></div>
                   </template>
                 </el-input>
               </el-form-item>
@@ -144,7 +144,7 @@ import utils from'../../utils/get-url-key.js'//获取url中参数
     },
     watch: {},
     mounted() {
-      let activation = utils.getUrlKey('id')
+      let activation = utils.getUrlKey('activation')
       console.log("推广码：",activation)
       this.registerForm.activation= activation
     },

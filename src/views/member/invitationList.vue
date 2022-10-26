@@ -59,7 +59,7 @@
         pagerCount: 4, //设置页码显示最多的数量
         totalCount:0,
         pageNum: 1, //当前页
-        pageSize: 0, //当前显示条数
+        pageSize: 20, //当前显示条数
       }
     },
     created() {
@@ -80,11 +80,14 @@
         }
         activationUsers(data).then(response => {
           console.log(response.data.data)
-          this.tableData = response.data.data.list
-          this.pageNum = response.data.data.pageNum //当前页
-          // this.totalPage = response.data.data.pageCount //总页面数
-          this.pageSize = response.data.data.pageSize //当前页面条数
-          this.totalCount = response.data.data.totalCount //数据总数
+          if(response.data.data != null){
+            this.tableData = response.data.data.list
+            this.pageNum = response.data.data.pageNum //当前页
+            // this.totalPage = response.data.data.pageCount //总页面数
+            this.pageSize = response.data.data.pageSize //当前页面条数
+            this.totalCount = response.data.data.totalCount //数据总数
+          }
+
         })
       },
 
@@ -122,11 +125,11 @@
       },
       editRow(index, rows) {
         console.log("index", index)
-        console.log("rows", rows[index])
+        console.log("rows", rows[index].userid)
         this.$router.replace({
           path: 'contractList',
           query: {
-            eidtData: rows[index]
+            userid: rows[index].userid
           }
         })
       },

@@ -5,13 +5,14 @@
       <el-table-column width="55">
       </el-table-column>
       <el-table-column prop="contractNo" label="合同编号" min-width="120"></el-table-column>
-      <el-table-column prop="time" label="合同日期" min-width="200"></el-table-column>
+      <el-table-column prop="createdAt" label="创建时间" min-width="200"></el-table-column>
+      <el-table-column prop="signDate" label="签订日期" min-width="200"></el-table-column>
       <el-table-column prop="amount" label="合同金额" min-width="120"></el-table-column>
     </el-table>
     <div class="bottoms-box">
       <div class="left"></div>
       <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange"
-        :page-sizes="[1,5,10, 15, 20, 25]" :pager-count="5" :page-size="currentSize.pageSize" :background="false"
+        :page-sizes="[1,5,10, 15, 20, 25]" :pager-count="5" :page-size="pageSize" :background="false"
         layout="total, sizes, prev, pager, next, jumper" :total="total">
       </el-pagination>
     </div>
@@ -25,11 +26,8 @@
   } from "../utils/elTableAutoHeight.js";
   import axios from 'axios';
   import {
-    fetchList
-  } from '@/api/article'
-  import {
-    goodsList
-  } from '@/api/goods'
+    contractList
+  } from '@/api/member'
   export default {
     name: 'GoodsItem',
     filters: {
@@ -45,73 +43,71 @@
     watch: {},
     data() {
       return {
-        tableData: [{
-            id: '1',
-            contractNo: 'FM8855184165345623',
-            time: '2021-10-28',
-            amount: '99999.99'
-          },
-          {
-            id: '1',
-            contractNo: 'FM8855184165345623',
-            time: '2021-10-28',
-            amount: '99999.99'
-          },
-          {
-            id: '1',
-            contractNo: 'FM8855184165345623',
-            time: '2021-10-28',
-            amount: '99999.99'
-          },
-          {
-            id: '1',
-            contractNo: 'FM8855184165345623',
-            time: '2021-10-28',
-            amount: '99999.99'
-          },
-          {
-            id: '1',
-            contractNo: 'FM8855184165345623',
-            time: '2021-10-28',
-            amount: '99999.99'
-          },
-          {
-            id: '1',
-            contractNo: 'FM8855184165345623',
-            time: '2021-10-28',
-            amount: '99999.99'
-          },
-          {
-            id: '1',
-            contractNo: 'FM8855184165345623',
-            time: '2021-10-28',
-            amount: '99999.99'
-          },
-          {
-            id: '1',
-            contractNo: 'FM8855184165345623',
-            time: '2021-10-28',
-            amount: '99999.99'
-          }
+        userId: '',
+        tableData: [
+          // {
+          //   id: '1',
+          //   contractNo: 'FM8855184165345623',
+          //   time: '2021-10-28',
+          //   amount: '99999.99'
+          // },
+          // {
+          //   id: '1',
+          //   contractNo: 'FM8855184165345623',
+          //   time: '2021-10-28',
+          //   amount: '99999.99'
+          // },
+          // {
+          //   id: '1',
+          //   contractNo: 'FM8855184165345623',
+          //   time: '2021-10-28',
+          //   amount: '99999.99'
+          // },
+          // {
+          //   id: '1',
+          //   contractNo: 'FM8855184165345623',
+          //   time: '2021-10-28',
+          //   amount: '99999.99'
+          // },
+          // {
+          //   id: '1',
+          //   contractNo: 'FM8855184165345623',
+          //   time: '2021-10-28',
+          //   amount: '99999.99'
+          // },
+          // {
+          //   id: '1',
+          //   contractNo: 'FM8855184165345623',
+          //   time: '2021-10-28',
+          //   amount: '99999.99'
+          // },
+          // {
+          //   id: '1',
+          //   contractNo: 'FM8855184165345623',
+          //   time: '2021-10-28',
+          //   amount: '99999.99'
+          // },
+          // {
+          //   id: '1',
+          //   contractNo: 'FM8855184165345623',
+          //   time: '2021-10-28',
+          //   amount: '99999.99'
+          // }
         ],
-        total: 100,
+        total: 0,
         tableHeight: 0,
         pagerCount: 4, //设置页码显示最多的数量
-        isAddAllTerminalStatus: false,
         currentPage: 1, //当前页
         pageSize: 20, //当前显示条数
-        currentSize: {
-          page: 1,
-          pageSize: 20
-        }
       }
     },
-    created() {},
     mounted() {
+      this.userId = this.$route.query.userid
       // 初始化给table高度赋值
       this.getHeight();
       // 屏幕resize监听方法
       this.screenMonitor();
+      this.initData()
     },
     methods: {
       screenMonitor() {
@@ -133,6 +129,26 @@
           // this.tableHeight = getDynamicHeight(this.$refs.searchContainer).height;
           this.tableHeight = getDynamicHeight(200).height;
         }, 400);
+      },
+      initData() {
+        let data = {
+          pageNo: this.currentPage,
+          pageSize: this.pageSize,
+          userId: this.userId != null ? this.userId : ''
+
+        }
+        console.log("this.userId:",this.userId)
+        contractList(data).then(response => {
+          console.log(response.data.data)
+          if (response.data.data != null) {
+            this.tableData = response.data.data.list
+            this.currentPage = response.data.data.pageNum //当前页
+            this.totalPage = response.data.data.pageCount //总页面数
+            this.pageSize = response.data.data.pageSize //当前页面条数
+            this.totalNum = response.data.data.totalCount //数据总数
+          }
+
+        })
       },
       handleSizeChange(val) {
         console.log("handleSizeChange:", val)

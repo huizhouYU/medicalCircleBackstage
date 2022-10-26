@@ -18,6 +18,7 @@ const state = {
   name: '',
   avatar: '',
   introduction: '',
+  regUrl:'',
   roles: []
 }
 
@@ -27,6 +28,9 @@ const mutations = {
   },
   SET_INTRODUCTION: (state, introduction) => {
     state.introduction = introduction
+  },
+  SET_REGURL: (state, regUrl) => {
+    state.regUrl = regUrl
   },
   SET_NAME: (state, name) => {
     state.name = name
@@ -60,6 +64,7 @@ const actions = {
         setToken(data)
         resolve()
       }).catch(error => {
+        console.log("登录失败：",error)
         reject(error)
       })
     })
@@ -71,11 +76,13 @@ const actions = {
       captcha,
       activation
     } = registerInfo
+    console.log("store中注册")
+    console.log("activation:",activation)
     return new Promise((resolve, reject) => {
       register({
         mobile: mobile.trim(),
         captcha: captcha.trim(),
-        activation: activation.trim()
+        activation: activation!=null?activation.trim():''
       }).then(response => {
         console.log("注册接口返回：",response)
         console.log("将返回的token保存到store中")
@@ -87,6 +94,7 @@ const actions = {
         // setToken(data)
         resolve()
       }).catch(error => {
+        console.log("注册接口返回失败：",error)
         reject(error)
       })
     })
@@ -121,6 +129,7 @@ const actions = {
         commit('SET_NAME', user.username)
         commit('SET_AVATAR', "")
         commit('SET_INTRODUCTION', "固定无")
+        commit('SET_REGURL', user.regUrl)
         // commit('SET_ROLES', roles)
         // commit('SET_NAME', name)
         // commit('SET_AVATAR', avatar)

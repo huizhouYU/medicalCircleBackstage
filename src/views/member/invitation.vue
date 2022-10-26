@@ -5,7 +5,7 @@
       <div class="invitation">
         <span class="title">邀请链接：</span>
         <div class="content">
-          <div class="link">{{link}}</div>
+          <div class="link">{{regUrl}}</div>
           <div class="copy" @click="copy">复制链接</div>
         </div>
       </div>
@@ -39,10 +39,20 @@
 </template>
 
 <script>
+  import {
+    mapGetters
+  } from 'vuex'
   export default {
+    computed: {
+      ...mapGetters([
+        'name',
+        'avatar',
+        'roles',
+        'regUrl'
+      ])
+    },
     data() {
       return {
-        link: 'www.yijiequan.cn',
         formLabelWidth: '100px',
         applyDialogVisible: false,
         applyForm: {
@@ -82,7 +92,7 @@
         // 创建输入框元素
         let oInput = document.createElement('input');
         // 将想要复制的值
-        oInput.value = this.link;
+        oInput.value = this.regUrl;
         // 页面底部追加输入框
         document.body.appendChild(oInput);
         // 选中输入框
