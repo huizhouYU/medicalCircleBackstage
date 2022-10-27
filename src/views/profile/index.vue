@@ -16,7 +16,7 @@
               <el-tab-pane label="信息通知" name="timeline">
                 <timeline />
               </el-tab-pane>
-              <el-tab-pane label="修改密码" name="activity">
+              <el-tab-pane label="修改密码" name="activity" :user="user">
                 <activity />
               </el-tab-pane>
             </el-tabs>
@@ -54,7 +54,8 @@
       ...mapGetters([
         'name',
         'avatar',
-        'roles'
+        'roles',
+        'mobile'
       ])
     },
     created() {
@@ -66,7 +67,8 @@
           name: this.name,
           role: this.roles.join(' | '),
           email: 'admin@test.com',
-          avatar: this.avatar
+          avatar: this.avatar,
+          mobile: this.mobile
         }
       }
     }

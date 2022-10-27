@@ -423,7 +423,6 @@
                   query: this.otherQuery
                 })
                 this.loading = false
-                console.log("成功")
               }).catch(() => {
                 this.loading = false
                 console.log("失败")

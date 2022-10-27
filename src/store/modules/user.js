@@ -12,6 +12,7 @@ import {
 import router, {
   resetRouter
 } from '@/router'
+import { Message } from 'element-ui'
 
 const state = {
   token: getToken(),
@@ -19,6 +20,7 @@ const state = {
   avatar: '',
   introduction: '',
   regUrl:'',
+  mobile:'',
   roles: []
 }
 
@@ -28,6 +30,9 @@ const mutations = {
   },
   SET_INTRODUCTION: (state, introduction) => {
     state.introduction = introduction
+  },
+  SET_MOBILE: (state, mobile) => {
+    state.mobile = mobile
   },
   SET_REGURL: (state, regUrl) => {
     state.regUrl = regUrl
@@ -55,13 +60,17 @@ const actions = {
         username: username.trim(),
         password: password
       }).then(response => {
-        console.log("sdresponse：",response)
+        // console.log("sdresponse：",response)
         const {
-          data
+          data,code,message
         } = response.data
-        console.log("setToken:",data)
-        commit('SET_TOKEN', data)
-        setToken(data)
+        if(code == 10000){
+          commit('SET_TOKEN', data)
+          setToken(data)
+        }else{
+          console.log(message)
+          Message.error({ message })
+        }
         resolve()
       }).catch(error => {
         console.log("登录失败：",error)
@@ -130,6 +139,7 @@ const actions = {
         commit('SET_AVATAR', "")
         commit('SET_INTRODUCTION', "固定无")
         commit('SET_REGURL', user.regUrl)
+        commit('SET_MOBILE',user.mobile)
         // commit('SET_ROLES', roles)
         // commit('SET_NAME', name)
         // commit('SET_AVATAR', avatar)

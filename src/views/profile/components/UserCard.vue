@@ -22,10 +22,10 @@
         <div class="user-bio-section-header"><svg-icon icon-class="education" /><span>信息</span></div>
         <div class="user-bio-section-body">
           <div class="text-muted">
-            手机号：16354285642
+            手机号：{{user.mobile}}
           </div>
           <div class="text-muted">
-            邮箱：admin@test.com
+            邮箱：{{user.email}}
           </div>
         </div>
       </div>
@@ -68,7 +68,8 @@ export default {
           name: '',
           email: '',
           avatar: '',
-          role: ''
+          role: '',
+          mobile:''
         }
       }
     }

@@ -9,9 +9,9 @@ function resolve(dir) {
 const name = defaultSettings.title || '医界圈' // page title
 
 // If your port is set to 80,
-// use administrator privileges to execute the command line.
+// use administrator privileges to execute the command line. 使用管理员权限执行命令行
 // For example, Mac: sudo npm run
-// You can change the port by the following method:
+// You can change the port by the following method: 您可以通过以下方法更改端口：
 // port = 9527 npm run dev OR npm run dev --port = 9527
 const port = process.env.port || process.env.npm_config_port || 9527 // dev port
 
