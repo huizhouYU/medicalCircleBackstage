@@ -1,5 +1,6 @@
 import {
   login,
+  msgLogin,
   logout,
   register,
   getInfo
@@ -69,9 +70,38 @@ const actions = {
           setToken(data)
         }else{
           console.log(message)
-          Message.error({ message })
+          // Message.error({ message })
         }
-        resolve()
+        resolve(response.data)
+      }).catch(error => {
+        console.log("登录失败：",error)
+        reject(error)
+      })
+    })
+  },
+  // user msgLogin
+  msgLogin({ commit }, userInfo) {
+    const {
+      mobile,
+      captcha
+    } = userInfo
+    return new Promise((resolve, reject) => {
+      msgLogin({
+        mobile: mobile.trim(),
+        captcha: captcha.trim()
+      }).then(response => {
+        console.log("store中sdresponse：",response)
+        const {
+          data,code,message
+        } = response.data
+        if(code == 10000){
+          commit('SET_TOKEN', data)
+          setToken(data)
+        }else{
+          console.log(message)
+          // Message.error({ message })
+        }
+        resolve(response.data)
       }).catch(error => {
         console.log("登录失败：",error)
         reject(error)
@@ -95,13 +125,16 @@ const actions = {
       }).then(response => {
         console.log("注册接口返回：",response)
         console.log("将返回的token保存到store中")
-        // const {
-        //   data
-        // } = response.data
-        // console.log("setToken:",data)
-        // commit('SET_TOKEN', data)
-        // setToken(data)
-        resolve()
+        const {
+          data
+        } = response.data
+        if(data != null){
+          console.log("setToken:",data)
+          commit('SET_TOKEN', data)
+          setToken(data)
+        }
+
+        resolve(response.data)
       }).catch(error => {
         console.log("注册接口返回失败：",error)
         reject(error)

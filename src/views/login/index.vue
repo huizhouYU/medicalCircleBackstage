@@ -65,16 +65,16 @@
           <div v-show="loginWay == 2">
             <el-form label-position="top" label-width="80px" ref="loginCodeForm" :model="loginCodeForm"
               class="modular-form" :rules="loginCodeRules">
-              <el-form-item label="" class="form-label" prop="phone">
-                <el-input v-model="loginCodeForm.phone" placeholder="请输入手机号" clearable>
+              <el-form-item label="" class="form-label" prop="mobile">
+                <el-input v-model="loginCodeForm.mobile" placeholder="请输入手机号" clearable>
                   <template #prefix>
                     <div class="prefix"><img src="../../../public/imgs/login/user.png" alt=""></div>
                   </template>
                 </el-input>
               </el-form-item>
               <div class="getCode-item">
-                <el-form-item label="" class="form-label" prop="phoneCode">
-                  <el-input v-model="loginCodeForm.verCode" placeholder="请输入验证码" clearable>
+                <el-form-item label="" class="form-label" prop="captcha">
+                  <el-input v-model="loginCodeForm.captcha" placeholder="请输入验证码" clearable>
                     <template #prefix>
                       <div class="prefix"><img src="../../../public/imgs/login/shield.png" alt=""></div>
                     </template>
@@ -220,8 +220,8 @@
           verCode: ''
         },
         loginCodeForm: {
-          phone: '',
-          phoneCode: ''
+          mobile: '',
+          captcha: ''
         },
         loginRules: {
           username: [{
@@ -241,12 +241,12 @@
           }]
         },
         loginCodeRules: {
-          phone: [{
+          mobile: [{
             required: true,
             trigger: 'blur',
             validator: validatePhone
           }],
-          phoneCode: [{
+          captcha: [{
             required: true,
             message: '请输入短信验证码',
             trigger: 'change'
@@ -294,7 +294,12 @@
       document.onkeydown = (e) => {
         var e = event || window.event;
         if (e && e.keyCode == 13) {
-          this.login('loginForm');
+          if (this.loginWay == 1) {
+            this.login('loginForm');
+          } else if (this.loginWay == 2) {
+            this.login('loginCodeForm');
+          }
+
         }
       }
     },
@@ -398,8 +403,8 @@
           return true
         } else if (this.loginWay == 2) {
           //验证码登录
-          if (this.loginForm.phone === '' && this.loginForm.verCode === '') {
-            if (!this.isCellPhone(this.loginForm.phone)) {
+          if (this.loginCodeForm.mobile === '' && this.loginCodeForm.captcha === '') {
+            if (!this.isCellPhone(this.loginCodeForm.phone)) {
               return false
             }
             this.$message.error('请先填写短信验证码！')
@@ -416,13 +421,28 @@
           if (this.checkLoginInfo()) {
             this.loading = true
             console.log("登录前验证成功")
-            this.$store.dispatch('user/login', this.loginForm)
-              .then(() => {
-                this.$router.push({
-                  path: this.redirect || '/',
-                  query: this.otherQuery
-                })
-                this.loading = false
+            var requestPath = ''
+            var requestForm = ''
+            if (this.loginWay == 1) { //密码登录
+              requestPath = 'user/login'
+              requestForm = this.loginForm
+            } else if (this.loginWay == 2) { //验证码登录
+              requestPath = 'user/msgLogin'
+              requestForm = this.loginCodeForm
+            }
+
+            this.$store.dispatch(requestPath, requestForm)
+              .then((response) => {
+                 if(response.code ==10000){
+                   this.$router.push({
+                     path: this.redirect || '/',
+                     query: this.otherQuery
+                   })
+                   this.loading = false
+                 }else{
+                   this.$message.error(response.message)
+                 }
+               
               }).catch(() => {
                 this.loading = false
                 console.log("失败")
@@ -441,9 +461,9 @@
       },
       //存储
       setCookie(userName, userPws) {
-        localStorage.setItem("yj_UserName",userName)
-        localStorage.setItem("yj_Pws",userPws)
-        localStorage.setItem("yj_isRemember",this.isRememberPass)
+        localStorage.setItem("yj_UserName", userName)
+        localStorage.setItem("yj_Pws", userPws)
+        localStorage.setItem("yj_isRemember", this.isRememberPass)
       },
       //如果用户不选择记住密码清除cookie
       clearCookie() {
@@ -480,12 +500,12 @@
       // 获取短信验证码
       getVCode() {
         if (!this.isForgotPassword) {
-          if (!this.isCellPhone(this.loginCodeForm.phone)) {
+          if (!this.isCellPhone(this.loginCodeForm.mobile)) {
             this.$message.error('请先输入正确的手机号码！')
             return
           }
           let data = {
-            mobile: this.loginCodeForm.phone
+            mobile: this.loginCodeForm.mobile
           }
           sendMsg(data).then(response => {
             console.log(response.data.data)

@@ -216,13 +216,18 @@ import utils from'../../utils/get-url-key.js'//获取url中参数
       immedRegister(formName) {
         if (this.isAgree && this.validityForm(formName)) {
           this.$store.dispatch('user/register', this.registerForm)
-            .then(() => {
-              this.$router.push({
-                path: this.redirect || '/',
-                query: this.otherQuery
-              })
-              this.loading = false
-              console.log("成功")
+            .then((response) => {
+              if(response.code ==10000){
+                this.$router.push({
+                  path: this.redirect || '/',
+                  query: this.otherQuery
+                })
+                this.loading = false
+                console.log("成功")
+              }else{
+                this.$message.error(response.message)
+              }
+
             }).catch(() => {
               this.loading = false
               console.log("失败")

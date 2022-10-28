@@ -2,7 +2,7 @@
   <div class="box">
 
     <!-- 第一步:定义出4个步骤 -->
-    <div v-show="!isLook" class="steps-content">
+    <div class="steps-content">
       <el-steps :active="active" finish-status="success">
         <el-step title="认证信息" />
         <el-step title="证明材料" />
@@ -14,7 +14,9 @@
     <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-position="right" label-width="110px"
       class="el-form-content ">
       <div v-show="isLook" class="sign">
-        <i v-show="examineResult == '2'" class="iconfont" style="color: #FF7575">&#xe6cd;</i>
+        <el-tooltip class="item" effect="light" :content="ruleForm.applyRemark" placement="top-start">
+          <el-button><i v-show="examineResult == '3'" class="iconfont" style="color: #FF7575">&#xe6cd;</i></el-button>
+        </el-tooltip>
         <i v-show="examineResult == '0'" class="iconfont" style="color: #40A9FF">&#xe6ce;</i>
         <i v-show="examineResult == '1'" class="iconfont" style="color: #13ce66">&#xe6d1;</i>
       </div>
@@ -26,35 +28,37 @@
           <el-form-item label="主体类型：" prop="stype">
             <el-select v-model="ruleForm.stype" placeholder="请选择主体类型" @change="adjustLayout">
               <el-option v-for="item in shopTypeOption" :key="item.value" :label="item.label" :value="item.value"
-                :disabled="isLook" />
+                :disabled="editForbidFlag" />
             </el-select>
           </el-form-item>
           <div class="tip">注：主体类型设置后无法更改</div>
         </div>
         <div class="inpout-content">
           <el-form-item v-show="ruleForm.stype == 'personal'" label="真实姓名：" class="item-left">
-            <el-input v-model="ruleForm.storeName" :disabled="isLook" />
+            <el-input v-model="ruleForm.storeName" :disabled="editForbidFlag" />
           </el-form-item>
           <el-form-item v-show="ruleForm.stype == 'company'" label="企业名称：" class="item-left">
-            <el-input v-model="ruleForm.storeName" placeholder="请与营业执照的公司名称保持一致" :disabled="isLook" />
+            <el-input v-model="ruleForm.storeName" placeholder="请与营业执照的公司名称保持一致" :disabled="editForbidFlag" />
           </el-form-item>
           <el-form-item label="店铺分类：" prop="categoryId" class="item-right">
             <el-select v-model="ruleForm.categoryId" placeholder="请选择店铺分类">
               <el-option v-for="item in shopSortOption" :key="item.cateId" :label="item.cateName" :value="item.cateId"
-                :disabled="isLook" />
+                :disabled="editForbidFlag" />
             </el-select>
           </el-form-item>
           <el-form-item label="身份证号码：" class="item-left">
-            <el-input v-model="ruleForm.identityCard" :disabled="isLook" />
+            <el-input v-model="ruleForm.identityCard" :disabled="editForbidFlag"
+              oninput="value=value.replace(/[^\w\.\/]/ig,'')" />
           </el-form-item>
-          <el-form-item label="所属地区：" class="item-left" v-show="!isLook">
-            <el-cascader v-model="ruleForm.regionId" :options="cities" :disabled="isLook" @change="changeFormat" ref="cascaderRegion"/>
+          <el-form-item label="所属地区：" class="item-left" v-show="!editForbidFlag">
+            <el-cascader v-model="ruleForm.regionId" :options="cities" :disabled="editForbidFlag" @change="changeFormat"
+              ref="cascaderRegion" />
           </el-form-item>
-          <el-form-item label="所属地区：" class="item-left" v-show="isLook">
-            <el-input v-model="ruleForm.regionName" placeholder="请选择所属地区" :disabled="isLook" />
+          <el-form-item label="所属地区：" class="item-left" v-show="editForbidFlag">
+            <el-input v-model="ruleForm.regionName" placeholder="请选择所属地区" :disabled="editForbidFlag" />
           </el-form-item>
           <el-form-item label="详细地址：" prop="address" class="address-input">
-            <el-input v-model="ruleForm.address" :disabled="isLook" placeholder="请填写详细的街道地址" />
+            <el-input v-model="ruleForm.address" :disabled="editForbidFlag" placeholder="请填写详细的街道地址" />
           </el-form-item>
         </div>
         <!-- 下一步 -->
@@ -70,27 +74,31 @@
 
           <div class="img-list">
             <!-- 身份证正面 -->
-            <upload-one-img :mr-src="cardFront.cardImg" :title="cardFront.cardTitle" :imgUrl="ruleForm.identityFront" :remark="cardFront.cardRemark"
-              @getImgFile="identityFrontImgFile" isLook="isLook"/>
+            <upload-one-img :mr-src="cardFront.cardImg" :title="cardFront.cardTitle" :imgUrl="ruleForm.identityFront"
+              :remark="cardFront.cardRemark" @getImgFile="identityFrontImgFile" :isLook="editForbidFlag" />
             <!-- 身份证反面 -->
-            <upload-one-img :mr-src="cardBack.cardImg" :title="cardBack.cardTitle" :imgUrl="ruleForm.identityBack"  :remark="cardBack.cardRemark"
-              @getImgFile="identityBackImgFile"  isLook="isLook"/>
+            <upload-one-img :mr-src="cardBack.cardImg" :title="cardBack.cardTitle" :imgUrl="ruleForm.identityBack"
+              :remark="cardBack.cardRemark" @getImgFile="identityBackImgFile" :isLook="editForbidFlag" />
             <!-- 手持身份证 -->
-            <upload-one-img v-show="ruleForm.stype == 'personal'" :mr-src="cardHold.cardImg" :title="cardHold.cardTitle" :imgUrl="ruleForm.identityHandle"
-              :remark="cardHold.cardRemark" @getImgFile="identityHandleImgFile" isLook="isLook" />
+            <upload-one-img v-show="ruleForm.stype == 'personal'" :mr-src="cardHold.cardImg" :title="cardHold.cardTitle"
+              :imgUrl="ruleForm.identityHandle" :remark="cardHold.cardRemark" @getImgFile="identityHandleImgFile"
+              :isLook="editForbidFlag" />
             <!-- 其他证件 -->
             <upload-one-img v-show="ruleForm.stype == 'personal'" :mr-src="cardOther.cardImg"
-              :title="cardOther.cardTitle" :imgUrl="ruleForm.otherCertificate"  :remark="cardOther.cardRemark" @getImgFile="otherCertificateImgFile" isLook="isLook" />
+              :title="cardOther.cardTitle" :imgUrl="ruleForm.otherCertificate" :remark="cardOther.cardRemark"
+              @getImgFile="otherCertificateImgFile" :isLook="editForbidFlag" />
             <!-- 营业执照 -->
             <upload-one-img v-show="ruleForm.stype == 'company'" :mr-src="businessLicense.cardImg"
-              :title="businessLicense.cardTitle" :imgUrl="ruleForm.businessLicense"  :remark="businessLicense.cardRemark"
-              @getImgFile="businessLicenseImgFile" isLook="isLook" />
+              :title="businessLicense.cardTitle" :imgUrl="ruleForm.businessLicense" :remark="businessLicense.cardRemark"
+              @getImgFile="businessLicenseImgFile" :isLook="editForbidFlag" />
             <!-- 医疗器械生产许可证 -->
             <upload-one-img v-show="ruleForm.stype == 'company'" :mr-src="licenceOne.cardImg"
-              :title="licenceOne.cardTitle" :imgUrl="ruleForm.productionLicense"  :remark="licenceOne.cardRemark" @getImgFile="productionLicenseImgFile" isLook="isLook" />
+              :title="licenceOne.cardTitle" :imgUrl="ruleForm.productionLicense" :remark="licenceOne.cardRemark"
+              @getImgFile="productionLicenseImgFile" :isLook="editForbidFlag" />
             <!-- 经营许可证 -->
             <upload-one-img v-show="ruleForm.stype == 'company'" :mr-src="licenceTwo.cardImg"
-              :title="licenceTwo.cardTitle" :imgUrl="ruleForm.businessCertificate"  :remark="licenceTwo.cardRemark" @getImgFile="businessCertificateImgFile" isLook="isLook" />
+              :title="licenceTwo.cardTitle" :imgUrl="ruleForm.businessCertificate" :remark="licenceTwo.cardRemark"
+              @getImgFile="businessCertificateImgFile" :isLook="editForbidFlag" />
           </div>
         </el-form-item>
         <!-- 上一步 下一步 -->
@@ -105,14 +113,14 @@
         <div class="item-title">联系信息</div>
         <!-- 联系电话 -->
         <el-form-item label="联系人：" class="phone-input">
-          <el-input v-model="ruleForm.ownerName" placeholder="请输入联系人" :disabled="isLook" />
+          <el-input v-model="ruleForm.ownerName" placeholder="请输入联系人" :disabled="editForbidFlag" />
         </el-form-item>
         <!-- 联系电话 -->
         <el-form-item label="联系电话：" prop="tel" class="phone-input">
-          <el-input v-model="ruleForm.tel" placeholder="请输入联系方式" :disabled="isLook" />
+          <el-input v-model="ruleForm.tel" placeholder="请输入联系方式" :disabled="editForbidFlag" />
         </el-form-item>
         <!-- 验证码 -->
-        <el-form-item v-show="!isLook" label="验证码：" prop="vCode" class="vcode-input">
+        <el-form-item v-show="!isLook || !editForbidFlag" label="验证码：" prop="vCode" class="vcode-input">
           <el-input v-model="ruleForm.vCode" placeholder="请填写" />
           <el-button class="getVcode-btn" type="primary" plain :disabled="!show" @click="getVcode">
             <span v-show="show">获取验证码</span>
@@ -123,6 +131,9 @@
         <div v-show="!isLook" class="item-btn lx-btn-pre-sub">
           <el-button class="public-el-submit-btn pre-but" @click="pre">上一步</el-button>
           <el-button class="public-el-submit-btn" type="primary" plain @click="submitForm('ruleForm')">确认提交</el-button>
+        </div>
+        <div v-show="!editForbidFlag" class="item-btn">
+          <el-button class="public-el-submit-btn" type="primary" plain @click="submitForm('ruleForm')">重新提交</el-button>
         </div>
       </div>
     </el-form>
@@ -160,6 +171,7 @@
         examineResult: '-1', // 审核状态
         cities: [],
         isLook: false, // 是否查看
+        editForbidFlag: false, // 是否禁止编辑
         show: true,
         count: '',
         cardFront: {
@@ -224,7 +236,7 @@
           identityCard: '', //身份证,示例值(340111199901019876)
           categoryId: '', // 所属分类
           regionId: '', // 所在地区
-          regionName:'',//所在地区名称
+          regionName: '', //所在地区名称
           address: '', // 详细地址
           identityFront: '', //身份证正面
           identityBack: '', //身份证背面
@@ -304,19 +316,25 @@
         this.getStoreDetail()
       },
       //获取店铺详情
-      getStoreDetail(){
+      getStoreDetail() {
         storeDetail().then(response => {
-          if(response.data.data != null){
+          if (response.data.data != null) {
             this.ruleForm = response.data.data
             this.isLook = true
-            // 店铺状态 0-待审核 1-审核成功 2-审核失败
+            // 店铺状态 0-待审核 1-审核成功 3-审核失败
             this.examineResult = response.data.data.state
+            if (this.examineResult == 3) {
+              this.editForbidFlag = false
+            } else {
+              this.editForbidFlag = true
+            }
+
+            console.log("审核失败，放开编辑")
           }
         })
       },
       //身份证正面
       identityFrontImgFile(file) {
-        console.log(file)
         this.imgFile.identityFront = file
       },
       //身份证反面
@@ -396,7 +414,7 @@
             if (this.checkData()) {
               //提交数据到后台： 先提交证明材料，再表单提交
               this.postData()
-              alert('submit!')
+              // alert('submit!')
             }
 
           } else {
@@ -407,7 +425,7 @@
       },
       changeFormat() {
         console.log(this.$refs["cascaderRegion"])
-        if(this.$refs["cascaderRegion"].getCheckedNodes()[0] != undefined){
+        if (this.$refs["cascaderRegion"].getCheckedNodes()[0] != undefined) {
           let regionName = this.$refs["cascaderRegion"].getCheckedNodes()[0].pathLabels
           this.ruleForm.regionName = regionName.join("/")
           console.log("jjj", JSON.stringify(this.ruleForm.regionName))
@@ -475,9 +493,11 @@
         console.log("要上传的数据：", JSON.stringify(this.ruleForm))
         await storeApply(JSON.stringify(this.ruleForm)).then(response => {
           console.log(response.data.data)
-          if(response.data.code == 10000){
+          if (response.data.code == 10000) {
             this.$message.success("提交成功！")
-          }else{
+            //获取店铺详情
+            this.getStoreDetail()
+          } else {
             this.$message.success(response.data.message)
           }
         })
@@ -507,7 +527,7 @@
           this.$message.error('请选择【认证信息】店铺分类！')
           return false
         }
-        if (this.ruleForm.regionId.length < 1) {
+        if (this.ruleForm.regionId == null || this.ruleForm.regionId == '' || this.ruleForm.regionId.length < 1) {
           this.$message.error('请选择【认证信息】所在地区！')
           return false
         }
@@ -515,30 +535,40 @@
           this.$message.error('请上传【认证信息】详细地址！')
           return false
         }
-        if (this.imgFile.identityFront == null || this.imgFile.identityFront == '') {
+        console.log("this.imgFile.identityFront:", this.imgFile.identityFront)
+        console.log("this.imgFile.identityFront:", this.imgFile.identityFront == null)
+        console.log("this.ruleForm.identityFront:", this.ruleForm.identityFront != null && this.ruleForm
+          .identityFront != '')
+        if ((this.imgFile.identityFront == null || this.imgFile.identityFront == '') && (this.ruleForm.identityFront ==
+            null && this.ruleForm.identityFront == '')) {
           this.$message.error('请上传【证明材料】身份证正面！')
           return false
         }
-        if (this.imgFile.identityBack == null || this.imgFile.identityBack == '') {
+        if ((this.imgFile.identityBack == null || this.imgFile.identityBack == '') && (this.ruleForm.identityBack ==
+            null && this.ruleForm.identityBack == '')) {
           this.$message.error('请上传【证明材料】身份证反面！')
           return false
         }
         if (this.ruleForm.stype == 'personal') {
-          if (this.imgFile.identityHandle == null || this.imgFile.identityHandle == '') {
+          if ((this.imgFile.identityHandle == null || this.imgFile.identityHandle == '') && (this.ruleForm
+              .identityHandle == null && this.ruleForm.identityHandle == '')) {
             this.$message.error('请上传【证明材料】手持身份证！')
             return false
           }
         }
         if (this.ruleForm.stype == 'company') {
-          if (this.imgFile.businessLicense == null || this.imgFile.businessLicense == '') {
+          if ((this.imgFile.businessLicense == null || this.imgFile.businessLicense == '') && (this.ruleForm
+              .businessLicense == null && this.ruleForm.businessLicense == '')) {
             this.$message.error('请上传【证明材料】营业执照！')
             return false
           }
-          if (this.imgFile.productionLicense == null || this.imgFile.productionLicense == '') {
+          if ((this.imgFile.productionLicense == null || this.imgFile.productionLicense == '') && (this.ruleForm
+              .productionLicense == null && this.ruleForm.productionLicense == '')) {
             this.$message.error('请上传【证明材料】生产许可证！')
             return false
           }
-          if (this.imgFile.businessCertificate == null || this.imgFile.businessCertificate == '') {
+          if ((this.imgFile.businessCertificate == null || this.imgFile.businessCertificate == '') && (this.ruleForm
+              .businessCertificate == null && this.ruleForm.businessCertificate == '')) {
             this.$message.error('请上传【证明材料】经营许可证！')
             return false
           }
@@ -551,6 +581,7 @@
           this.$message.error('请填写【联系信息】短信验证码！')
           return false
         }
+
         return true
       },
       resetForm(formName) {
@@ -661,6 +692,9 @@
 
       .iconfont {
         font-size: 50px;
+      }
+      /deep/ .el-button{
+        border:none;
       }
     }
 

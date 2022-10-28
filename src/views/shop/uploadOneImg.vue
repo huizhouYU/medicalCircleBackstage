@@ -5,7 +5,7 @@
       <!-- 预览+删除 -->
       <div class="preview-del-div" v-show="isShowCardImgDiv">
         <!-- <i class="el-icon-zoom-in" ></i> -->
-        <i class="el-icon-delete" @click="deleteImg" v-show="!isLook"></i>
+        <i class="el-icon-delete" @click="deleteImg" ></i>
       </div>
     </div>
     <label v-else>
@@ -42,7 +42,11 @@
     },
     methods: {
       showCardDiv() {
-        this.isShowCardImgDiv = true;
+        console.log("isLook:",this.isLook)
+        if(!this.isLook){
+          this.isShowCardImgDiv = true;
+        }
+
       },
       hideCardDiv() {
         this.isShowCardImgDiv = false;

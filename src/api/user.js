@@ -8,6 +8,15 @@ export function login(data) {
     data:data
   })
 }
+//短信验证码登录
+export function msgLogin(data) {
+  return request({
+    // url: '/vue-element-admin/user/login',
+    url: '/msgLogin',
+    method: 'post',
+    data:data
+  })
+}
 //获取用户信息
 export function getInfo(token) {
   return request({
