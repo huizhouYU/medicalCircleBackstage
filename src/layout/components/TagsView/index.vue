@@ -63,8 +63,8 @@
     methods: {
       isActive(route) {
         let path = this.$route.path
-        if(this.$route.meta.showZj != undefined){
-          if(this.$route.meta.showZj){
+        if (this.$route.meta.showZj != undefined) {
+          if (this.$route.meta.showZj) {
             // console.log("sdffsd")
             // console.log(route.path)
             path = '/invitationList'
@@ -110,9 +110,12 @@
         }
       },
       addTags() {
-        const { name,meta } = this.$route
-        if(meta.showZj != undefined){
-          if(meta.showZj) return
+        const {
+          name,
+          meta
+        } = this.$route
+        if (meta.showZj != undefined) {
+          if (meta.showZj) return
         }
         if (name) {
           this.$store.dispatch('tagsView/addView', this.$route)
@@ -142,10 +145,8 @@
             fullPath
           } = view
           this.$nextTick(() => {
-            console.log("$nextTick:",fullPath)
             this.$router.replace({
-              // path: '/redirect' + fullPath
-              path: fullPath
+              path: '/redirect' + fullPath
             })
           })
         })
@@ -169,9 +170,9 @@
         this.$store.dispatch('tagsView/delAllViews').then(({
           visitedViews
         }) => {
-     //      if (this.affixTags.some(tag => tag.path === view.path)) {
-     //        return
-     //      }
+          //      if (this.affixTags.some(tag => tag.path === view.path)) {
+          //        return
+          //      }
           this.toLastView(visitedViews, view)
         })
       },
@@ -283,7 +284,7 @@
           // -webkit-transition: padding 1.2s linear;
           // transition: all .3s cubic-bezier(.645,.045,.355,1),border 0s,color .1s,font-size 0s;
           // transition: padding .3s cubic-bezier(.645,.045,.355,1)  0s;
-          transition: padding 0.3s linear  0s;
+          transition: padding 0.3s linear 0s;
           // animation: move 1s linear 0s forwards;
           background-color: #e8f4ff;
           color: #1890ff;
@@ -300,12 +301,12 @@
             bottom: 0px;
             width: 10px;
             height: 10px;
-             /* border-radius: 50%; */
-             /* border-bottom-left-radius: 50%; */
-             /* border-top-left-radius: 50%; */
-             /* border-top-right-radius: 50%; */
-             border-bottom-right-radius: 50%;
-             box-shadow: 10px 10px 0 10px #e8f4ff;
+            /* border-radius: 50%; */
+            /* border-bottom-left-radius: 50%; */
+            /* border-top-left-radius: 50%; */
+            /* border-top-right-radius: 50%; */
+            border-bottom-right-radius: 50%;
+            box-shadow: 10px 10px 0 10px #e8f4ff;
           }
 
           &::after {
@@ -316,12 +317,12 @@
             bottom: 0px;
             width: 10px;
             height: 10px;
-             /* border-radius: 50%; */
-             /* border-bottom-left-radius: 50%; */
-             /* border-top-left-radius: 50%; */
-              border-bottom-left-radius: 50%;
-             // border-bottom-right-radius: 50%;
-             box-shadow: -10px 10px 0 10px #e8f4ff;
+            /* border-radius: 50%; */
+            /* border-bottom-left-radius: 50%; */
+            /* border-top-left-radius: 50%; */
+            border-bottom-left-radius: 50%;
+            // border-bottom-right-radius: 50%;
+            box-shadow: -10px 10px 0 10px #e8f4ff;
           }
         }
       }
@@ -331,9 +332,11 @@
       0% {
         border-width: 0px;
       }
+
       100% {
         border-bottom: 1px solid #1890ff;
       }
+
       // 100% {
       //   border-width: 100%;
       // }
