@@ -229,6 +229,7 @@ export const constantRoutes = [
         path: 'shopCarousel',
         component: () => import('@/views/shop/shopCarousel'),
         name: 'ShopCarousel',
+        hidden:true,
         meta: {
           title: '店铺轮播',
           // icon: 'edit'
@@ -249,7 +250,7 @@ export const constantRoutes = [
 
       path: '/member',
       component: Layout,
-      redirect: '/invitationList',
+      redirect: '/invitation',
       name: 'Member',
       meta: {
         title: '会员中心',
@@ -269,11 +270,10 @@ export const constantRoutes = [
                 path: '/invitationList',
                 component: () => import('@/views/member/invitationList'),
                 name: 'InvitationList',
-                hidden: true,
+                // hidden: true,
                 meta: {
                   title: '邀请信息',
-                  // showZj: false
-                  // icon: 'edit'
+                  showZj: false
                 },
             },
             {
@@ -283,13 +283,12 @@ export const constantRoutes = [
                 hidden: true,
                 meta: {
                   title: '合同详情',
-                  showZj: false
-                  // icon: 'edit'
+                  showZj: true
                 },
             }
           ]
-          // hidden: true
-        },{
+        },
+        {
           path: 'contractList',
           component: () => import('@/views/member/contractList'),
           name: 'ContractList',
@@ -297,7 +296,6 @@ export const constantRoutes = [
             title: '合同详情',
           }
         }
-
       ]
   },
   // {

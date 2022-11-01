@@ -7,6 +7,14 @@ export function storeApply(data) {
     data
   })
 }
+//商家认证重新提交
+export function applyUpdate(data) {
+  return request({
+    url: '/store/applyUpdate',
+    method: 'post',
+    data
+  })
+}
 //获取店铺分类
 export function storeCategoryList() {
   return request({
@@ -27,6 +35,15 @@ export function storeUpdate(data) {
   return request({
     url: '/store/update',
     method: 'post',    data
+  })
+}
+
+//短信验证码登录
+export function applyMsg(data) {
+  return request({
+    url: '/user/applyMsg',
+    method: 'post',
+    data
   })
 }
 

@@ -434,6 +434,7 @@
             this.$store.dispatch(requestPath, requestForm)
               .then((response) => {
                  if(response.code ==10000){
+                   console.log("登录：",response)
                    this.$router.push({
                      path: this.redirect || '/',
                      query: this.otherQuery
@@ -442,7 +443,7 @@
                  }else{
                    this.$message.error(response.message)
                  }
-               
+
               }).catch(() => {
                 this.loading = false
                 console.log("失败")

@@ -22,7 +22,8 @@ const state = {
   introduction: '',
   regUrl:'',
   mobile:'',
-  roles: []
+  roles: [],
+  store:''
 }
 
 const mutations = {
@@ -46,6 +47,9 @@ const mutations = {
   },
   SET_ROLES: (state, roles) => {
     state.roles = roles
+  },
+  SET_STORE: (state, store) => {
+    state.store = store
   }
 }
 
@@ -173,6 +177,7 @@ const actions = {
         commit('SET_INTRODUCTION', "固定无")
         commit('SET_REGURL', user.regUrl)
         commit('SET_MOBILE',user.mobile)
+        commit('SET_STORE',store)
         // commit('SET_ROLES', roles)
         // commit('SET_NAME', name)
         // commit('SET_AVATAR', avatar)
@@ -191,22 +196,34 @@ const actions = {
     dispatch
   }) {
     return new Promise((resolve, reject) => {
-      logout(state.token).then(() => {
-        commit('SET_TOKEN', '')
-        commit('SET_ROLES', [])
-        removeToken()
-        resetRouter()
-
-        // reset visited views and cached views
-        // to fixed https://github.com/PanJiaChen/vue-element-admin/issues/2485
-        dispatch('tagsView/delAllViews', null, {
-          root: true
-        })
-
-        resolve()
-      }).catch(error => {
-        reject(error)
+      commit('SET_TOKEN', '')
+      commit('SET_ROLES', [])
+      removeToken()
+      resetRouter()
+      
+      // reset visited views and cached views
+      // to fixed https://github.com/PanJiaChen/vue-element-admin/issues/2485
+      dispatch('tagsView/delAllViews', null, {
+        root: true
       })
+      resolve()
+      
+      // logout(state.token).then(() => {
+      //   commit('SET_TOKEN', '')
+      //   commit('SET_ROLES', [])
+      //   removeToken()
+      //   resetRouter()
+
+      //   // reset visited views and cached views
+      //   // to fixed https://github.com/PanJiaChen/vue-element-admin/issues/2485
+      //   dispatch('tagsView/delAllViews', null, {
+      //     root: true
+      //   })
+
+      //   resolve()
+      // }).catch(error => {
+      //   reject(error)
+      // })
     })
   },
 

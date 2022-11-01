@@ -63,14 +63,15 @@
     methods: {
       isActive(route) {
         let path = this.$route.path
-        // console.log("呼呼：",this.$route)
         if(this.$route.meta.showZj != undefined){
-          if(!this.$route.meta.showZj){
-            console.log("sdffsd")
-            console.log(route.path)
+          if(this.$route.meta.showZj){
+            // console.log("sdffsd")
+            // console.log(route.path)
             path = '/invitationList'
           }
         }
+        //  console.log(route.path)
+        // console.log(route.path === path)
         return route.path === path
       },
       isAffix(tag) {
@@ -109,11 +110,9 @@
         }
       },
       addTags() {
-        const {
-          name,meta
-        } = this.$route
+        const { name,meta } = this.$route
         if(meta.showZj != undefined){
-          if(!meta.showZj) return
+          if(meta.showZj) return
         }
         if (name) {
           this.$store.dispatch('tagsView/addView', this.$route)
@@ -136,11 +135,14 @@
         })
       },
       refreshSelectedTag(view) {
+        console.log(view)
         this.$store.dispatch('tagsView/delCachedView', view).then(() => {
+
           const {
             fullPath
           } = view
           this.$nextTick(() => {
+            console.log("$nextTick:",fullPath)
             this.$router.replace({
               // path: '/redirect' + fullPath
               path: fullPath

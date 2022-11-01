@@ -51,7 +51,7 @@
               oninput="value=value.replace(/[^\w\.\/]/ig,'')" />
           </el-form-item>
           <el-form-item label="所属地区：" class="item-left" v-show="!editForbidFlag">
-            <el-cascader v-model="ruleForm.regionId" :options="cities" :disabled="editForbidFlag" @change="changeFormat"
+            <el-cascader v-model="ruleForm.regionIdList" :options="cities" :disabled="editForbidFlag" @change="changeFormat"
               ref="cascaderRegion" />
           </el-form-item>
           <el-form-item label="所属地区：" class="item-left" v-show="editForbidFlag">
@@ -120,8 +120,8 @@
           <el-input v-model="ruleForm.tel" placeholder="请输入联系方式" :disabled="editForbidFlag" />
         </el-form-item>
         <!-- 验证码 -->
-        <el-form-item v-show="!isLook || !editForbidFlag" label="验证码：" prop="vCode" class="vcode-input">
-          <el-input v-model="ruleForm.vCode" placeholder="请填写" />
+        <el-form-item v-show="!isLook || !editForbidFlag" label="验证码：" prop="capthca" class="vcode-input">
+          <el-input v-model="ruleForm.capthca" placeholder="请填写" />
           <el-button class="getVcode-btn" type="primary" plain :disabled="!show" @click="getVcode">
             <span v-show="show">获取验证码</span>
             <span v-show="!show" class="count">{{ count }} s</span>
@@ -132,7 +132,7 @@
           <el-button class="public-el-submit-btn pre-but" @click="pre">上一步</el-button>
           <el-button class="public-el-submit-btn" type="primary" plain @click="submitForm('ruleForm')">确认提交</el-button>
         </div>
-        <div v-show="!editForbidFlag" class="item-btn">
+        <div v-show="!editForbidFlag && isLook" class="item-btn">
           <el-button class="public-el-submit-btn" type="primary" plain @click="submitForm('ruleForm')">重新提交</el-button>
         </div>
       </div>
@@ -144,7 +144,9 @@
   import {
     storeCategoryList,
     storeApply,
-    storeDetail
+    applyUpdate,
+    storeDetail,
+    applyMsg
   } from '@/api/shop'
   import {
     uploadImage
@@ -235,8 +237,8 @@
           storeName: '', // 个人工程师：姓名；企业：企业姓名
           identityCard: '', //身份证,示例值(340111199901019876)
           categoryId: '', // 所属分类
-          regionId: '', // 所在地区
           regionName: '', //所在地区名称
+          regionIdList:'',
           address: '', // 详细地址
           identityFront: '', //身份证正面
           identityBack: '', //身份证背面
@@ -245,54 +247,17 @@
           businessLicense: '', //营业执照
           productionLicense: '', //生产许可证，如果是生产企业必传
           otherCertificate: '', //其他证件
-
-
-          // identityFront: '', // 身份证正面
-          // cardBack: '', // 身份证反面
-          // engineer: {
-          //   idNo: '', // 身份证号码
-          //   cardHold: '', // 手持身份证
-          //   cardOther: '' // 其他证件
-          // },
-          // business: {
-          //   businessLicense: '', // 营业执照
-          //   licenceOne: '', // 许可证
-          //   licenceTwo: '' // 许可证
-          // },
           ownerName: '', //联系人
           tel: '', // 联系电话
-          vCode: '' // 验证码
+          capthca: '' // 验证码
         },
         rules: {
-          // stype: [
-          //   {
-          //   required: true,
-          //   message: '请选择主体类型',
-          //   trigger: 'change'
-          // }],
-          // storeName: [{
-          //   required: true,
-          //   message: '请输入真实姓名',
-          //   trigger: 'blur'
-          // }],
-          // idNo: [{
-          //   required: true,
-          //   message: '请输入身份证号码',
-          //   trigger: 'blur'
-          // }],
-          //   {
-          //     min: 3,
-          //     max: 5,
-          //     message: '长度在 3 到 5 个字符',
-          //     trigger: 'blur'
-          //   }
-          // ],
           tel: [{
             required: true,
             validator: checkphone,
             trigger: 'blur'
           }],
-          vCode: [{
+          capthca: [{
             required: true,
             message: '请输入验证码',
             trigger: 'blur'
@@ -391,21 +356,25 @@
       // 获取验证码
       getVcode() {
         // axios请求
-        console.log(this.ruleForm.phone)
-        // 验证码倒计时
-        if (!this.timer) {
-          this.count = 60
-          this.show = false
-          this.timer = setInterval(() => {
-            if (this.count > 0 && this.count <= 60) {
-              this.count--
-            } else {
-              this.show = true
-              clearInterval(this.timer)
-              this.timer = null
-            }
-          }, 1000)
-        }
+        applyMsg(JSON.stringify({})).then(response=>{
+          this.$message.success(response.data.data)
+          // 验证码倒计时
+          if (!this.timer) {
+            this.count = 60
+            this.show = false
+            this.timer = setInterval(() => {
+              if (this.count > 0 && this.count <= 60) {
+                this.count--
+              } else {
+                this.show = true
+                clearInterval(this.timer)
+                this.timer = null
+              }
+            }, 1000)
+          }
+        })
+
+
       },
       // 提交
       submitForm(formName) {
@@ -428,9 +397,9 @@
         if (this.$refs["cascaderRegion"].getCheckedNodes()[0] != undefined) {
           let regionName = this.$refs["cascaderRegion"].getCheckedNodes()[0].pathLabels
           this.ruleForm.regionName = regionName.join("/")
-          console.log("jjj", JSON.stringify(this.ruleForm.regionName))
+          this.ruleForm.regionIdList = this.$refs["cascaderRegion"].getCheckedNodes()[0].path
+          this.ruleForm.regionIdList = this.ruleForm.regionIdList.map(Number)
         }
-
       },
       async postData() {
         //上传身份证正面
@@ -489,18 +458,40 @@
             this.ruleForm.productionLicense = response.data.data
           })
         }
-        console.log("证件上传后数据：", this.ruleForm)
+        if (this.ruleForm.regionIdList == null || this.ruleForm.regionIdList == '' || this.ruleForm.regionIdList
+          .length < 0) {
+          this.ruleForm.regionIdList = null
+        }
+        if(this.ruleForm.regionIdList != null && this.ruleForm.regionIdList != ''){
+          this.ruleForm.regionIdList = this.ruleForm.regionIdList.map(Number)
+        }
         console.log("要上传的数据：", JSON.stringify(this.ruleForm))
-        await storeApply(JSON.stringify(this.ruleForm)).then(response => {
-          console.log(response.data.data)
-          if (response.data.code == 10000) {
-            this.$message.success("提交成功！")
-            //获取店铺详情
-            this.getStoreDetail()
-          } else {
-            this.$message.success(response.data.message)
-          }
-        })
+        if(this.editForbidFlag){
+          console.log("商家认证重新提交")
+          await applyUpdate(JSON.stringify(this.ruleForm)).then(response => {
+            console.log(response.data.data)
+            if (response.data.code == 10000) {
+              this.$message.success("提交成功！")
+              //获取店铺详情
+              this.getStoreDetail()
+            } else {
+              this.$message.success(response.data.message)
+            }
+          })
+        }else{
+          console.log("商家认证")
+          await storeApply(JSON.stringify(this.ruleForm)).then(response => {
+            console.log(response.data.data)
+            if (response.data.code == 10000) {
+              this.$message.success("提交成功！")
+              //获取店铺详情
+              this.getStoreDetail()
+            } else {
+              this.$message.success(response.data.message)
+            }
+          })
+        }
+
       },
       checkData() {
         if (this.ruleForm.stype == null || this.ruleForm.stype == '') {
@@ -527,7 +518,7 @@
           this.$message.error('请选择【认证信息】店铺分类！')
           return false
         }
-        if (this.ruleForm.regionId == null || this.ruleForm.regionId == '' || this.ruleForm.regionId.length < 1) {
+        if (this.ruleForm.regionIdList == null || this.ruleForm.regionIdList == '' || this.ruleForm.regionIdList.length < 1) {
           this.$message.error('请选择【认证信息】所在地区！')
           return false
         }
