@@ -1,205 +1,168 @@
 <template>
   <div class="amap-page-container">
-    <div class="input-search">
-      <el-input class="inpu" placeholder="请输入你要定位的地址" v-model="address">
-        <i slot="prefix" class="el-input__icon el-icon-search"></i>
-      </el-input>
-      <el-button type="primary" @click="searchMap()">定位</el-button>
+    <!-- 百度地图  -->
+    <div id="bai-du-map">
+      <!-- 技术支持和联系方式  -->
     </div>
-    <el-amap vid="amap" :plugin="plugin" class="amap-demo" :center="center" :zoom="zoom" :events='events'>
-      <!-- 点击显示标记 -->
-      <el-amap-marker v-for="(marker, index) in markers" :key="marker.index" :position="marker.position"
-        :icon="marker.icon" :title="marker.title" :events="marker.events" :visible="marker.visible"
-        :draggable="marker.draggable" :vid="index"></el-amap-marker>
-      </el-amap>
-    <div class="dis-tan ju-cen">
+    <div id="myPageTop">
+      <label>请输入关键字：</label>
+      <input id="tipinput" />
     </div>
   </div>
 </template>
 
 <script>
   window._AMapSecurityConfig = {
-    securityJsCode: "9ac444e6943626216ac1428ea09c45fa"
-  };
+    // 设置安全密钥
+    securityJsCode: '9ac444e6943626216ac1428ea09c45fa',
+  }
+  import AMapLoader from "@amap/amap-jsapi-loader";
+
   export default {
-    name: "v-map",
     props: {
-      longitude:String,//经度
-      latitude:String,//纬度
+      longitude: {//经度
+        type: String,
+        default: 117.136991
+      },
+      latitude: {//纬度
+        type: String,
+        default: 31.832883
+      }
+      // longitude: String,
+      // latitude: String, //纬度
     },
-    watch:{
-      longitude(val){
-        if(val != undefined && val != null && val !=''){
-          this.center[0] = val
-          console.log("this.center[0]:",this.center[0])
+    watch: {
+      longitude(val) {
+        console.log("longitude:",val)
+        if (val != undefined && val != null && val != '') {
+          this.position[0] = val
+          console.log("this.center[0]:", this.position[0])
+          this.initMap()
         }
       },
-      latitude(val){
-        if(val != undefined && val != null && val !=''){
-          this.center[1] = val
-          console.log("this.center[1]:",this.center[1])
+      latitude(val) {
+        console.log("latitude:",val)
+        if (val != undefined && val != null && val != '') {
+          this.position[1] = val
+          console.log("this.center[1]:", this.position[1])
+          this.initMap()
         }
       }
     },
     data() {
-      let self = this;
       return {
-        tishi: '',
-        //从这里下去是地图有关的
-        address: '', //获取的位置
-        zoom: 13, // 地图缩放
-        // center: [122.59996, 26.197646], // 初始中心
-        center: [117.30823, 31.863293], // 初始中心
-        lng: 0, //经纬度
-        lat: 0,
-        loaded: false,
-        // 点击显示的标记默认的定位
-        markers: [],
-        //  自动定位到当前位置
-        plugin: [{
-          timeout: 1000, //超过10秒后停止定位，默认：无穷大
-          panToLocation: true, //定位成功后将定位到的位置作为地图中心点，默认：true
-          zoomToAccuracy: true, //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：f
-          pName: 'Geolocation',
-          events: {
-            init(o) {
-              self.markers = [{
-                position: self.center,
-              }]
-              self.loaded = true;
-              self.$nextTick();
-              // o 是高德地图定位插件实例
-              // o.getCurrentPosition((status, result) => {
-              //   console.log(result)
-              //   if (result && result.position) {
-              //     self.address = result.formattedAddress;
-              //     self.lng = result.position.lng;
-              //     self.lat = result.position.lat;
-              //     self.center = [self.lng, self.lat];
-              //     self.markers = [{
-              //       position: self.center,
-              //     }]
-              //     self.loaded = true;
-              //     self.$nextTick();
-              //   } else {
-              //     o.getCityInfo((status, result) => {
-              //       if (result && result.center) {
-              //         // self.address = result.formattedAddress;
-              //         self.lng = result.center[0];
-              //         self.lat = result.center[1];
-              //         self.center = result.center;
-              //         self.markers = [{
-              //           position: self.center,
-              //         }]
-              //         self.loaded = true;
-              //         self.$nextTick();
-              //       }
-              //     });
-              //   }
-              // });
-            }
-          }
-        }],
-        // 点击地图获取当前位置并显示标记
-        events: {
-          click(e) {
-            self.chaadd(e.lnglat)
-          }
-        }
+        position: [117.136991,30.832883],
+        map: null,
+        mouseTool: null,
+        overlays: [],
+        auto: null,
+        placeSearch: null,
+        marker:null
       }
     },
-    created() {
-      // console.log(this.address)
-    },
     methods: {
-      searchMap() {
-        let that = this;
-        let address = this.address;
-        var geocoder = new AMap.Geocoder({
-          city: "", //城市设为北京，默认：“全国”
-        });
-        geocoder.getLocation(address, function(status, result) {
-          console.log("status", status)
-          console.log("result", result)
-          if (status === 'complete' && result.geocodes.length) {
-            var lnglat = result.geocodes[0].location;
-            that.center = [lnglat.lng, lnglat.lat]
-            that.lng = lnglat.lng;
-            that.lat = lnglat.lat;
-            that.markers = [{
-              position: that.center,
-            }]
-            let data = {
-              lng: that.lng,
-              lat: that.lat
-            };
-            that.$emit('mapDing', data);
-          } else {
-            console.log('根据地址查询位置失败');
-          }
-        });
-      },
-      chaadd(e) {
-        let self = this;
-        let {
-          lng,
-          lat
-        } = e;
-        self.lng = lng;
-        self.lat = lat;
-        self.center = [self.lng, self.lat];
-        self.loaded = true;
-        self.markers = [{
-          position: self.center,
-        }]
-        var geocoder = new AMap.Geocoder({
-          radius: 1000 //范围，默认：500
-        });
-        var marker = new AMap.Marker();
-
-        function regeoCode() {
-          var lnglat = [lng, lat]
-          geocoder.getAddress(lnglat, function(status, result) {
-            if (status === 'complete' && result.regeocode) {
-              self.address = result.regeocode.formattedAddress;
-            } else {
-              console.log('根据经纬度查询地址失败')
-            }
+      initMap() {
+        console.log("初始化this.position：",this.position)
+        AMapLoader.load({
+          "key": "351fa1549567026aba8fb335fe01e931", // 申请好的Web端开发者Key，首次调用 load 时必填
+          "version": "2.0", // 指定要加载的 JSAPI 的版本，缺省时默认为 1.4.15
+          "plugins": ["AMap.AutoComplete", "AMap.PlaceSearch"], // 需要使用的的插件列表，如比例尺'AMap.Scale'等
+          // "plugins": [],           // 需要使用的的插件列表，如比例尺'AMap.Scale'等
+        }).then((AMap) => {
+          this.map = new AMap.Map('bai-du-map', {
+            viewMode: "2D", //  是否为3D地图模式
+            zoom: 13, // 初始化地图级别
+            center: this.position, //中心点坐标  郑州
+            resizeEnable: true
           });
-        }
-        regeoCode();
-        self.$emit('mapDing', {lng,lat});
+          // 关键字查询
+          // this.searchMap()
+          this.auto = new AMap.AutoComplete({
+            input: 'tipinput' // 搜索框的id
+          });
+          this.placeSearch = new AMap.PlaceSearch({
+            map: this.map,
+            panel: "panel", // 结果列表将在此容器中进行展示。
+            // city: "010", // 兴趣点城市
+            autoFitView: true, // 是否自动调整地图视野使绘制的 Marker点都处于视口的可见范围
+            extensions: 'base' //返回基本地址信息
+          });
+          this.auto.on("select", this.select); //注册监听，当选中某条记录时会触发
+          // 标记
+          this.marker = new AMap.Marker({
+            position: this.position // 基点位置
+          });
+          // 地图添加标记
+          this.map.add(this.marker);
+          // 鼠标点击获取经纬度
+          var _this = this
+          this.map.on('click', function(e) {
+            console.log("经度", e.lnglat.getLng())
+            console.log("纬度", e.lnglat.getLat())
+            _this.position = [e.lnglat.getLng(), e.lnglat.getLat()]
+            let data = {
+              lng: e.lnglat.getLng(),
+              lat: e.lnglat.getLat()
+            };
+            _this.$emit('mapDing', data);
+            _this.poistionImg()
+          });
+        }).catch(e => {
+          console.log(e);
+        });
       },
-    }
-  }
+      poistionImg(){
+        // if(this.marker != null && this.marker != ""){
+          this.map.remove(this.marker)
+        // }
+        this.marker = new AMap.Marker({
+          position: this.position,
+        });
+        this.map.add(this.marker);
+      },
+      select(e) {
+        this.position = [e.poi.location.lng, e.poi.location.lat]
+        this.placeSearch.setCity(e.poi.adcode);
+        this.placeSearch.search(e.poi.name); //关键字查询查询
+        let data = {
+          lng: e.poi.location.lng,
+          lat: e.poi.location.lat
+        };
+        this.$emit('mapDing', data);
+        this.poistionImg()
+      }
+    },
+    mounted() {
+      this.initMap();
+    },
+  };
 </script>
-
-
-<style scoped>
+<style>
   .amap-page-container {
     height: 400px;
     margin-top: 20px;
     position: relative;
+    border: 1px solid #DCDFE6;
   }
 
-  .input-search {
+  #myPageTop {
     position: absolute;
     top: 0px;
     right: 0px;
     z-index: 5;
+
+  }
+#myPageTop label{
+  font-size: 12px;
+  color: #333;
+}
+  #myPageTop input {
+    outline: none;
+    border: 1px solid #DCDFE6;
   }
 
-  .inpu {
-    width: calc(100% - 120px);
-    margin-right: 20px;
-    margin-bottom: 20px;
-    margin-left: 20px;
-  }
-  .el-button--medium{
-    height: 34px;
-  }
-
-  .wan {
-    margin-top: 20px;
+  #bai-du-map {
+    /* width: 700px; */
+    height: 400px;
   }
 </style>

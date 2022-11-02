@@ -254,7 +254,7 @@ export const constantRoutes = [
       name: 'Member',
       meta: {
         title: '会员中心',
-        icon:'more-four'
+        icon:'vip-one'
       },
       children: [
         {

@@ -38,7 +38,7 @@
         </el-form-item>
         <div class="item3">
           <el-form-item label="设备名称：" class="demandInfo-item" prop="equipmentName">
-            <el-input v-model="demandInfo.equipmentName" type="text" placeholder="请输入设备名称" maxlength="20"
+            <el-input v-model="demandInfo.equipmentName" type="text" placeholder="请输入设备名称" maxlength="30"
               show-word-limit />
           </el-form-item>
           <el-form-item label="设备品牌：" class="demandInfo-item" prop="brandId">
@@ -72,8 +72,8 @@
       <div v-show="demandInfo.articleType ==2">
         <!-- 维修区域 -->
         <el-form-item label="维修区域：" prop="regionIdList">
-          <el-cascader v-model="demandInfo.regionIdList" :options="cities" @change="changeFormat"
-            ref="cascaderRegion" />
+          <el-cascader v-model="demandInfo.regionIdList" :options="cities" @change="changeFormat2"
+            ref="cascaderRegion2" />
         </el-form-item>
       </div>
       <div v-show="demandInfo.articleType ==3">
@@ -84,8 +84,9 @@
         </el-form-item>
         <!-- 维修区域 -->
         <el-form-item label="维修区域：" prop="regionIdList">
-          <el-cascader v-model="demandInfo.regionIdList" :options="cities" @change="changeFormat"
-            ref="cascaderRegion" />
+          <el-cascader v-model="demandInfo.regionIdList" :options="cities" @change="changeFormat3"
+          :props="{ multiple: true, checkStrictly: true }"
+            ref="cascaderRegion3" />
         </el-form-item>
         <!-- 个人图片 -->
         <el-form-item label="个人图片：" class="product-images">
@@ -107,7 +108,7 @@
         <el-form-item label="联系人员：" class="demandInfo-item" prop="linkMan">
           <el-input v-model="demandInfo.linkMan" type="text" placeholder="请输入联系人员" show-word-limit />
         </el-form-item>
-        <el-form-item label="联系手机：" class="demandInfo-item" prop="linkTel">
+        <el-form-item label="联系手机：" class="demandInfo-item" >
           <el-input v-model="demandInfo.linkTel" type="text" placeholder="请输入联系手机" show-word-limit />
         </el-form-item>
       </div>
@@ -221,14 +222,32 @@
         })
       },
       //区域 转换格式
-      changeFormat() {
-        if (this.$refs["cascaderRegion"].getCheckedNodes()[0] != undefined) {
-          let regionName = this.$refs["cascaderRegion"].getCheckedNodes()[0].pathLabels
+      changeFormat2() {
+        if (this.$refs["cascaderRegion2"].getCheckedNodes()[0] != undefined) {
+          let regionName = this.$refs["cascaderRegion2"].getCheckedNodes()[0].pathLabels
           // this.demandInfo.regionIdList = this.$refs["cascaderRegion"].getCheckedNodes()[0].path.join("/")
-          this.demandInfo.regionIdList = this.$refs["cascaderRegion"].getCheckedNodes()[0].path
+          this.demandInfo.regionIdList = this.$refs["cascaderRegion2"].getCheckedNodes()[0].path
           this.demandInfo.regionIdList = this.demandInfo.regionIdList.map(Number)
           this.demandInfo.region = regionName.join("/")
         }
+
+      },
+      //区域 转换格式
+      changeFormat3() {
+        console.log(this.$refs["cascaderRegion3"].getCheckedNodes())
+        // if(this.$refs["cascaderRegion3"].getCheckedNodes() != undefined){
+        //   for(var i = 0;i<)
+        // }
+        // if (this.$refs["cascaderRegion3"].getCheckedNodes()[0] != undefined) {
+        //   let regionName = this.$refs["cascaderRegion3"].getCheckedNodes()[0].pathLabels
+        //   // this.demandInfo.regionIdList = this.$refs["cascaderRegion"].getCheckedNodes()[0].path.join("/")
+        //   this.demandInfo.regionIdList = this.$refs["cascaderRegion3"].getCheckedNodes()[0].path
+        //   this.demandInfo.regionIdList = this.demandInfo.regionIdList.map(Number)
+        //   this.demandInfo.region = regionName.join("/")
+
+        // }
+        // console.log("this.demandInfo.region:",this.demandInfo.region)
+        //  console.log("this.demandInfo.regionIdList:",this.demandInfo.regionIdList)
       },
       //发布请求接口
       async submitDemand() {

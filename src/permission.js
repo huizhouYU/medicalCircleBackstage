@@ -41,13 +41,27 @@ router.beforeEach(async (to, from, next) => {
       if (hasRoles) {
         // next()
         //如果是店铺未认证，选择其他功能菜单时默认跳转到店铺认证页面让其进行认证
-        if (store.getters.store || to.path === '/shop/storeAuthentication') {
-          next()
+        console.log(store.getters.store)
+        if (store.getters.store) {
+          
+          if (to.path !== '/shop/storeAuthentication' && store.getters.store.state !== 1) {
+            var str = "请先等待店铺认证审核！"
+            if(store.getters.store.state ===3){
+              str = "审核认证失败，请重新提交认证信息！"
+            }
+            Message.warning(str)
+            next({
+              path: '/shop/storeAuthentication'
+            })
+            NProgress.done()
+          }else{
+            next()
+          }
         } else {
-          Message.success('请先进行店铺认证！')
+          Message.warning('请先进行店铺认证！')
           // console.log("应该跳转到店铺认证页面")
           // console.log("to.path:", to.path)
-           // this.$router.push('/shop/storeAuthentication')
+          // this.$router.push('/shop/storeAuthentication')
           next({
             path: '/shop/storeAuthentication'
           })

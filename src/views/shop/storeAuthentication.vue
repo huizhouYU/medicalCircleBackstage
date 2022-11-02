@@ -466,7 +466,8 @@
           this.ruleForm.regionIdList = this.ruleForm.regionIdList.map(Number)
         }
         console.log("要上传的数据：", JSON.stringify(this.ruleForm))
-        if(this.editForbidFlag){
+        console.log("this.editForbidFlag:",this.editForbidFlag)
+        if(this.isLook && !this.editForbidFlag){
           console.log("商家认证重新提交")
           await applyUpdate(JSON.stringify(this.ruleForm)).then(response => {
             console.log(response.data.data)

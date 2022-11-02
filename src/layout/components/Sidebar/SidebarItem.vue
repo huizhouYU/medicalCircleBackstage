@@ -31,7 +31,8 @@
     SettingTwo,
     Commodity,
     TransactionOrder,
-    MoreFour
+    MoreFour,
+    VipOne
   } from '@icon-park/vue'
 
   export default {
@@ -43,6 +44,7 @@
       'transaction-order': TransactionOrder,
       'more-four': MoreFour,
       'setting-two': SettingTwo,
+      'vip-one':VipOne
     },
     mixins: [FixiOSBug],
     props: {
