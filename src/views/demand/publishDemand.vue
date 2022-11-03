@@ -55,11 +55,11 @@
             <el-input v-model="demandInfo.pnCode" type="text" placeholder="请输入P/N码" show-word-limit />
           </el-form-item>
         </div>
-        <!-- 商品图片 -->
-        <el-form-item label="商品图片：" class="product-images">
+        <!-- 相关图片 -->
+        <el-form-item label="相关图片：" class="product-images">
           <div label="图片可拖曳排序：" prop="trialImgs" class="content-images">
             <div class="row">
-              <DragUpload :limit="limit" @allList="trialImgs" :imgList="imgList" :limitWidth="800" :limitHeight="800"/>
+              <DragUpload :limit="limit" @allList="trialImgs" :imgList="imgList" :limitWidth="800" :limitHeight="800" />
               <div class="el-upload__tip gray-tip">请：图片上传不超过5张，图片支持jpg/png格式，不超过500kb，尺寸为800*800</div>
             </div>
           </div>
@@ -72,7 +72,7 @@
       <div v-show="demandInfo.articleType ==2">
         <!-- 维修区域 -->
         <el-form-item label="维修区域：" prop="regionIdList">
-          <el-cascader v-model="demandInfo.regionIdList" :options="cities" @change="changeFormat2"
+          <el-cascader v-model="demandInfo.regionIdList" :options="cities" @change="changeFormat('cascaderRegion2')"
             ref="cascaderRegion2" />
         </el-form-item>
       </div>
@@ -84,15 +84,14 @@
         </el-form-item>
         <!-- 维修区域 -->
         <el-form-item label="维修区域：" prop="regionIdList">
-          <el-cascader v-model="demandInfo.regionIdList" :options="cities" @change="changeFormat3"
-          :props="{ multiple: true, checkStrictly: true }"
-            ref="cascaderRegion3" />
+          <el-cascader v-model="demandInfo.regionIdList" :options="cities" @change="changeFormat('cascaderRegion3')"
+            :props="{ multiple: true }" collapse-tags ref="cascaderRegion3" clearable />
         </el-form-item>
         <!-- 个人图片 -->
         <el-form-item label="个人图片：" class="product-images">
           <div label="图片可拖曳排序：" prop="trialImgs" class="content-images">
             <div class="row">
-              <DragUpload :limit="limit" @allList="trialImgs" :imgList="imgList" :limitWidth="800" :limitHeight="800"/>
+              <DragUpload :limit="limit" @allList="trialImgs" :imgList="imgList" :limitWidth="800" :limitHeight="800" />
               <div class="el-upload__tip gray-tip">请：图片上传不超过5张，图片支持jpg/png格式，不超过500kb，尺寸为800*800</div>
             </div>
           </div>
@@ -108,7 +107,7 @@
         <el-form-item label="联系人员：" class="demandInfo-item" prop="linkMan">
           <el-input v-model="demandInfo.linkMan" type="text" placeholder="请输入联系人员" show-word-limit />
         </el-form-item>
-        <el-form-item label="联系手机：" class="demandInfo-item" >
+        <el-form-item label="联系手机：" class="demandInfo-item">
           <el-input v-model="demandInfo.linkTel" type="text" placeholder="请输入联系手机" show-word-limit />
         </el-form-item>
       </div>
@@ -222,44 +221,37 @@
         })
       },
       //区域 转换格式
-      changeFormat2() {
-        if (this.$refs["cascaderRegion2"].getCheckedNodes()[0] != undefined) {
-          let regionName = this.$refs["cascaderRegion2"].getCheckedNodes()[0].pathLabels
-          // this.demandInfo.regionIdList = this.$refs["cascaderRegion"].getCheckedNodes()[0].path.join("/")
-          this.demandInfo.regionIdList = this.$refs["cascaderRegion2"].getCheckedNodes()[0].path
-          this.demandInfo.regionIdList = this.demandInfo.regionIdList.map(Number)
-          this.demandInfo.region = regionName.join("/")
+      changeFormat(key) {
+        this.demandInfo.region = []
+        var list = this.$refs[key].getCheckedNodes()
+        for (var index in list) {
+          var item = {
+            name: '',
+            id: ''
+          }
+          item.id = list[index].path
+          item.name = list[index].pathLabels
+          this.demandInfo.region.push(item)
         }
-
       },
-      //区域 转换格式
-      changeFormat3() {
-        console.log(this.$refs["cascaderRegion3"].getCheckedNodes())
-        // if(this.$refs["cascaderRegion3"].getCheckedNodes() != undefined){
-        //   for(var i = 0;i<)
-        // }
-        // if (this.$refs["cascaderRegion3"].getCheckedNodes()[0] != undefined) {
-        //   let regionName = this.$refs["cascaderRegion3"].getCheckedNodes()[0].pathLabels
-        //   // this.demandInfo.regionIdList = this.$refs["cascaderRegion"].getCheckedNodes()[0].path.join("/")
-        //   this.demandInfo.regionIdList = this.$refs["cascaderRegion3"].getCheckedNodes()[0].path
-        //   this.demandInfo.regionIdList = this.demandInfo.regionIdList.map(Number)
-        //   this.demandInfo.region = regionName.join("/")
-
-        // }
-        // console.log("this.demandInfo.region:",this.demandInfo.region)
-        //  console.log("this.demandInfo.regionIdList:",this.demandInfo.regionIdList)
+      //深复制对象方法
+      cloneObj(obj) {
+        var newObj = {};
+        if (obj instanceof Array) {
+          newObj = [];
+        }
+        for (var key in obj) {
+          var val = obj[key];
+          newObj[key] = typeof val === 'object' ? cloneObj(val) : val;
+        }
+        return newObj;
       },
       //发布请求接口
       async submitDemand() {
-        if (this.demandInfo.regionIdList == null || this.demandInfo.regionIdList == '' || this.demandInfo.regionIdList
-          .length < 0) {
-          this.demandInfo.regionIdList = null
-        }
-        if(this.demandInfo.regionIdList != null && this.demandInfo.regionIdList != ''){
-          this.demandInfo.regionIdList = this.demandInfo.regionIdList.map(Number)
-        }
-        if(this.demandInfo.brandId == ''){
-          this.demandInfo.brandId=0
+        this.demandInfo.regionIdList = null
+        this.demandInfo.region = JSON.stringify(this.demandInfo.region)
+        if (this.demandInfo.brandId == '') {
+          this.demandInfo.brandId = 0
         }
         this.demandInfo.imageList = []
         for (var item of this.ruleForm.trialImgs) {
@@ -347,7 +339,7 @@
         }
         return true
       },
-    //获取要编辑的需求id来获取需求详情
+      //获取要编辑的需求id来获取需求详情
       async getParams() {
         //编辑需求 跳转过来 传递的数据
         var editDemandData = this.$route.query.eidtData //要编辑需求的数据
@@ -357,9 +349,21 @@
           }).then(response => {
             this.isUpdate = true
             this.demandInfo = response.data.data
-            if(this.demandInfo.regionIdList != null){
-               this.demandInfo.regionIdList = this.demandInfo.regionIdList.map(String)
+            var reg = JSON.parse(this.demandInfo.region)
+            console.log("reg:", reg)
+            //维修区域
+            this.demandInfo.regionIdList = []
+            if (this.demandInfo.articleType == 2) { //项目外包
+              if (reg.length > 0) {
+                this.demandInfo.regionIdList = reg[0].id
+              }
+            } else if (this.demandInfo.articleType == 3) { //灵活兼职
+              this.demandInfo.regionIdList.length = reg.length
+              for (var index in reg) {
+                this.demandInfo.regionIdList[index] = reg[index].id
+              }
             }
+            //相关图片
             this.imgList = this.demandInfo.imageList
           })
         }
@@ -524,7 +528,8 @@
     }
 
     .el-cascader {
-      width: 260px;
+      width: 270px;
+      height: 36px;
     }
 
     .item3 {

@@ -285,6 +285,9 @@
         storeDetail().then(response => {
           if (response.data.data != null) {
             this.ruleForm = response.data.data
+            if(this.ruleForm.regionIdList != null){
+               this.ruleForm.regionIdList = this.ruleForm.regionIdList.map(String)
+            }
             this.isLook = true
             // 店铺状态 0-待审核 1-审核成功 3-审核失败
             this.examineResult = response.data.data.state
@@ -293,8 +296,7 @@
             } else {
               this.editForbidFlag = true
             }
-
-            console.log("审核失败，放开编辑")
+            // console.log("审核失败，放开编辑")
           }
         })
       },
