@@ -247,7 +247,6 @@ export const constantRoutes = [
     ]
   },
   {
-
       path: '/member',
       component: Layout,
       redirect: '/invitation',
@@ -295,6 +294,14 @@ export const constantRoutes = [
           name: 'ContractList',
           meta: {
             title: '合同详情',
+          }
+        },
+        {
+          path: 'drawingRecord',
+          component: () => import('@/views/member/drawingRecord'),
+          name: 'DrawingRecord',
+          meta: {
+            title: '提现记录',
           }
         }
       ]
