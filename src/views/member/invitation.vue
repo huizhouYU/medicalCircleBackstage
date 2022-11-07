@@ -18,16 +18,19 @@
       class="el-dialog-box">
       <el-form :model="applyForm" label-position="right" ref="applyForm" :rules="applyRules">
         <el-form-item label="可提取余额:" :label-width="formLabelWidth">
-          <el-input v-model="applyForm.balance" placeholder="--" :disabled="true" />
+          <el-input v-model="applyForm.amount" placeholder="--" :disabled="true" />
         </el-form-item>
-        <el-form-item label="银行卡号:" :label-width="formLabelWidth" prop="bankCardNo">
-          <el-input v-model="applyForm.bankCardNo" autocomplete="off" size="medium" placeholder="请输入本人的银行卡号" />
+        <el-form-item label="真实姓名:" :label-width="formLabelWidth" prop="accountName">
+          <el-input v-model="applyForm.accountName" autocomplete="off" size="medium" placeholder="请输入真实姓名" />
         </el-form-item>
-        <el-form-item label="真实姓名:" :label-width="formLabelWidth" prop="name">
-          <el-input v-model="applyForm.name" autocomplete="off" size="medium" placeholder="请输入真实姓名" />
+        <el-form-item label="银行卡号:" :label-width="formLabelWidth" prop="accountNo">
+          <el-input v-model="applyForm.accountNo" autocomplete="off" size="medium" placeholder="请输入本人的银行卡号" />
         </el-form-item>
-        <el-form-item label="开户行:" :label-width="formLabelWidth" prop="deposit">
-          <el-input v-model="applyForm.deposit" autocomplete="off" size="medium" placeholder="请输入" />
+        <el-form-item label="银行名称:" :label-width="formLabelWidth" prop="bankName">
+          <el-input v-model="applyForm.bankName" autocomplete="off" size="medium" placeholder="请输入本人的银行卡号" />
+        </el-form-item>
+        <el-form-item label="开户行:" :label-width="formLabelWidth" prop="bankArea">
+          <el-input v-model="applyForm.bankArea" autocomplete="off" size="medium" placeholder="请输入" />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -40,6 +43,10 @@
 
 <script>
   import {
+    bankInfo,
+    apply
+  } from '@/api/member'
+  import {
     mapGetters
   } from 'vuex'
   export default {
@@ -48,7 +55,8 @@
         'name',
         'avatar',
         'roles',
-        'regUrl'
+        'regUrl',
+        'balance'
       ])
     },
     data() {
@@ -56,28 +64,34 @@
         formLabelWidth: '100px',
         applyDialogVisible: false,
         applyForm: {
-          balance: '9999.99',
-          bankCardNo: '',
-          name: '',
-          deposit: ''
+          amount: '',
+          accountNo: '',
+          accountName: '',
+          bankName: '',
+          bankArea: ''
         },
         applyRules: {
-          bankCardNo: [{
+          accountNo: [{
             required: true,
             message: '请输入本人的银行卡号',
             trigger: 'blur',
 
           }],
-          name: [{
+          accountName: [{
             required: true,
             message: '请输入真实姓名',
             trigger: 'blur'
           }],
-          deposit: [{
+          bankArea: [{
             required: true,
             message: '请输入开户行',
             trigger: 'blur'
-          }]
+          }],
+          bankName: [{
+            required: true,
+            message: '请输入银行名称',
+            trigger: 'blur'
+          }],
         },
       }
     },
@@ -105,89 +119,119 @@
         oInput.remove();
       },
       applyWithdrawal() {
+        this.applyForm.amount = this.balance
         this.applyDialogVisible = true
+        //获取最近使用的提款账号
+        bankInfo().then(response => {
+          console.log(response)
+        })
       },
       closeApplyDialog() {
         this.applyDialogVisible = false
       },
       sureApplyDialog() {
-        // 请求后端接口数据，保存信息
-        this.closeApplyDialog()
+        // 申请提现
+        apply(JSON.stringify(this.applyForm)).then(response => {
+          console.log(response)
+          if (response.data.code == 10000) {
+            this.$message.success(response.data.message)
+          } else {
+            this.$message.warning(response.data.message)
+          }
+          this.closeApplyDialog()
+          // this.$alert(response.data.message, '', {
+          //   confirmButtonText: '确定',
+          //   callback: action => {
+          //     // this.$message({
+          //     //   type: 'info',
+          //     //   message: `action: ${ action }`
+          //     // });
+          //   }
+          // });
+
+        })
+        // this.closeApplyDialog()
       },
     }
   }
 </script>
 
 <style lang="less" scoped>
-  .invitation-info {
-    margin-bottom: 20px;
-    height: 74px;
-    background: #FFFFFF;
-    box-shadow: 0px 2px 10px 1px rgba(0, 0, 0, 0.06);
-    border-radius: 6px 6px 6px 6px;
-    padding: 0px 20px 0 15px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-sizing: border-box;
-
-    .invitation {
+  .invitation-box {
+    .invitation-info {
+      margin-bottom: 20px;
+      height: 74px;
+      background: #FFFFFF;
+      box-shadow: 0px 2px 10px 1px rgba(0, 0, 0, 0.06);
+      border-radius: 6px 6px 6px 6px;
+      padding: 0px 20px 0 15px;
       display: flex;
-      justify-content: flex-start;
+      justify-content: space-between;
       align-items: center;
+      box-sizing: border-box;
 
-      .title {
-        margin-right: 30px;
-        font-size: 12px;
-        font-family: Microsoft YaHei-Regular, Microsoft YaHei;
-        font-weight: 400;
-        color: #333333;
-      }
-
-      .content {
-        width: 320px;
-        height: 34px;
-        background: #FFFFFF;
-        border-radius: 4px 4px 4px 4px;
-        border: 1px solid #EBEEF5;
+      .invitation {
         display: flex;
-        justify-content: space-between;
+        justify-content: flex-start;
         align-items: center;
-        padding-left: 14px;
 
-        .link {
-          width: 232px;
-          font-size: 12px;
-          font-family: Microsoft YaHei-Regular, Microsoft YaHei;
-          color: #666666;
-        }
-
-        .copy {
-          cursor: pointer;
-          width: 88px;
-          height: 34px;
-          background: #1890FF;
-          border-radius: 0px 4px 4px 0px;
-          display: flex;
-          justify-content: center;
-          align-items: center;
+        .title {
+          margin-right: 30px;
           font-size: 12px;
           font-family: Microsoft YaHei-Regular, Microsoft YaHei;
           font-weight: 400;
-          color: #FFFFFF;
+          color: #333333;
         }
+
+        .content {
+          width: 320px;
+          height: 34px;
+          background: #FFFFFF;
+          border-radius: 4px 4px 4px 4px;
+          border: 1px solid #EBEEF5;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding-left: 14px;
+
+          .link {
+            width: 232px;
+            font-size: 12px;
+            font-family: Microsoft YaHei-Regular, Microsoft YaHei;
+            color: #666666;
+          }
+
+          .copy {
+            cursor: pointer;
+            width: 88px;
+            height: 34px;
+            background: #1890FF;
+            border-radius: 0px 4px 4px 0px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+            font-family: Microsoft YaHei-Regular, Microsoft YaHei;
+            font-weight: 400;
+            color: #FFFFFF;
+          }
+        }
+      }
+
+      .apply-withdrawal {
+        width: 88px;
+        height: 34px;
+        background: #1890FF;
+        border-radius: 6px 6px 6px 6px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 12px;
       }
     }
 
-    .apply-withdrawal {
-      width: 88px;
-      height: 34px;
-      background: #1890FF;
-      border-radius: 6px 6px 6px 6px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 12px;
+    /deep/ .el-dialog {
+      height: 400px !important;
     }
   }
 </style>

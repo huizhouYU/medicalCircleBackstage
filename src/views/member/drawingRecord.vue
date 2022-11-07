@@ -4,13 +4,26 @@
       :height="tableHeight" class="el-table-box" :header-cell-style="{'text-align':'center'}">
       <!--   <el-table-column  width="55">
       </el-table-column> -->
-      <el-table-column prop="username" label="申请提款时间" ></el-table-column>
-      <el-table-column prop="nickname" label="提款金额" ></el-table-column>
-      <el-table-column prop="createdAt" label="提款账号" ></el-table-column>
-      <el-table-column prop="nickname" label="提款人" ></el-table-column>
-      <el-table-column prop="nickname" label="手机号码" ></el-table-column>
-      <el-table-column prop="nickname" label="状态" ></el-table-column>
-      <el-table-column prop="createdAt" label="备注" width="180"></el-table-column>
+      <el-table-column prop="createdAt" label="申请提款时间"></el-table-column>
+      <el-table-column prop="amount" label="提款金额"></el-table-column>
+      <el-table-column prop="accountNo" label="提款账号"></el-table-column>
+      <el-table-column prop="accountName" label="提款人"></el-table-column>
+      <el-table-column prop="mobile" label="手机号码"></el-table-column>
+      <el-table-column prop="status" label="状态">
+        <template slot-scope="scope" v-if="scope.row.status == 0">
+          <span class="status color0">待处理</span>
+        </template>
+        <template slot-scope="scope" v-else-if="scope.row.status == 1">
+          <span class="status color1">处理中</span>
+        </template>
+        <template slot-scope="scope" v-else-if="scope.row.status == 2">
+          <span class="status color2">提现成功</span>
+        </template>
+        <template slot-scope="scope" v-else-if="scope.row.status == 3">
+          <span class="status color3">提现失败</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="summary" label="备注" width="180"></el-table-column>
     </el-table>
     <div class="bottoms-box">
       <div class="left"></div>
@@ -23,9 +36,9 @@
 </template>
 
 <script>
-  // import {
-  //   drawingRecord
-  // } from '@/api/member'
+  import {
+    applyList
+  } from '@/api/member'
   import {
     getDynamicHeight,
     debounce
@@ -54,7 +67,6 @@
     },
     created() {},
     mounted() {
-
       // 初始化给table高度赋值
       this.getHeight();
       // 屏幕resize监听方法
@@ -67,17 +79,17 @@
           pageNo: this.pageNum, //页码
           pageSize: this.pageSize
         }
-        // drawingRecord(data).then(response => {
-        //   console.log(response.data.data)
-        //   if(response.data.data != null){
-        //     this.tableData = response.data.data.list
-        //     this.pageNum = response.data.data.pageNum //当前页
-        //     // this.totalPage = response.data.data.pageCount //总页面数
-        //     this.pageSize = response.data.data.pageSize //当前页面条数
-        //     this.totalCount = response.data.data.totalCount //数据总数
-        //   }
+        applyList(data).then(response => {
+          console.log("huhu:", response.data.data)
+          if (response.data.data != null) {
+            this.tableData = response.data.data.list
+            this.pageNum = response.data.data.pageNum //当前页
+            // this.totalPage = response.data.data.pageCount //总页面数
+            this.pageSize = response.data.data.pageSize //当前页面条数
+            this.totalCount = response.data.data.totalCount //数据总数
+          }
 
-        // })
+        })
       },
 
 
@@ -98,7 +110,7 @@
         // 为什么设置了一个定时器我忘却了。。。。大概因为在获取元素时还没有元素吧哈哈哈哈我真的讲不明白但是得有这个定时器
         setTimeout(() => {
           // this.tableHeight = getDynamicHeight(this.$refs.searchContainer).height;
-          this.tableHeight = getDynamicHeight(200).height;
+          this.tableHeight = getDynamicHeight(100).height;
         }, 400);
       },
       handleSizeChange(val) {
@@ -263,5 +275,24 @@
   .el-pagination.is-background .el-pager li {
     background-color: #fff !important;
     border: 1px solid #f4f4f5;
+  }
+  //不同状态 不同颜色样式
+  .status{
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 2px;
+     color: #fff;
+  }
+  .color0{
+    background-color: #E6A23C;
+  }
+  .color1{
+    background-color: #E6A23C;
+  }
+  .color2{
+    background-color: #67C23A;
+  }
+  .color3{
+    background-color: #909399;
   }
 </style>

@@ -1,13 +1,13 @@
 <template>
   <div class="app-container">
     <el-table ref="multipleTable" :data="tableData" tooltip-effect="dark" style="width: 100%;min-height:200px"
-      :height="tableHeight"  class="el-table-box" >
+      :height="tableHeight"  class="el-table-box" :header-cell-style="{'text-align':'center'}">
       <el-table-column  width="55">
       </el-table-column>
-      <el-table-column prop="username" label="邀请名单" min-width="120"></el-table-column>
-      <el-table-column prop="nickname" label="用户名" min-width="200"></el-table-column>
-      <el-table-column prop="createdAt" label="邀请时间" min-width="120"></el-table-column>
-      <el-table-column fixed="right" label="操作" min-width="120">
+      <el-table-column prop="username" label="邀请名单" ></el-table-column>
+      <el-table-column prop="nickname" label="用户名" ></el-table-column>
+      <el-table-column prop="createdAt" label="邀请时间" ></el-table-column>
+      <el-table-column fixed="right" label="操作" >
         <template slot-scope="scope">
           <el-button @click.native.prevent="editRow(scope.$index, tableData)" type="text" size="small">
             成交信息
