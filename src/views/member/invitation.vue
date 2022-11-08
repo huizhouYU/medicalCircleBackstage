@@ -18,7 +18,11 @@
       class="el-dialog-box">
       <el-form :model="applyForm" label-position="right" ref="applyForm" :rules="applyRules">
         <el-form-item label="可提取余额:" :label-width="formLabelWidth">
-          <el-input v-model="applyForm.amount" placeholder="--" :disabled="true" />
+          <div class="get-money-div">
+            <el-input v-model="applyForm.amount" placeholder="--" :disabled="true" />
+            <span class="remarks">最低提现金额不得低于50元</span>
+          </div>
+
         </el-form-item>
         <el-form-item label="真实姓名:" :label-width="formLabelWidth" prop="accountName">
           <el-input v-model="applyForm.accountName" autocomplete="off" size="medium" placeholder="请输入真实姓名" />
@@ -32,6 +36,14 @@
         <el-form-item label="开户行:" :label-width="formLabelWidth" prop="bankArea">
           <el-input v-model="applyForm.bankArea" autocomplete="off" size="medium" placeholder="请输入" />
         </el-form-item>
+        <el-form-item label="验证码:" :label-width="formLabelWidth" prop="captcha">
+          <div class="get-captcha-div">
+            <el-input v-model="applyForm.captcha" autocomplete="off" size="medium" placeholder="请输入短信验证码" />
+            <!-- <span class="get-captcha">获取短信验证码</span> -->
+            <span v-show="showGetVCode" @click="getVCode" class="get-captcha">获取短信验证码</span>
+            <span v-show="!showGetVCode" class="countDown">{{countdown}} s</span>
+          </div>
+        </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button size="medium" @click="closeApplyDialog">取 消</el-button>
@@ -44,7 +56,8 @@
 <script>
   import {
     bankInfo,
-    apply
+    apply,
+    sendSms
   } from '@/api/member'
   import {
     mapGetters
@@ -61,6 +74,8 @@
     },
     data() {
       return {
+        showGetVCode: true,
+        countdown: '',
         formLabelWidth: '100px',
         applyDialogVisible: false,
         applyForm: {
@@ -68,7 +83,8 @@
           accountNo: '',
           accountName: '',
           bankName: '',
-          bankArea: ''
+          bankArea: '',
+          captcha: ''
         },
         applyRules: {
           accountNo: [{
@@ -90,6 +106,11 @@
           bankName: [{
             required: true,
             message: '请输入银行名称',
+            trigger: 'blur'
+          }],
+          captcha: [{
+            required: true,
+            message: '请输入短信验证码',
             trigger: 'blur'
           }],
         },
@@ -119,12 +140,19 @@
         oInput.remove();
       },
       applyWithdrawal() {
-        this.applyForm.amount = this.balance
-        this.applyDialogVisible = true
+        var _this = this
         //获取最近使用的提款账号
         bankInfo().then(response => {
-          console.log(response)
+          console.log("获取最近使用的提款账号:", response)
+          if (response.data.data != null) {
+            _this.applyForm = response.data.data
+          }
+          _this.$set(_this.applyForm, 'amount', _this.balance)
+          _this.$set(_this.applyForm, 'captcha', '')
         })
+
+        // this.applyForm.amount = this.balance
+        this.applyDialogVisible = true
       },
       closeApplyDialog() {
         this.applyDialogVisible = false
@@ -139,18 +167,27 @@
             this.$message.warning(response.data.message)
           }
           this.closeApplyDialog()
-          // this.$alert(response.data.message, '', {
-          //   confirmButtonText: '确定',
-          //   callback: action => {
-          //     // this.$message({
-          //     //   type: 'info',
-          //     //   message: `action: ${ action }`
-          //     // });
-          //   }
-          // });
-
         })
-        // this.closeApplyDialog()
+      },
+      //获取手机短信验证码
+      getVCode() {
+        sendSms(JSON.stringify({})).then(response => {
+          console.log(response.data.data)
+        })
+        // 验证码倒计时
+        if (!this.timer) {
+          this.countdown = 60;
+          this.showGetVCode = false;
+          this.timer = setInterval(() => {
+            if (this.countdown > 0 && this.countdown <= 60) {
+              this.countdown--;
+            } else {
+              this.showGetVCode = true;
+              clearInterval(this.timer);
+              this.timer = null;
+            }
+          }, 1000);
+        }
       },
     }
   }
@@ -230,8 +267,49 @@
       }
     }
 
+    .get-captcha-div {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+
+      /deep/ .el-input {
+        width: 150px;
+      }
+
+      .get-captcha {
+        cursor: pointer;
+        margin-left: 50px;
+        color: #1890FF;
+      }
+
+      .countDown {
+        margin-left: 50px;
+        color: #DBDBDB;
+      }
+    }
+    // .el-form-item__content{
+    //   position: relative;
+
+    // }
+    .get-money-div{
+      /deep/ .el-input {
+        width: 150px;
+      }
+
+      .remarks{
+        // position: absolute;
+        // top: 76%;
+        // left: 0;
+        margin-left: 15px;
+        color: #999;
+        font-size: 12px;
+      }
+    }
+
+
+
     /deep/ .el-dialog {
-      height: 400px !important;
+      height: 450px !important;
     }
   }
 </style>

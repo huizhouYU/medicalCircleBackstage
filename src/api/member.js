@@ -17,6 +17,14 @@ export function bankInfo(query) {
     params:query
   })
 }
+//发送提现申请短信
+export function sendSms(data) {
+  return request({
+    url: '/withdraw/sendSms',
+    method: 'post',
+    data
+  })
+}
 //申请提现
 export function apply(data) {
   return request({

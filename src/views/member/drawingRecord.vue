@@ -1,15 +1,15 @@
 <template>
   <div class="app-container">
     <el-table ref="multipleTable" :data="tableData" tooltip-effect="dark" style="width: 100%;min-height:200px"
-      :height="tableHeight" class="el-table-box" :header-cell-style="{'text-align':'center'}">
+       :height="tableHeight" class="el-table-box" :header-cell-style="{'text-align':'center'}">
       <!--   <el-table-column  width="55">
       </el-table-column> -->
-      <el-table-column prop="createdAt" label="申请提款时间"></el-table-column>
-      <el-table-column prop="amount" label="提款金额"></el-table-column>
-      <el-table-column prop="accountNo" label="提款账号"></el-table-column>
-      <el-table-column prop="accountName" label="提款人"></el-table-column>
-      <el-table-column prop="mobile" label="手机号码"></el-table-column>
-      <el-table-column prop="status" label="状态">
+      <el-table-column align="center" prop="createdAt" label="申请提款时间"></el-table-column>
+      <el-table-column align="center" prop="amount" label="提款金额"></el-table-column>
+      <el-table-column align="center" prop="accountNo" label="提款账号"></el-table-column>
+      <el-table-column align="center" prop="accountName" label="提款人"></el-table-column>
+      <el-table-column align="center" prop="mobile" label="手机号码"></el-table-column>
+      <el-table-column align="center" prop="status" label="状态">
         <template slot-scope="scope" v-if="scope.row.status == 0">
           <span class="status color0">待处理</span>
         </template>
@@ -23,7 +23,7 @@
           <span class="status color3">提现失败</span>
         </template>
       </el-table-column>
-      <el-table-column prop="summary" label="备注" width="180"></el-table-column>
+      <el-table-column align="center" prop="summary" label="备注" width="180"></el-table-column>
     </el-table>
     <div class="bottoms-box">
       <div class="left"></div>
@@ -276,23 +276,28 @@
     background-color: #fff !important;
     border: 1px solid #f4f4f5;
   }
+
   //不同状态 不同颜色样式
-  .status{
+  .status {
     display: inline-block;
     padding: 5px 10px;
     border-radius: 2px;
-     color: #fff;
+    color: #fff;
   }
-  .color0{
+
+  .color0 {
     background-color: #E6A23C;
   }
-  .color1{
+
+  .color1 {
     background-color: #E6A23C;
   }
-  .color2{
+
+  .color2 {
     background-color: #67C23A;
   }
-  .color3{
+
+  .color3 {
     background-color: #909399;
   }
 </style>
