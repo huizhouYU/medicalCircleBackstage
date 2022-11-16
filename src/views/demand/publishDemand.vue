@@ -42,14 +42,15 @@
               show-word-limit />
           </el-form-item>
           <el-form-item label="设备品牌：" class="demandInfo-item" prop="brandId">
-            <el-select v-model="demandInfo.brandId" class="select-brand" @change="selectBrand">
+           <!-- <el-select v-model="demandInfo.brandId" class="select-brand" @change="selectBrand">
               <el-option v-for="item in brandsOptions" :key="item.brandId" :label="item.brandName" :value="item.brandId"
                 ref="brandSelect">
               </el-option>
-            </el-select>
+            </el-select> -->
+            <el-input v-model="demandInfo.brandName" type="text" placeholder="请输入设备品牌" />
           </el-form-item>
-          <el-form-item label="设备类型：" class="demandInfo-item">
-            <el-input v-model="demandInfo.equipmentType" type="text" placeholder="请输入设备类型" />
+          <el-form-item label="设备型号：" class="demandInfo-item">
+            <el-input v-model="demandInfo.equipmentType" type="text" placeholder="请输入设备型号" />
           </el-form-item>
           <el-form-item label="P/N码：" class="demandInfo-item">
             <el-input v-model="demandInfo.pnCode" type="text" placeholder="请输入P/N码" show-word-limit />
@@ -190,19 +191,19 @@
     methods: {
       //初始化数据
       initData() {
-        brandList().then(response => {
-          this.brandsOptions = response.data.data
-        })
+        // brandList().then(response => {
+        //   this.brandsOptions = response.data.data
+        // })
         this.cities = city
       },
-      //选择 设备品牌
-      selectBrand(value) {
-        let obj = {};
-        obj = this.brandsOptions.find((item) => {
-          return item.brandId === value;
-        });
-        this.demandInfo.brandName = obj.brandName
-      },
+      // //选择 设备品牌
+      // selectBrand(value) {
+      //   let obj = {};
+      //   obj = this.brandsOptions.find((item) => {
+      //     return item.brandId === value;
+      //   });
+      //   this.demandInfo.brandName = obj.brandName
+      // },
       //获取详情 内容
       getDescription(val) {
         this.demandInfo.description = val
@@ -310,18 +311,18 @@
             this.$message.error("请输入设备名称")
             return false
           }
+          if (this.demandInfo.brandName == null || this.demandInfo.brandName == "") {
+            this.$message.error("请输入设备品牌")
+            return false
+          }
           if (this.demandInfo.equipmentType == null || this.demandInfo.equipmentType == "") {
-            this.$message.error("请选择设备类型")
+            this.$message.error("请选择设备型号")
             return false
           }
-          if (this.demandInfo.pnCode == null || this.demandInfo.pnCode == "") {
-            this.$message.error("请输入P/N码")
-            return false
-          }
-          if (this.demandInfo.pnCode == null || this.demandInfo.pnCode == "") {
-            this.$message.error("请输入P/N码")
-            return false
-          }
+          // if (this.demandInfo.pnCode == null || this.demandInfo.pnCode == "") {
+          //   this.$message.error("请输入P/N码")
+          //   return false
+          // }
         }
         if (this.demandInfo.articleType != 1) {
           if (this.demandInfo.regionIdList == null || this.demandInfo.regionIdList.length < 1) {

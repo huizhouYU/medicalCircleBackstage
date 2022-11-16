@@ -5,17 +5,17 @@
       <!-- 搜索部分 -->
       <div class="search">
         <!-- 商品分类 -->
-        <el-cascader v-model="sortValue" placeholder="商品分类" :options="options" @change="handleChange"
+        <!-- <el-cascader v-model="sortValue" placeholder="商品分类" :options="options" @change="handleChange"
           class="public-select-box" clearable :filterable="true">
-        </el-cascader>
+        </el-cascader> -->
         <!-- 商品状态 -->
-        <el-select v-model="value" placeholder="商品状态" class="public-select-box choose-shop-state" clearable>
+        <el-select v-model="listQuery.ifShow" placeholder="商品状态" class="public-select-box choose-shop-state" clearable>
           <el-option v-for="item in shopStateOptions" :key="item.value" :label="item.label" :value="item.value">
           </el-option>
         </el-select>
         <!-- input 输入关键字  -->
-        <el-input placeholder="请输入关键字" v-model="inputKey" class="input-with-select search-select-input">
-          <el-select v-model="inputKeyType" slot="prepend" placeholder="请选择">
+        <el-input placeholder="请输入关键字" v-model="listQuery.keyword" class="input-with-select search-select-input">
+          <el-select v-model="listQuery.keyType" slot="prepend" placeholder="请选择">
             <el-option v-for="item in inputKeyOptions" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
@@ -28,14 +28,10 @@
     <!-- 模块三 商品列表 -->
     <!-- <goods-items class="items" :tableData="tableData" :total="total" @getList="getNewList" v-if="tableData&&flag"></goods-items> -->
     <goods-items class="items" :tableData="tableData" :total="total" @getList="getNewList"></goods-items>
-    
   </div>
 </template>
 
 <script>
-  import {
-    fetchList
-  } from '@/api/article'
   import {
     goodsList
   } from '@/api/goods'
@@ -60,66 +56,41 @@
     },
     data() {
       return {
-        tableData:[],
-        flag:false,
+        tableData: [],
+        flag: false,
         //商品分类
-        options: [{
-            value: 'zhinan',
-            label: '指南',
-            children: [{
-              value: 'daohang',
-              label: '导航',
-              children: [{
-                value: 'cexiangdaohang',
-                label: '侧向导航'
-              }, {
-                value: 'dingbudaohang',
-                label: '顶部导航'
-              }]
-            }]
-          },
-          {
-            value: 'ziyuan',
-            label: '资源',
-            children: [{
-              value: 'axure',
-              label: 'Axure Components'
-            }, {
-              value: 'sketch',
-              label: 'Sketch Templates'
-            }, {
-              value: 'jiaohu',
-              label: '组件交互文档'
-            }]
-          }
-        ],
+        // options: [],
         //商品状态
         shopStateOptions: [{
-          value: '1',
+          value: 1,
           label: '上架'
         }, {
-          value: '2',
+          value: 0,
           label: '下架'
         }],
         //搜索关键字类型
         inputKeyOptions: [{
-          value: '1',
+          value: 1,
           label: '产品编码'
         }, {
-          value: '2',
+          value: 2,
           label: '产品名称'
         }],
-        inputKeyType: '1', //搜索的关键字的类型
-        inputKey: '', //输入商品名称/关键字
-        value: '',
-        sortValue: '', //选择的商品分类
+        // inputKeyType: '1', //搜索的关键字的类型
+        // inputKey: '', //输入商品名称/关键字
+        // value: '', //商品状态
+        // sortValue: '', //选择的商品分类
         //////////////////
         list: null,
         total: null,
         listLoading: true,
         listQuery: {
-          page: 1,
-          pageSize: 20
+          ifShow:'',//商品状态：上架 下架
+          isDeleted: 0,//是否回收站 0-普通列表 1-回收站列表
+          keyType: null,//搜索类型 1-商品编码 2-商品名称
+          keyword: "",//搜索关键字
+          pageNo: 1,//页码,示例值(1)
+          pageSize: 20,//每页显示数量,示例值(10)
         }
       }
     },
@@ -129,20 +100,26 @@
     methods: {
       getList() {
         this.listLoading = true
-        this.tableData= []
-       // goodsList(this.listQuery).then(response => {
-       //   console.log("response.data.count:",response.data.count)
-       //    this.tableData = response.data.data
-       //    this.total = response.data.count
-       //    this.listLoading = false
-       //    this.flag = true
-       //  })
+        this.tableData = []
+        goodsList(JSON.stringify(this.listQuery)).then(response => {
+          var res = response.data.data
+          if(response.data.code != '10000'){
+            this.$message.error(response.data.message)
+          }else{
+            this.tableData = res.list
+            this.total = response.data.totalCount
+            this.listLoading = false
+            this.flag = true
+          }
+          // console.log("response.data:",response.data)
+
+         })
       },
       getNewList(data) {
-       console.log("data:",data)
-       this.listQuery.page = data.page
-       this.listQuery.pageSize = data.pageSize
-       this.getList()
+        console.log("data:", data)
+        this.listQuery.pageNo = data.pageNo
+        this.listQuery.pageSize = data.pageSize
+        this.getList()
       },
       //添加商品
       toAddGoods() {
@@ -152,9 +129,9 @@
       selectData() {
         alert("不要点啦！后台接口数据还没做呢。。。")
       },
-      handleChange() {
+      // handleChange() {
 
-      }
+      // }
     }
   }
 </script>
@@ -169,6 +146,7 @@
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
+    padding-left: 15px;
 
     // 搜索部分
     .search {

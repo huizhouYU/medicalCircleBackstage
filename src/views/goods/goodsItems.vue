@@ -1,45 +1,45 @@
 <template>
   <div class="app-container">
-    <el-table ref="multipleTable" :data="tableData" tooltip-effect="dark" style="width: 100%;min-height:200px" 
+    <el-table ref="multipleTable" :data="tableData" tooltip-effect="dark" style="width: 100%;min-height:200px"
       :height="tableHeight" @selection-change="handleSelectionChange" class="el-table-box">
       <el-table-column type="selection" width="55">
       </el-table-column>
-      <el-table-column prop="id" label="产品编码" min-width="120"></el-table-column>
+      <el-table-column prop="goodsCode" label="产品编码" min-width="120"></el-table-column>
       <el-table-column label="商品图" min-width="100">
         <template slot-scope="scope">
-          <img :src="scope.row.imgUrl" alt="图片加载失败" class="item-img">
+          <img :src="scope.row.defaultImage" alt="图片加载失败" class="item-img">
         </template>
       </el-table-column>
       <el-table-column label="商品名称" min-width="200">
         <template slot-scope="scope">
-          <span class="goods-name-span" :title="scope.row.name">{{scope.row.name}} </span>
+          <span class="goods-name-span" :title="scope.row.goodsName">{{scope.row.goodsName}} </span>
         </template>
       </el-table-column>
-      <el-table-column prop="sort" label="商品分类"min-width="200"></el-table-column>
+      <el-table-column prop="cateName" label="商品分类"min-width="200"></el-table-column>
       <el-table-column prop="brand" label="品牌" min-width="120"></el-table-column>
       <el-table-column prop="price" label="价格" min-width="100"></el-table-column>
-      <el-table-column prop="stock" label="库存" min-width="100"></el-table-column>
+      <el-table-column prop="specQty" label="库存" min-width="100"></el-table-column>
       <el-table-column label="上架" min-width="100">
         <template slot-scope="scope">
-          <el-switch class="tableScopeSwitch" @change="handleStatusChange(scope.$index, scope.row)" active-text="上架"
-            inactive-text="下架" v-model="scope.row.isPut">
+          <el-switch class="tableScopeSwitch" @change="changePutState(scope.$index, scope.row)" active-text="上架"
+            inactive-text="下架" v-model="scope.row.ifShow">
           </el-switch>
         </template>
       </el-table-column>
       <el-table-column label="推荐" min-width="100">
         <template slot-scope="scope">
-          <el-switch class="tableScopeSwitch" @change="handleStatusChange(scope.$index, scope.row)" active-text="推荐"
-            inactive-text="推荐" v-model="scope.row.isRecommend">
+          <el-switch class="tableScopeSwitch" @change="changeRecommendState(scope.$index, scope.row)" active-text="推荐"
+            inactive-text="推荐" v-model="scope.row.recommended">
           </el-switch>
         </template>
       </el-table-column>
-      <el-table-column prop="isForbid" label="禁售" min-width="100">
+      <!-- <el-table-column prop="isForbid" label="禁售" min-width="100">
         <template slot-scope="scope">
           <el-switch class="tableScopeSwitch" @change="handleStatusChange(scope.$index, scope.row)" active-text="禁售"
             inactive-text="禁售" v-model="scope.row.isForbid" active-color="#FF7575">
           </el-switch>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column fixed="right" label="操作" min-width="120">
         <template slot-scope="scope">
           <el-button @click.native.prevent="editRow(scope.$index, tableData)" type="text" size="small">
@@ -71,12 +71,6 @@
     debounce
   } from "../utils/elTableAutoHeight.js";
   import axios from 'axios';
-  import {
-    fetchList
-  } from '@/api/article'
-  import {
-    goodsList
-  } from '@/api/goods'
   // const a = require("../../../src/json/goods.json")
   export default {
     name: 'GoodsItem',
@@ -106,7 +100,7 @@
         pageSize: 20, //当前显示条数
         multipleSelection: [],
         currentSize: {
-          page: 1,
+          pageNo: 1,
           pageSize: 20
         }
       }
@@ -146,7 +140,7 @@
         this.$emit("getList",this.currentSize)
       },
       handleCurrentChange(val) {
-        this.currentSize.page = val
+        this.currentSize.pageNo= val
         this.$emit("getList",this.currentSize)
         console.log("handleCurrentChange:",val)
       },
@@ -217,19 +211,19 @@
       //改变上架状态
       changePutState(index, rows) {
         console.log(rows[index].id)
-        rows[index].isPut = !rows[index].isPut;
+        rows[index].ifShow = !rows[index].ifShow;
         //数据提交给后台保存
       },
       //改变推荐状态
       changeRecommendState(index, rows) {
-        rows[index].isRecommend = !rows[index].isRecommend;
+        rows[index].recommended = !rows[index].recommended;
         //数据提交给后台保存
       },
       //改变禁售状态
-      changeForbidState(index, rows) {
-        rows[index].isForbid = !rows[index].isForbid;
-        //数据提交给后台保存
-      },
+      // changeForbidState(index, rows) {
+      //   rows[index].isForbid = !rows[index].isForbid;
+      //   //数据提交给后台保存
+      // },
     }
   }
 </script>

@@ -1,12 +1,20 @@
 import request from '@/utils/request'
 
-export function goodsList(query) {
+export function goodsList(data) {
   return request({
     url: 'goods/list',
     method: 'post',
-    params: query
+    data
   })
 }
+// //编辑需求  提交
+// export function updateDemand(data) {
+//   return request({
+//     url: 'article/update',
+//     method: 'post',
+//     data
+//   })
+// }
 
 export function goodsCategoryList() {
   return request({
