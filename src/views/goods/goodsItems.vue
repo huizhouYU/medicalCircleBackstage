@@ -70,7 +70,11 @@
     getDynamicHeight,
     debounce
   } from "../utils/elTableAutoHeight.js";
-  import axios from 'axios';
+  import {
+    updateRecommend,updateShow
+  } from '@/api/goods'
+  // import axios from 'axios';
+
   // const a = require("../../../src/json/goods.json")
   export default {
     name: 'GoodsItem',
@@ -210,14 +214,41 @@
       },
       //改变上架状态
       changePutState(index, rows) {
-        console.log(rows[index].id)
+        // console.log(rows[index].id)
         rows[index].ifShow = !rows[index].ifShow;
+        var params = {
+          goodsId:rows[index].goodsId,
+          show:rows[index].ifShow
+        }
         //数据提交给后台保存
+        updateShow(JSON.stringify(params)).then(response => {
+          var res = response.data.data
+          if(response.data.code != '10000'){//失败
+            this.$message.error(response.data.message)
+            // rows[index].ifShow = rows[index].ifShow;
+          }else{//成功
+            // rows[index].ifShow = !rows[index].ifShow;
+          }
+         })
       },
       //改变推荐状态
       changeRecommendState(index, rows) {
         rows[index].recommended = !rows[index].recommended;
         //数据提交给后台保存
+        var params = {
+          goodsId:rows[index].goodsId,
+          recommend:rows[index].recommended
+        }
+        //数据提交给后台保存
+        updateRecommend(JSON.stringify(params)).then(response => {
+          var res = response.data.data
+          if(response.data.code != '10000'){//失败
+            this.$message.error(response.data.message)
+            // rows[index].recommended = rows[index].recommended;
+          }else{//成功
+            // rows[index].recommended = !rows[index].recommended;
+          }
+         })
       },
       //改变禁售状态
       // changeForbidState(index, rows) {

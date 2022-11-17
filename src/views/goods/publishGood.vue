@@ -8,44 +8,51 @@
       </el-form-item>
       <!-- 产品名称 -->
       <el-form-item label="产品名称：" class="item-name">
-        <el-input v-model="goodInfo.name" placeholder="请输入商品名称" maxlength="40" show-word-limit></el-input>
+        <el-input v-model="goodInfo.goodsName" placeholder="请输入商品名称" maxlength="40" show-word-limit></el-input>
       </el-form-item>
       <!-- 所属品牌 -->
       <el-form-item label="所属品牌：" class="item-brand">
-        <el-select v-model="goodInfo.brand" class="select-brand" v-show="!customBrand">
-          <el-option v-for="item in brandsOptions" :key="item.value" :label="item.label" :value="item.value">
+        <el-select v-model="goodInfo.brandId" class="select-brand" v-show="!goodInfo.brandInputType">
+          <el-option v-for="item in brandsOptions" :key="item.brandId" :label="item.brandName" :value="item.brandId">
           </el-option>
         </el-select>
-        <el-input v-model="goodInfo.brand" placeholder="请输入商品品牌" maxlength="40" show-word-limit v-show="customBrand">
+        <el-input v-model="goodInfo.brandName" placeholder="请输入商品品牌" maxlength="40" show-word-limit
+          v-show="goodInfo.brandInputType">
         </el-input>
-        <el-checkbox v-model="customBrand" @change='goodInfo.brand= ""'>自定义品牌</el-checkbox>
+        <el-checkbox v-model="goodInfo.brandInputType" @change='goodInfo.brandName= ""'>自定义品牌</el-checkbox>
       </el-form-item>
       <!-- 产品规格： -->
       <el-form-item label="产品规格：" class="product-specs">
         <el-form-item label="销售类型" class="product-specs-item">
-          <el-select v-model="goodInfo.chosedXS" class="select-item" @change="isEditPrice()">
+          <el-select v-model="goodInfo.saleType" class="select-item" @change="isEditPrice()">
             <el-option v-for="item in xsOptions" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="价格" class="product-specs-item">
-          <el-input type="number" v-model="goodInfo.price" placeholder="请输入价格" :disabled="!isEditPriceFlag"></el-input>
+          <el-input type="text" v-model="goodInfo.price" placeholder="请输入价格" :disabled="!isEditPriceFlag"
+            onkeyup="if(!this.value.match(/^[\+\-]?\d*?\.?\d*?$/))this.value=this.t_value;else this.t_value=this.value;if(this.value.match(/^(?:[\+\-]?\d+(?:\.\d+)?)?$/))this.o_value=this.value"
+            onblur="if(!this.value.match(/^(?:[\+\-]?\d+(?:\.\d+)?|\.\d*?)?$/))this.value=this.o_value;else{if(this.value.match(/^\.\d+$/))this.value=0+this.value;if(this.value.match(/^\.$/))this.value=0;this.o_value=this.value}">
+          </el-input>
         </el-form-item>
         <el-form-item label="商品编码" class="product-specs-item">
-          <el-input v-model="goodInfo.PN" placeholder="产品P/N码或识别码"></el-input>
+          <el-input v-model="goodInfo.goodsPn" placeholder="产品P/N码或识别码" onkeyup="value=value.replace(/[^\w\.\/]/ig,'')">
+          </el-input>
         </el-form-item>
         <el-form-item label="库存" class="product-specs-item">
-          <el-input type="number" v-model="goodInfo.kc" placeholder="请输入商品库存"></el-input>
+          <el-input type="text" v-model="goodInfo.specQty" placeholder="请输入商品库存"
+            onkeyup="this.value=this.value.replace(/\D/g,'')"></el-input>
         </el-form-item>
         <el-form-item label="新旧程度" class="product-specs-item">
-          <el-select v-model="goodInfo.chosedDegree" class="select-item" placeholder="请选择">
+          <el-select v-model="goodInfo.degree" class="select-item" placeholder="请选择">
             <el-option v-for="item in newOrOrdDegreeOptions" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="保质期限" class="product-specs-item shelf-life">
-          <el-input type="number" v-model="goodInfo.bzq" placeholder=""></el-input>
-          <el-select v-model="goodInfo.chosedShelfLife" class="select-item" placeholder="请选择">
+          <el-input type="text" v-model="goodInfo.qualityTime" placeholder=""
+            onkeyup="this.value=this.value.replace(/\D/g,'')"></el-input>
+          <el-select v-model="goodInfo.qualityTimeUnit" class="select-item" placeholder="请选择">
             <el-option v-for="item in shelfLifeOptions" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
@@ -67,7 +74,7 @@
       </el-form-item>
       <!-- 交易方式 -->
       <el-form-item label="交易方式：">
-        <el-select v-model="goodInfo.chosedFare" class="select-item">
+        <el-select v-model="goodInfo.tradeMode" class="select-item">
           <el-option v-for="item in fareOptions" :key="item.value" :label="item.label" :value="item.value">
           </el-option>
         </el-select>
@@ -76,7 +83,7 @@
       <el-form-item label="商品标签：" class="prodect-tag">
         <div class="content">
           <div class="tags-content">
-            <el-tag :key="tag" v-for="tag in goodInfo.tagList" closable :disable-transitions="false"
+            <el-tag :key="tag" v-for="tag in goodInfo.tags" closable :disable-transitions="false"
               @close="handleClose(tag)">
               {{tag}}
             </el-tag>
@@ -88,12 +95,12 @@
       </el-form-item>
       <!-- 立即上架 -->
       <el-form-item label="立即上架：" class="prodect-grounding-item">
-        <el-switch v-model="goodInfo.groundingValue" active-color="#1890FF">
+        <el-switch v-model="goodInfo.ifShow" active-color="#1890FF">
         </el-switch>
       </el-form-item>
       <!-- 是否推荐 -->
       <el-form-item label="是否推荐：" class="prodect-recommendValue">
-        <el-switch v-model="goodInfo.recommendValue" active-color="#13ce66">
+        <el-switch v-model="goodInfo.recommended" active-color="#13ce66">
         </el-switch>
         <span class="gray-tip">被推荐的商品会显示在店铺首页</span>
       </el-form-item>
@@ -106,6 +113,12 @@
 </template>
 
 <script>
+  import {
+    goodCreate
+  } from '@/api/goods'
+  import {
+    brandList
+  } from '@/api/demand'
   import edit from '../utils/edit.vue'
   import DragUpload from '../utils/DragUpload.vue'; // 引入vue-draggable
   export default {
@@ -117,103 +130,108 @@
       return {
         inputVisible: true,
         goodTag: '', //添加的商品标签
-        customBrand: false, //是否自定义品牌
         isBack: true, //只有新增商品才能返回上一步
         limit: 5,
         //商品信息
         goodInfo: {
-          name: '', //商品名称
-          brand: '', //所属品牌
+          goodsName: '', //商品名称
+          brandInputType: 0, //是否自定义品牌
+          brandId: '', //所属品牌ID 如果自定义就不传
+          brandName: '', //品牌名称 如果自定义就传
           chooseClassify: '', //选择的类目【拼接字符串】
           chosedData: [], //选择的类目
-          chosedDegree: '', //选择的新旧程度
-          chosedXS: '1', //选择的销售方式
+          cateId: '',
+          saleType: 1, //选择的销售方式
+          degree: '', //选择的新旧程度
           price: '', //价格
-          PN: '', //商品编码
-          kc: '', //库存
-          bzq: '', //保质期
-          chosedShelfLife: '1', //选择的保质期【年、月、日】
+          goodsPn: '', //商品编码
+          specQty: '', //库存
+          qualityTime: '', //保质期
+          qualityTimeUnit: '日', //选择的保质期【年、月、日】
+          defaultImage: '', //主图
+
+
           content: '', //产品详情
-          chosedFare: "1", //选择的交易方式
-          tagList: ['模板一', '模板二'], //商品标签
-          groundingValue: true, //是否立即上架
-          recommendValue: false, //是否推荐
+          tradeMode: "1", //选择的交易方式
+          tags: ['模板一', '模板二'], //商品标签
+          ifShow: 0, //是否立即上架
+          recommended: 1, //是否推荐
         },
         brandsOptions: [],
         //是否允许输入价格
         isEditPriceFlag: true,
         //交易方式
         fareOptions: [{
-          value: '1',
+          value: 1,
           label: '当面交易'
         }, {
-          value: '2',
+          value: 2,
           label: '物流发货'
         }],
         // 销售类型
         xsOptions: [{
-            value: '1',
+            value: 1,
             label: '在线销售'
           },
           {
-            value: '2',
+            value: 2,
             label: '咨询议价'
           }
         ],
         //新旧程度
         newOrOrdDegreeOptions: [{
-            value: '1',
+            value: 1,
             label: '一成新'
           },
           {
-            value: '2',
+            value: 2,
             label: '两成新'
           },
           {
-            value: '3',
+            value: 3,
             label: '三成新'
           },
           {
-            value: '4',
+            value: 4,
             label: '四成新'
           },
 
           {
-            value: '5',
+            value: 5,
             label: '五成新'
           },
           {
-            value: '6',
+            value: 6,
             label: '六成新'
           },
           {
-            value: '7',
+            value: 7,
             label: '七成新'
           },
           {
-            value: '8',
+            value: 8,
             label: '八成新'
           },
           {
-            value: '9',
+            value: 9,
             label: '九成新'
           },
           {
-            value: '10',
+            value: 10,
             label: '十成新'
           }
         ],
         //保质期类型【日、月、年】
         shelfLifeOptions: [{
-            value: '1',
+            value: '日',
             label: '日'
           },
           {
-            value: '2',
+            value: '月',
             label: '月'
           },
           {
-            value: '3',
+            value: '年',
             label: '年'
           }
         ],
@@ -228,6 +246,9 @@
     },
     methods: {
       getParams() {
+        brandList().then(response => {
+          this.brandsOptions = response.data.data
+        })
         //添加商品  跳转过来 传递的数据
         var chosedDataString = this.$route.query.chosedData //商品类别
         if (chosedDataString != undefined) {
@@ -285,24 +306,42 @@
         console.log(this.ruleForm)
       },
       submit() {
+        this.goodInfo.cateId = Number(this.goodInfo.chosedData[this.goodInfo.chosedData.length - 1].value)
+        this.goodInfo.ifShow = Number(this.goodInfo.ifShow)
+        this.goodInfo.recommended = Number(this.goodInfo.recommended)
+        this.goodInfo.price = Number(this.goodInfo.price)
+        this.goodInfo.qualityTime = Number(this.goodInfo.qualityTime)
+        this.goodInfo.saleType = Number(this.goodInfo.saleType)
+        this.goodInfo.specQty = Number(this.goodInfo.specQty)
         console.log('商品信息', this.goodInfo)
-        console.log('图片信息', this.ruleForm)
-        alert("核对要提交给后台的数据后，再请求接口提交数据，暂定提交成功！")
-        this.$router.replace("/success")
+        console.log(JSON.stringify(this.goodInfo))
+        // console.log('图片信息', this.ruleForm)
+
+        goodCreate(JSON.stringify(this.goodInfo)).then(response => {
+          var res = response.data.data
+          if (response.data.code != '10000') { //失败
+            this.$message.error(response.data.message)
+            // rows[index].ifShow = rows[index].ifShow;
+          } else { //成功
+            alert("成功！")
+            // rows[index].ifShow = !rows[index].ifShow;
+          }
+        })
+        // this.$router.replace("/success")
       },
       deletTag(index) {
-        this.goodInfo.tagList.splice(index, 1)
-        if (this.goodInfo.tagList.length < 5) {
+        this.goodInfo.tags.splice(index, 1)
+        if (this.goodInfo.tags.length < 5) {
           this.inputVisible = true
         } else {
           this.inputVisible = false
         }
       },
       addTag() {
-        if (this.goodInfo.tagList.length < 5) {
-          this.goodInfo.tagList.push(this.goodTag.substring(0, 4))
+        if (this.goodInfo.tags.length < 5) {
+          this.goodInfo.tags.push(this.goodTag.substring(0, 4))
         }
-        if (this.goodInfo.tagList.length < 5) {
+        if (this.goodInfo.tags.length < 5) {
           this.inputVisible = true
         } else {
           this.inputVisible = false
@@ -310,8 +349,8 @@
         this.goodTag = ''
       },
       handleClose(key) {
-        this.goodInfo.tagList.splice(this.goodInfo.tagList.indexOf(key), 1);
-        if (this.goodInfo.tagList.length < 5) {
+        this.goodInfo.tags.splice(this.goodInfo.tags.indexOf(key), 1);
+        if (this.goodInfo.tags.length < 5) {
           this.inputVisible = true
         } else {
           this.inputVisible = false

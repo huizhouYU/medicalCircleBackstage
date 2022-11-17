@@ -120,8 +120,8 @@
           <el-input v-model="ruleForm.tel" placeholder="请输入联系方式" :disabled="editForbidFlag" />
         </el-form-item>
         <!-- 验证码 -->
-        <el-form-item v-show="!isLook || !editForbidFlag" label="验证码：" prop="capthca" class="vcode-input">
-          <el-input v-model="ruleForm.capthca" placeholder="请填写" />
+        <el-form-item v-show="!isLook || !editForbidFlag" label="验证码：" prop="captcha" class="vcode-input">
+          <el-input v-model="ruleForm.captcha" placeholder="请填写" />
           <el-button class="getVcode-btn" type="primary" plain :disabled="!show" @click="getVcode">
             <span v-show="show">获取验证码</span>
             <span v-show="!show" class="count">{{ count }} s</span>
@@ -249,7 +249,7 @@
           otherCertificate: '', //其他证件
           ownerName: '', //联系人
           tel: '', // 联系电话
-          capthca: '' // 验证码
+          captcha: '' // 验证码
         },
         rules: {
           tel: [{
@@ -257,7 +257,7 @@
             validator: checkphone,
             trigger: 'blur'
           }],
-          capthca: [{
+          captcha: [{
             required: true,
             message: '请输入验证码',
             trigger: 'blur'
