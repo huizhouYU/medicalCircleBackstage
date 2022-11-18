@@ -34,6 +34,14 @@ export function updateShow(data) {
     data
   })
 }
+//根据id获取商品详情
+export function goodsDetail(query) {
+  return request({
+    url: 'goods/detail',
+    method: 'get',
+    params:query
+  })
+}
 // //编辑需求  提交
 // export function updateDemand(data) {
 //   return request({

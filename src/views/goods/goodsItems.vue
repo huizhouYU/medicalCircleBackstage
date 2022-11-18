@@ -7,7 +7,7 @@
       <el-table-column prop="goodsCode" label="产品编码" min-width="120"></el-table-column>
       <el-table-column label="商品图" min-width="100">
         <template slot-scope="scope">
-          <img :src="scope.row.defaultImage" alt="图片加载失败" class="item-img">
+          <img :src="scope.row.defaultImage[0]" alt="图片加载失败" class="item-img">
         </template>
       </el-table-column>
       <el-table-column label="商品名称" min-width="200">
@@ -214,30 +214,30 @@
       },
       //改变上架状态
       changePutState(index, rows) {
-        // console.log(rows[index].id)
-        rows[index].ifShow = !rows[index].ifShow;
+        console.log("改变上架状态:",rows)
+        console.log("改变上架状态:",index)
+        rows.ifShow = !rows.ifShow;
         var params = {
-          goodsId:rows[index].goodsId,
-          show:rows[index].ifShow
+          goodsId:rows.goodsId,
+          show:rows.ifShow?1:0
         }
         //数据提交给后台保存
         updateShow(JSON.stringify(params)).then(response => {
           var res = response.data.data
           if(response.data.code != '10000'){//失败
             this.$message.error(response.data.message)
-            // rows[index].ifShow = rows[index].ifShow;
           }else{//成功
-            // rows[index].ifShow = !rows[index].ifShow;
           }
          })
       },
       //改变推荐状态
       changeRecommendState(index, rows) {
-        rows[index].recommended = !rows[index].recommended;
+        console.log("改变推荐状态:",rows.goodsId)
+        rows.recommended = !rows.recommended;
         //数据提交给后台保存
         var params = {
-          goodsId:rows[index].goodsId,
-          recommend:rows[index].recommended
+          goodsId:rows.goodsId,
+          recommend:rows.recommended?1:0
         }
         //数据提交给后台保存
         updateRecommend(JSON.stringify(params)).then(response => {

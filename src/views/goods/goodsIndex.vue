@@ -85,12 +85,12 @@
         total: null,
         listLoading: true,
         listQuery: {
-          ifShow:'',//商品状态：上架 下架
-          isDeleted: 0,//是否回收站 0-普通列表 1-回收站列表
-          keyType: null,//搜索类型 1-商品编码 2-商品名称
-          keyword: "",//搜索关键字
-          pageNo: 1,//页码,示例值(1)
-          pageSize: 20,//每页显示数量,示例值(10)
+          ifShow: '', //商品状态：上架 下架
+          isDeleted: 0, //是否回收站 0-普通列表 1-回收站列表
+          keyType: null, //搜索类型 1-商品编码 2-商品名称
+          keyword: "", //搜索关键字
+          pageNo: 1, //页码,示例值(1)
+          pageSize: 20, //每页显示数量,示例值(10)
         }
       }
     },
@@ -103,17 +103,37 @@
         this.tableData = []
         goodsList(JSON.stringify(this.listQuery)).then(response => {
           var res = response.data.data
-          if(response.data.code != '10000'){
+          if (response.data.code != '10000') {
             this.$message.error(response.data.message)
-          }else{
+          } else {
             this.tableData = res.list
+            for (var index in this.tableData) {
+              if (this.tableData[index].defaultImage != null && this.tableData[index].defaultImage != "") {
+                this.tableData[index].defaultImage = JSON.parse(this.tableData[index].defaultImage)
+                for (var k in this.tableData[index].defaultImage) {
+                  this.tableData[index].defaultImage[k] = "https://images.weserv.nl/?url=" + this.tableData[index]
+                    .defaultImage[k]
+                }
+              }
+
+              if (this.tableData[index].ifShow == 1) {
+                this.tableData[index].ifShow = true
+              } else {
+                this.tableData[index].ifShow = false
+              }
+              if (this.tableData[index].recommended == 1) {
+                this.tableData[index].recommended = true
+              } else {
+                this.tableData[index].recommended = false
+              }
+            }
             this.total = response.data.totalCount
             this.listLoading = false
             this.flag = true
           }
           // console.log("response.data:",response.data)
 
-         })
+        })
       },
       getNewList(data) {
         console.log("data:", data)

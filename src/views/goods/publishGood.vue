@@ -62,7 +62,9 @@
       <el-form-item label="产品主图：" class="">
         <div label="图片可拖曳排序：" prop="trialImgs" class="">
           <div class="">
-            <DragUpload :allList="ruleForm.trialImgs" v-on:allList="trialImgs" :limit="limit">
+            <DragUpload :allList="ruleForm.trialImgs" @allList="trialImgs" :limit="limit" :limitWidth="800"
+              :limitHeight="800">
+              <!-- <DragUpload :imgList="imgList" :limit="5" @allList="trialImgs"  :limitWidth="800" :limitHeight="800"/> -->
             </DragUpload>
             <div class="gray-tip">请：主图按照图片上传顺序展示，图片支持jpg/png格式，不超过10M，尺寸为800*800，拖拽图片可调整排序</div>
           </div>
@@ -114,8 +116,12 @@
 
 <script>
   import {
-    goodCreate
+    goodCreate,
+    goodsDetail
   } from '@/api/goods'
+  import {
+    uploadImage
+  } from '@/api/public'
   import {
     brandList
   } from '@/api/demand'
@@ -135,12 +141,14 @@
         //商品信息
         goodInfo: {
           goodsName: '', //商品名称
-          brandInputType: 0, //是否自定义品牌
+          brandInputType: false, //是否自定义品牌,false-选择 true-自定义
           brandId: '', //所属品牌ID 如果自定义就不传
           brandName: '', //品牌名称 如果自定义就传
+          category: '', //分类的Json信息
           chooseClassify: '', //选择的类目【拼接字符串】
           chosedData: [], //选择的类目
           cateId: '',
+          cateName: '',
           saleType: 1, //选择的销售方式
           degree: '', //选择的新旧程度
           price: '', //价格
@@ -149,10 +157,8 @@
           qualityTime: '', //保质期
           qualityTimeUnit: '日', //选择的保质期【年、月、日】
           defaultImage: '', //主图
-
-
           content: '', //产品详情
-          tradeMode: "1", //选择的交易方式
+          tradeMode: 1, //选择的交易方式
           tags: ['模板一', '模板二'], //商品标签
           ifShow: 0, //是否立即上架
           recommended: 1, //是否推荐
@@ -263,27 +269,24 @@
         }
         //编辑商品 跳转过来 传递的数据
         var editGoodData = this.$route.query.eidtData //要编辑商品的数据
+        console.log("编辑商品：", editGoodData)
         if (editGoodData != undefined) {
           this.isBack = false
-          this.goodInfo.chooseClassify = editGoodData.sort //商品类目
-          this.goodInfo.name = editGoodData.name //商品名称
-          this.goodInfo.brand = editGoodData.brand //商品品牌
-          this.$message({
-            type: 'info',
-            message: '此处应该根据商品ID去请求后端接口，获取商品数据，填充页面'
+          goodsDetail({
+            goodsId: editGoodData.goodsId
+          }).then(response => {
+            console.log(response.data.data)
           })
         }
 
       },
       //当选择“咨询议价”时，商品价格禁止输入
       isEditPrice() {
-        console.log("this.isEditPriceFlag", this.isEditPriceFlag)
-        if (this.goodInfo.chosedXS == 2) {
+        if (this.goodInfo.saleType == 2) {
           this.isEditPriceFlag = false
         } else {
           this.isEditPriceFlag = true
         }
-        console.log("this.isEditPriceFlag", this.isEditPriceFlag)
       },
       //点击‘类目’返回上一步
       preStep() {
@@ -305,7 +308,13 @@
         console.log(this.goodInfo)
         console.log(this.ruleForm)
       },
-      submit() {
+      async submit() {
+        var params = {
+          chosedData: this.goodInfo.chosedData,
+          chooseClassify: this.goodInfo.chooseClassify
+        }
+        this.goodInfo.category = JSON.stringify(params)
+        this.goodInfo.cateName = this.goodInfo.chosedData[this.goodInfo.chosedData.length - 1].label
         this.goodInfo.cateId = Number(this.goodInfo.chosedData[this.goodInfo.chosedData.length - 1].value)
         this.goodInfo.ifShow = Number(this.goodInfo.ifShow)
         this.goodInfo.recommended = Number(this.goodInfo.recommended)
@@ -313,6 +322,24 @@
         this.goodInfo.qualityTime = Number(this.goodInfo.qualityTime)
         this.goodInfo.saleType = Number(this.goodInfo.saleType)
         this.goodInfo.specQty = Number(this.goodInfo.specQty)
+
+        //相关图片
+        this.goodInfo.defaultImage = []
+        for (var item of this.ruleForm.trialImgs) {
+          if (item.file != '') {
+            let param = new FormData(); //创建form对象
+            param.append('file', item.file); //通过append向form对象添加数据
+            await uploadImage(param).then(response => {
+              console.log(response.data.data)
+              this.goodInfo.defaultImage.push(response.data.data)
+            })
+          } else {
+            var newImgUrl = item.imgUrl.split("https://images.weserv.nl/?url=").join("");
+            console.log("newImgUrl：", newImgUrl)
+            this.goodInfo.defaultImage.push(newImgUrl)
+          }
+        }
+        this.goodInfo.defaultImage = JSON.stringify(this.goodInfo.defaultImage)
         console.log('商品信息', this.goodInfo)
         console.log(JSON.stringify(this.goodInfo))
         // console.log('图片信息', this.ruleForm)
