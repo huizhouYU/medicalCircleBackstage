@@ -43,13 +43,14 @@ export function goodsDetail(query) {
   })
 }
 // //编辑需求  提交
-// export function updateDemand(data) {
-//   return request({
-//     url: 'article/update',
-//     method: 'post',
-//     data
-//   })
-// }
+//新建商品
+export function goodsUpdate(data) {
+  return request({
+    url: 'goods/update',
+    method: 'post',
+    data
+  })
+}
 
 export function goodsCategoryList() {
   return request({

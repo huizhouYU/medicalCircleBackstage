@@ -4,10 +4,6 @@
     <div class="search-add">
       <!-- 搜索部分 -->
       <div class="search">
-        <!-- 商品分类 -->
-        <!-- <el-cascader v-model="sortValue" placeholder="商品分类" :options="options" @change="handleChange"
-          class="public-select-box" clearable :filterable="true">
-        </el-cascader> -->
         <!-- 商品状态 -->
         <el-select v-model="listQuery.ifShow" placeholder="商品状态" class="public-select-box choose-shop-state" clearable>
           <el-option v-for="item in shopStateOptions" :key="item.value" :label="item.label" :value="item.value">
@@ -35,13 +31,10 @@
   import {
     goodsList
   } from '@/api/goods'
-  import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
   import GoodsItems from '../goods/goodsItems.vue'
-  const a = require("../../../src/json/goods.json")
   export default {
     name: 'GoodsList',
     components: {
-      Pagination,
       GoodsItems
     },
     filters: {
@@ -58,8 +51,6 @@
       return {
         tableData: [],
         flag: false,
-        //商品分类
-        // options: [],
         //商品状态
         shopStateOptions: [{
           value: 1,
@@ -76,11 +67,6 @@
           value: 2,
           label: '产品名称'
         }],
-        // inputKeyType: '1', //搜索的关键字的类型
-        // inputKey: '', //输入商品名称/关键字
-        // value: '', //商品状态
-        // sortValue: '', //选择的商品分类
-        //////////////////
         list: null,
         total: null,
         listLoading: true,
@@ -108,14 +94,8 @@
           } else {
             this.tableData = res.list
             for (var index in this.tableData) {
-              if (this.tableData[index].defaultImage != null && this.tableData[index].defaultImage != "") {
-                this.tableData[index].defaultImage = JSON.parse(this.tableData[index].defaultImage)
-                for (var k in this.tableData[index].defaultImage) {
-                  this.tableData[index].defaultImage[k] = "https://images.weserv.nl/?url=" + this.tableData[index]
-                    .defaultImage[k]
-                }
-              }
-
+              this.tableData[index].defaultImage = "https://images.weserv.nl/?url=" + this.tableData[index]
+                .defaultImage
               if (this.tableData[index].ifShow == 1) {
                 this.tableData[index].ifShow = true
               } else {
@@ -127,16 +107,13 @@
                 this.tableData[index].recommended = false
               }
             }
-            this.total = response.data.totalCount
+            this.total = res.totalCount
             this.listLoading = false
             this.flag = true
           }
-          // console.log("response.data:",response.data)
-
         })
       },
       getNewList(data) {
-        console.log("data:", data)
         this.listQuery.pageNo = data.pageNo
         this.listQuery.pageSize = data.pageSize
         this.getList()
@@ -147,11 +124,9 @@
       },
       //根据条件筛选数据
       selectData() {
-        alert("不要点啦！后台接口数据还没做呢。。。")
+        this.getList()
+        // alert("不要点啦！后台接口数据还没做呢。。。")
       },
-      // handleChange() {
-
-      // }
     }
   }
 </script>

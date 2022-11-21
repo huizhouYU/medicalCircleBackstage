@@ -216,7 +216,7 @@
               this.submitDemand()
             }
           } else {
-            console.log('error submit!!')
+            // console.log('error submit!!')
             return false
           }
         })
@@ -260,20 +260,17 @@
             let param = new FormData(); //创建form对象
             param.append('file', item.file); //通过append向form对象添加数据
             await uploadImage(param).then(response => {
-              console.log(response.data.data)
               this.demandInfo.imageList.push(response.data.data)
             })
           } else {
             var newImgUrl = item.imgUrl.split("https://images.weserv.nl/?url=").join("");
-            console.log("newImgUrl：", newImgUrl)
             this.demandInfo.imageList.push(newImgUrl)
           }
         }
-        console.log("发送的数据：", JSON.stringify(this.demandInfo))
+        // console.log("发送的数据：", JSON.stringify(this.demandInfo))
         // 编辑
         if (this.isUpdate) {
           await updateDemand(JSON.stringify(this.demandInfo)).then(response => {
-            console.log(response.data.data)
             if (response.data.code == 10000) {
               this.$message.success("更新成功！")
               this.$router.replace({
@@ -351,7 +348,6 @@
             this.isUpdate = true
             this.demandInfo = response.data.data
             var reg = JSON.parse(this.demandInfo.region)
-            console.log("reg:", reg)
             //维修区域
             this.demandInfo.regionIdList = []
             if (this.demandInfo.articleType == 2) { //项目外包

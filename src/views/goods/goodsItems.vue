@@ -4,10 +4,10 @@
       :height="tableHeight" @selection-change="handleSelectionChange" class="el-table-box">
       <el-table-column type="selection" width="55">
       </el-table-column>
-      <el-table-column prop="goodsCode" label="产品编码" min-width="120"></el-table-column>
+      <el-table-column prop="goodsPn" label="产品编码" min-width="120"></el-table-column>
       <el-table-column label="商品图" min-width="100">
         <template slot-scope="scope">
-          <img :src="scope.row.defaultImage[0]" alt="图片加载失败" class="item-img">
+          <img :src="scope.row.defaultImage" alt="图片加载失败" class="item-img">
         </template>
       </el-table-column>
       <el-table-column label="商品名称" min-width="200">
@@ -15,10 +15,10 @@
           <span class="goods-name-span" :title="scope.row.goodsName">{{scope.row.goodsName}} </span>
         </template>
       </el-table-column>
-      <el-table-column prop="cateName" label="商品分类"min-width="200"></el-table-column>
+      <el-table-column prop="cateName" label="商品分类" min-width="200"></el-table-column>
       <el-table-column prop="brand" label="品牌" min-width="120"></el-table-column>
       <el-table-column prop="price" label="价格" min-width="100"></el-table-column>
-      <el-table-column prop="specQty" label="库存" min-width="100"></el-table-column>
+      <el-table-column prop="qty" label="库存" min-width="100"></el-table-column>
       <el-table-column label="上架" min-width="100">
         <template slot-scope="scope">
           <el-switch class="tableScopeSwitch" @change="changePutState(scope.$index, scope.row)" active-text="上架"
@@ -33,13 +33,6 @@
           </el-switch>
         </template>
       </el-table-column>
-      <!-- <el-table-column prop="isForbid" label="禁售" min-width="100">
-        <template slot-scope="scope">
-          <el-switch class="tableScopeSwitch" @change="handleStatusChange(scope.$index, scope.row)" active-text="禁售"
-            inactive-text="禁售" v-model="scope.row.isForbid" active-color="#FF7575">
-          </el-switch>
-        </template>
-      </el-table-column> -->
       <el-table-column fixed="right" label="操作" min-width="120">
         <template slot-scope="scope">
           <el-button @click.native.prevent="editRow(scope.$index, tableData)" type="text" size="small">
@@ -57,10 +50,9 @@
         <el-button type="danger" class="public-el-btn" @click="deleteChoosed">删除</el-button>
       </div>
       <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange"
-        :page-sizes="[1,5,10, 15, 20, 25]" :pager-count="5" :page-size="currentSize.pageSize"
-        :background="false" layout="total, sizes, prev, pager, next, jumper" :total="total">
+        :page-sizes="[1,5,10, 15, 20, 25]" :pager-count="5" :page-size="currentSize.pageSize" :background="false"
+        layout="total, sizes, prev, pager, next, jumper" :total="total">
       </el-pagination>
-      <!-- <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" /> -->
     </div>
   </div>
 </template>
@@ -71,11 +63,9 @@
     debounce
   } from "../utils/elTableAutoHeight.js";
   import {
-    updateRecommend,updateShow
+    updateRecommend,
+    updateShow
   } from '@/api/goods'
-  // import axios from 'axios';
-
-  // const a = require("../../../src/json/goods.json")
   export default {
     name: 'GoodsItem',
     filters: {
@@ -88,11 +78,10 @@
         return statusMap[status]
       }
     },
-    props: ['tableData','total'],
+    props: ['tableData', 'total'],
     watch: {
       tableData(val) {
         this.tableData = val;
-        console.log(val);
       }
     },
     data() {
@@ -100,16 +89,12 @@
         tableHeight: 0,
         pagerCount: 4, //设置页码显示最多的数量
         isAddAllTerminalStatus: false,
-        currentPage: 1, //当前页
-        pageSize: 20, //当前显示条数
         multipleSelection: [],
         currentSize: {
           pageNo: 1,
           pageSize: 20
         }
       }
-    },
-    created() {
     },
     mounted() {
       // 初始化给table高度赋值
@@ -139,14 +124,12 @@
         }, 400);
       },
       handleSizeChange(val) {
-        console.log("handleSizeChange:",val)
         this.currentSize.pageSize = val
-        this.$emit("getList",this.currentSize)
+        this.$emit("getList", this.currentSize)
       },
       handleCurrentChange(val) {
-        this.currentSize.pageNo= val
-        this.$emit("getList",this.currentSize)
-        console.log("handleCurrentChange:",val)
+        this.currentSize.pageNo = val
+        this.$emit("getList", this.currentSize)
       },
       allSelectTerminal(e) {
         if (e === true) {
@@ -178,8 +161,6 @@
 
       },
       editRow(index, rows) {
-        console.log("index", index)
-        console.log("rows", rows[index])
         this.$router.replace({
           path: 'publishGood',
           query: {
@@ -214,47 +195,30 @@
       },
       //改变上架状态
       changePutState(index, rows) {
-        console.log("改变上架状态:",rows)
-        console.log("改变上架状态:",index)
-        rows.ifShow = !rows.ifShow;
         var params = {
-          goodsId:rows.goodsId,
-          show:rows.ifShow?1:0
+          goodsId: rows.goodsId,
+          show: rows.ifShow ? 1 : 0
         }
-        //数据提交给后台保存
         updateShow(JSON.stringify(params)).then(response => {
           var res = response.data.data
-          if(response.data.code != '10000'){//失败
+          if (response.data.code != '10000') { //失败
             this.$message.error(response.data.message)
-          }else{//成功
           }
-         })
+        })
       },
       //改变推荐状态
       changeRecommendState(index, rows) {
-        console.log("改变推荐状态:",rows.goodsId)
-        rows.recommended = !rows.recommended;
-        //数据提交给后台保存
         var params = {
-          goodsId:rows.goodsId,
-          recommend:rows.recommended?1:0
+          goodsId: rows.goodsId,
+          recommend: rows.recommended ? 1 : 0
         }
-        //数据提交给后台保存
         updateRecommend(JSON.stringify(params)).then(response => {
           var res = response.data.data
-          if(response.data.code != '10000'){//失败
+          if (response.data.code != '10000') { //失败
             this.$message.error(response.data.message)
-            // rows[index].recommended = rows[index].recommended;
-          }else{//成功
-            // rows[index].recommended = !rows[index].recommended;
           }
-         })
+        })
       },
-      //改变禁售状态
-      // changeForbidState(index, rows) {
-      //   rows[index].isForbid = !rows[index].isForbid;
-      //   //数据提交给后台保存
-      // },
     }
   }
 </script>

@@ -19,7 +19,7 @@
         <el-input v-model="goodInfo.brandName" placeholder="请输入商品品牌" maxlength="40" show-word-limit
           v-show="goodInfo.brandInputType">
         </el-input>
-        <el-checkbox v-model="goodInfo.brandInputType" @change='goodInfo.brandName= ""'>自定义品牌</el-checkbox>
+        <el-checkbox v-model="goodInfo.brandInputType">自定义品牌</el-checkbox>
       </el-form-item>
       <!-- 产品规格： -->
       <el-form-item label="产品规格：" class="product-specs">
@@ -40,7 +40,7 @@
           </el-input>
         </el-form-item>
         <el-form-item label="库存" class="product-specs-item">
-          <el-input type="text" v-model="goodInfo.specQty" placeholder="请输入商品库存"
+          <el-input type="text" v-model="goodInfo.qty" placeholder="请输入商品库存"
             onkeyup="this.value=this.value.replace(/\D/g,'')"></el-input>
         </el-form-item>
         <el-form-item label="新旧程度" class="product-specs-item">
@@ -62,8 +62,7 @@
       <el-form-item label="产品主图：" class="">
         <div label="图片可拖曳排序：" prop="trialImgs" class="">
           <div class="">
-            <DragUpload :allList="ruleForm.trialImgs" @allList="trialImgs" :limit="limit" :limitWidth="800"
-              :limitHeight="800">
+            <DragUpload @allList="trialImgs" :limit="limit" :limitWidth="800" :limitHeight="800" :imgList="imgList">
               <!-- <DragUpload :imgList="imgList" :limit="5" @allList="trialImgs"  :limitWidth="800" :limitHeight="800"/> -->
             </DragUpload>
             <div class="gray-tip">请：主图按照图片上传顺序展示，图片支持jpg/png格式，不超过10M，尺寸为800*800，拖拽图片可调整排序</div>
@@ -72,7 +71,7 @@
       </el-form-item>
       <!-- 产品详情 -->
       <el-form-item label="产品详情：" class="product-detail">
-        <edit class="edit" @getContent="getContentData"></edit>
+        <edit class="edit" @getContent="getContentData" :description="goodInfo.content"></edit>
       </el-form-item>
       <!-- 交易方式 -->
       <el-form-item label="交易方式：">
@@ -85,7 +84,7 @@
       <el-form-item label="商品标签：" class="prodect-tag">
         <div class="content">
           <div class="tags-content">
-            <el-tag :key="tag" v-for="tag in goodInfo.tags" closable :disable-transitions="false"
+            <el-tag :key="tag" v-for="tag in goodInfo.tagList" closable :disable-transitions="false"
               @close="handleClose(tag)">
               {{tag}}
             </el-tag>
@@ -117,6 +116,7 @@
 <script>
   import {
     goodCreate,
+    goodsUpdate,
     goodsDetail
   } from '@/api/goods'
   import {
@@ -138,6 +138,7 @@
         goodTag: '', //添加的商品标签
         isBack: true, //只有新增商品才能返回上一步
         limit: 5,
+        imgList: [],
         //商品信息
         goodInfo: {
           goodsName: '', //商品名称
@@ -153,13 +154,14 @@
           degree: '', //选择的新旧程度
           price: '', //价格
           goodsPn: '', //商品编码
-          specQty: '', //库存
+          qty: '', //库存
           qualityTime: '', //保质期
           qualityTimeUnit: '日', //选择的保质期【年、月、日】
           defaultImage: '', //主图
+          imageList: [],
           content: '', //产品详情
           tradeMode: 1, //选择的交易方式
-          tags: ['模板一', '模板二'], //商品标签
+          tagList: [], //商品标签
           ifShow: 0, //是否立即上架
           recommended: 1, //是否推荐
         },
@@ -269,13 +271,27 @@
         }
         //编辑商品 跳转过来 传递的数据
         var editGoodData = this.$route.query.eidtData //要编辑商品的数据
-        console.log("编辑商品：", editGoodData)
         if (editGoodData != undefined) {
           this.isBack = false
           goodsDetail({
             goodsId: editGoodData.goodsId
           }).then(response => {
-            console.log(response.data.data)
+            var res = response.data.data
+            this.goodInfo = res
+            //产品类目
+            var category = JSON.parse(res.category)
+            this.goodInfo.chosedData = category.chosedData
+            this.goodInfo.chooseClassify = category.chooseClassify
+            //相关图片
+            this.imgList = this.goodInfo.imageList
+            //是否上架
+            this.goodInfo.ifShow = this.goodInfo.ifShow == 1 ? true : false
+            //是否推荐
+            this.goodInfo.recommended = this.goodInfo.recommended == 1 ? true : false
+            //判断标签个数
+            if (this.goodInfo.tagList.length == 5) {
+              this.inputVisible = false
+            }
           })
         }
 
@@ -291,12 +307,17 @@
       //点击‘类目’返回上一步
       preStep() {
         if (this.isBack) {
-          this.$router.replace({
-            path: 'addGoods',
-            query: {
-              chosedData: JSON.stringify(this.goodInfo.chosedData)
-            }
+          this.$store.dispatch('tagsView/delView', this.$route).then(({
+            visitedViews
+          }) => {
+            this.$router.replace({
+              path: 'addGoods',
+              query: {
+                chosedData: JSON.stringify(this.goodInfo.chosedData)
+              }
+            })
           })
+
         }
       },
       // 图片可拖曳排序
@@ -305,8 +326,6 @@
       },
       getContentData(content) {
         this.goodInfo.content = content
-        console.log(this.goodInfo)
-        console.log(this.ruleForm)
       },
       async submit() {
         var params = {
@@ -321,54 +340,78 @@
         this.goodInfo.price = Number(this.goodInfo.price)
         this.goodInfo.qualityTime = Number(this.goodInfo.qualityTime)
         this.goodInfo.saleType = Number(this.goodInfo.saleType)
-        this.goodInfo.specQty = Number(this.goodInfo.specQty)
-
+        this.goodInfo.qty = Number(this.goodInfo.qty)
         //相关图片
-        this.goodInfo.defaultImage = []
-        for (var item of this.ruleForm.trialImgs) {
-          if (item.file != '') {
-            let param = new FormData(); //创建form对象
-            param.append('file', item.file); //通过append向form对象添加数据
-            await uploadImage(param).then(response => {
-              console.log(response.data.data)
-              this.goodInfo.defaultImage.push(response.data.data)
-            })
-          } else {
-            var newImgUrl = item.imgUrl.split("https://images.weserv.nl/?url=").join("");
-            console.log("newImgUrl：", newImgUrl)
-            this.goodInfo.defaultImage.push(newImgUrl)
+        if (this.ruleForm.trialImgs.length > 0) {
+          this.goodInfo.imageList = []
+          for (var item of this.ruleForm.trialImgs) {
+            if (item.file != '') {
+              let param = new FormData(); //创建form对象
+              param.append('file', item.file); //通过append向form对象添加数据
+              await uploadImage(param).then(response => {
+                this.goodInfo.imageList.push(response.data.data)
+              })
+            } else {
+              var newImgUrl = item.imgUrl.split("https://images.weserv.nl/?url=").join("");
+              this.goodInfo.imageList.push(newImgUrl)
+            }
           }
         }
-        this.goodInfo.defaultImage = JSON.stringify(this.goodInfo.defaultImage)
-        console.log('商品信息', this.goodInfo)
-        console.log(JSON.stringify(this.goodInfo))
-        // console.log('图片信息', this.ruleForm)
 
-        goodCreate(JSON.stringify(this.goodInfo)).then(response => {
-          var res = response.data.data
-          if (response.data.code != '10000') { //失败
-            this.$message.error(response.data.message)
-            // rows[index].ifShow = rows[index].ifShow;
-          } else { //成功
-            alert("成功！")
-            // rows[index].ifShow = !rows[index].ifShow;
-          }
-        })
-        // this.$router.replace("/success")
+        this.goodInfo.defaultImage = this.goodInfo.imageList[0]
+        // console.log('商品信息', this.goodInfo)
+        // console.log(JSON.stringify(this.goodInfo))
+        if (this.goodInfo.goodsId != undefined) { //编辑商品
+          goodsUpdate(JSON.stringify(this.goodInfo)).then(response => {
+            var res = response.data.data
+            if (response.data.code != '10000') { //失败
+              this.$message.error(response.data.message)
+            } else { //成功
+              this.$message({
+                type: 'success',
+                message: '更新成功!'
+              });
+              this.$store.dispatch('tagsView/delView', this.$route).then(({
+                visitedViews
+              }) => {
+                this.$router.replace("/goodsIndex")
+              })
+            }
+          })
+        } else { //新建商品
+          goodCreate(JSON.stringify(this.goodInfo)).then(response => {
+            var res = response.data.data
+            if (response.data.code != '10000') { //失败
+              this.$message.error(response.data.message)
+            } else { //成功
+              this.$message({
+                type: 'success',
+                message: '发布成功!'
+              });
+              this.$store.dispatch('tagsView/delView', this.$route).then(({
+                visitedViews
+              }) => {
+                this.$router.replace("/goodsIndex")
+              })
+            }
+          })
+        }
+
+
       },
       deletTag(index) {
-        this.goodInfo.tags.splice(index, 1)
-        if (this.goodInfo.tags.length < 5) {
+        this.goodInfo.tagList.splice(index, 1)
+        if (this.goodInfo.tagList.length < 5) {
           this.inputVisible = true
         } else {
           this.inputVisible = false
         }
       },
       addTag() {
-        if (this.goodInfo.tags.length < 5) {
-          this.goodInfo.tags.push(this.goodTag.substring(0, 4))
+        if (this.goodInfo.tagList.length < 5) {
+          this.goodInfo.tagList.push(this.goodTag.substring(0, 4))
         }
-        if (this.goodInfo.tags.length < 5) {
+        if (this.goodInfo.tagList.length < 5) {
           this.inputVisible = true
         } else {
           this.inputVisible = false
@@ -376,8 +419,8 @@
         this.goodTag = ''
       },
       handleClose(key) {
-        this.goodInfo.tags.splice(this.goodInfo.tags.indexOf(key), 1);
-        if (this.goodInfo.tags.length < 5) {
+        this.goodInfo.tagList.splice(this.goodInfo.tagList.indexOf(key), 1);
+        if (this.goodInfo.tagList.length < 5) {
           this.inputVisible = true
         } else {
           this.inputVisible = false

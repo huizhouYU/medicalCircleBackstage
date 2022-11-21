@@ -403,12 +403,18 @@
         if (this.isNextFlag) {
           var chosedDataString = JSON.stringify(this.chosedData)
           console.log(chosedDataString)
-          this.$router.replace({
-            path: 'publishGood',
-            query: {
-              chosedData: chosedDataString
-            }
+          this.$store.dispatch('tagsView/delView', this.$route).then(({
+            visitedViews
+          }) => {
+           this.$router.replace({
+             path: 'publishGood',
+             query: {
+               chosedData: chosedDataString
+             }
+           })
           })
+          
+         
         }
 
       },

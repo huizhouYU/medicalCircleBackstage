@@ -152,6 +152,7 @@
         })
       },
       closeSelectedTag(view) {
+        console.log("关闭：",view)
         this.$store.dispatch('tagsView/delView', view).then(({
           visitedViews
         }) => {
