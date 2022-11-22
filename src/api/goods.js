@@ -42,11 +42,26 @@ export function goodsDetail(query) {
     params:query
   })
 }
-// //编辑需求  提交
-//新建商品
+//编辑需求  提交
 export function goodsUpdate(data) {
   return request({
     url: 'goods/update',
+    method: 'post',
+    data
+  })
+}
+//删除商品
+export function goodsDelete(data) {
+  return request({
+    url: 'goods/delete',
+    method: 'post',
+    data
+  })
+}
+//还原商品
+export function goodsRenew(data) {
+  return request({
+    url: 'goods/renew',
     method: 'post',
     data
   })

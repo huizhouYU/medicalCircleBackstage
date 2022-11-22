@@ -11,7 +11,7 @@
         </el-select>
         <!-- input 输入关键字  -->
         <el-input placeholder="请输入关键字" v-model="listQuery.keyword" class="input-with-select search-select-input">
-          <el-select v-model="listQuery.keyType" slot="prepend" placeholder="请选择">
+          <el-select v-model="listQuery.keyType" slot="prepend" placeholder="请选择" clearable>
             <el-option v-for="item in inputKeyOptions" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>

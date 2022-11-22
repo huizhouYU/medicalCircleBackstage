@@ -35,10 +35,10 @@
       </el-table-column>
       <el-table-column fixed="right" label="操作" min-width="120">
         <template slot-scope="scope">
-          <el-button @click.native.prevent="editRow(scope.$index, tableData)" type="text" size="small">
+          <el-button @click.native.prevent="editRow(scope.$index, scope.row)" type="text" size="small">
             编辑
           </el-button>
-          <el-button @click.native.prevent="deleteRow(scope.$index, tableData)" type="text" size="small">
+          <el-button @click.native.prevent="deleteRow(scope.$index, scope.row)" type="text" size="small">
             删除
           </el-button>
         </template>
@@ -64,7 +64,8 @@
   } from "../utils/elTableAutoHeight.js";
   import {
     updateRecommend,
-    updateShow
+    updateShow,
+    goodsDelete
   } from '@/api/goods'
   export default {
     name: 'GoodsItem',
@@ -142,16 +143,28 @@
         this.multipleSelection = val;
       },
       deleteRow(index, rows) {
+        var params = {
+          id: rows.goodsId
+        }
         this.$confirm('确定删除 1 个选择项吗？ 删除的选择项将进入回收站中', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          rows.splice(index, 1);
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          });
+
+          goodsDelete(JSON.stringify(params)).then(response => {
+            var res = response.data.data
+            if (response.data.code != '10000') { //失败
+              this.$message.error(response.data.message)
+            } else {
+              this.$message({
+                type: 'success',
+                message: '删除成功!'
+              });
+              this.$emit("getList", this.currentSize)
+            }
+          })
+          // rows.splice(index, 1);
         }).catch(() => {
           this.$message({
             type: 'info',
@@ -164,7 +177,7 @@
         this.$router.replace({
           path: 'publishGood',
           query: {
-            eidtData: rows[index]
+            eidtData: rows
           }
         })
       },

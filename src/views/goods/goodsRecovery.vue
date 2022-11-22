@@ -4,8 +4,8 @@
     <div class="search">
       <!-- input 输入关键字  -->
       <el-input placeholder="请输入关键字" v-model="listQuery.keyword" class="input-with-select search-select-input public-interval">
-        <el-select v-model="listQuery.keyType" slot="prepend" placeholder="请选择">
-          <el-option v-for="item in inputKeyOptions" :key="item.value" :label="item.label" :value="item.value">
+        <el-select v-model="listQuery.keyType" slot="prepend" placeholder="请选择" clearable>
+          <el-option v-for="item in inputKeyOptions" :key="item.value" :label="item.label" :value="item.value" >
           </el-option>
         </el-select>
         <el-button slot="append" icon="el-icon-search" @click="selectData()"></el-button>
@@ -50,7 +50,7 @@
     methods: {
       //根据条件筛选数据
       selectData() {
-        alert("不要点啦！后台接口数据还没做呢。。。")
+        this.getList()
       },
       getList(){
         goodsList(JSON.stringify(this.listQuery)).then(response => {

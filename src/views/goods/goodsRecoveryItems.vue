@@ -19,7 +19,7 @@
       <el-table-column prop="qty" label="库存" min-width="100"></el-table-column>
       <el-table-column fixed="right" label="操作" min-width="120">
         <template slot-scope="scope">
-          <el-button @click.native.prevent="reduction(scope.$index, currentPageData)" type="text" size="small"> 还原
+          <el-button @click.native.prevent="reduction(scope.$index, scope.row)" type="text" size="small"> 还原
           </el-button>
         </template>
       </el-table-column>
@@ -39,6 +39,9 @@
     getDynamicHeight,
     debounce
   } from "../utils/elTableAutoHeight.js";
+  import {
+    goodsRenew
+  } from '@/api/goods'
   export default {
     props: ['tableData','total'],
     watch: {
@@ -92,17 +95,28 @@
         this.currentSize.pageNo= val
         this.$emit("getList",this.currentSize)
       },
+      //还原
       reduction(index, rows) {
+        var params = {
+          id: rows.goodsId
+        }
         this.$confirm('是否将该商品还原?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          rows.splice(index, 1);
-          this.$message({
-            type: 'success',
-            message: '还原成功!'
-          });
+          goodsRenew(JSON.stringify(params)).then(response => {
+            var res = response.data.data
+            if (response.data.code != '10000') { //失败
+              this.$message.error(response.data.message)
+            } else {
+              this.$message({
+                type: 'success',
+                message: '还原成功!'
+              });
+              this.$emit("getList", this.currentSize)
+            }
+          })
         }).catch(() => {
           this.$message({
             type: 'info',
