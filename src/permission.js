@@ -41,7 +41,7 @@ router.beforeEach(async (to, from, next) => {
       if (hasRoles) {
         // next()
         //如果是店铺未认证，选择其他功能菜单时默认跳转到店铺认证页面让其进行认证
-        console.log(store.getters.store)
+        // console.log(store.getters.store)
         if (store.getters.store) {
           
           if (to.path !== '/shop/storeAuthentication' && store.getters.store.state !== 1) {

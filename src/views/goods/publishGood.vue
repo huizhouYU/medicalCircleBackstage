@@ -292,6 +292,8 @@
             if (this.goodInfo.tagList.length == 5) {
               this.inputVisible = false
             }
+            //判断价格是否能输入
+            this.isEditPrice()
           })
         }
 
