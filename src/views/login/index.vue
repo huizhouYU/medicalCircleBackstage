@@ -372,9 +372,10 @@
           this.$message.error('请输入验证码！')
           return false
         }
+
         var num = this.show_num.join("");
         var val = this.loginForm.verCode;
-        if (val == num) {
+        if (val.toUpperCase() == num.toUpperCase()) {
           return true
         } else {
           this.$message.error('验证码输入错误！')

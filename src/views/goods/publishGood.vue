@@ -6,6 +6,11 @@
       <el-form-item label="产品类目：">
         <span @click="preStep()" class="chooseClassify-span">{{goodInfo.chooseClassify}}</span>
       </el-form-item>
+      <!-- 展示区域 -->
+      <el-form-item label="展示区域：" class="item-name">
+        <el-radio v-model="goodInfo.type" label="material">配件专区</el-radio>
+        <el-radio v-model="goodInfo.type" label="2">医疗器械</el-radio>
+      </el-form-item>
       <!-- 产品名称 -->
       <el-form-item label="产品名称：" class="item-name">
         <el-input v-model="goodInfo.goodsName" placeholder="请输入商品名称" maxlength="40" show-word-limit></el-input>
@@ -141,6 +146,7 @@
         imgList: [],
         //商品信息
         goodInfo: {
+          type:'material',//商品类型 material-配件 equipment-设备器械
           goodsName: '', //商品名称
           brandInputType: false, //是否自定义品牌,false-选择 true-自定义
           brandId: '', //所属品牌ID 如果自定义就不传

@@ -17,7 +17,13 @@
       </el-table-column>
       <el-table-column prop="cateName" label="商品分类" min-width="200"></el-table-column>
       <el-table-column prop="brand" label="品牌" min-width="120"></el-table-column>
-      <el-table-column prop="price" label="价格" min-width="100"></el-table-column>
+      <el-table-column label="价格" min-width="100">
+        <template slot-scope="scope">
+          <span v-if="scope.row.saleType == 1">{{scope.row.price}}</span>
+          <span v-else class="default-font">议价</span>
+        </template>
+
+      </el-table-column>
       <el-table-column prop="qty" label="库存" min-width="100"></el-table-column>
       <el-table-column label="上架" min-width="100">
         <template slot-scope="scope">
@@ -144,27 +150,14 @@
       },
       deleteRow(index, rows) {
         var params = {
-          id: rows.goodsId
+          idList: [rows.goodsId]
         }
         this.$confirm('确定删除 1 个选择项吗？ 删除的选择项将进入回收站中', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-
-          goodsDelete(JSON.stringify(params)).then(response => {
-            var res = response.data.data
-            if (response.data.code != '10000') { //失败
-              this.$message.error(response.data.message)
-            } else {
-              this.$message({
-                type: 'success',
-                message: '删除成功!'
-              });
-              this.$emit("getList", this.currentSize)
-            }
-          })
-          // rows.splice(index, 1);
+          this.deleteData(params)
         }).catch(() => {
           this.$message({
             type: 'info',
@@ -183,20 +176,27 @@
       },
       //批量删除
       deleteChoosed() {
+        var params = {
+          idList: []
+        }
+        for (var index in this.multipleSelection) {
+          params.idList.push(this.multipleSelection[index].goodsId)
+        }
         if (this.multipleSelection.length > 0) {
           this.$confirm('数据删除后将无法找回, 是否继续?', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            this.$message({
-              type: 'success',
-              message: '请求后台接口删除数据，先暂且算作删除成功？'
-            });
+            this.deleteData(params)
+            // this.$message({
+            //   type: 'success',
+            //   message: '请求后台接口删除数据，先暂且算作删除成功？'
+            // });
           }).catch(() => {
             this.$message({
               type: 'info',
-              message: '已取消删除1'
+              message: '已取消删除'
             });
           });
         } else {
@@ -205,6 +205,22 @@
             message: '您还没有选择数据，请先选择您要删除的数据？'
           });
         }
+      },
+      //请求后端接口删除数据
+      deleteData(params) {
+        console.log("删除:", params)
+        goodsDelete(JSON.stringify(params)).then(response => {
+          var res = response.data.data
+          if (response.data.code != '10000') { //失败
+            this.$message.error(response.data.message)
+          } else {
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            });
+            this.$emit("getList", this.currentSize)
+          }
+        })
       },
       //改变上架状态
       changePutState(index, rows) {
@@ -237,6 +253,13 @@
 </script>
 
 <style scoped lang="less">
+  .default-font {
+    font-size: 12px;
+    font-family: Microsoft YaHei-Regular, Microsoft YaHei;
+    font-weight: 400;
+    color: #333333;
+  }
+
   .app-container {
     box-shadow: 0px 2px 10px 1px rgba(0, 0, 0, 0.06);
   }
