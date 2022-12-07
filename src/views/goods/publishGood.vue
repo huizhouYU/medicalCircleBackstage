@@ -9,7 +9,7 @@
       <!-- 展示区域 -->
       <el-form-item label="展示区域：" class="item-name">
         <el-radio v-model="goodInfo.type" label="material">配件专区</el-radio>
-        <el-radio v-model="goodInfo.type" label="2">医疗器械</el-radio>
+        <el-radio v-model="goodInfo.type" label="equipment">医疗器械</el-radio>
       </el-form-item>
       <!-- 产品名称 -->
       <el-form-item label="产品名称：" class="item-name">
@@ -237,15 +237,15 @@
         ],
         //保质期类型【日、月、年】
         shelfLifeOptions: [{
-            value: '日',
+            value: 'day',
             label: '日'
           },
           {
-            value: '月',
+            value: 'month',
             label: '月'
           },
           {
-            value: '年',
+            value: 'year',
             label: '年'
           }
         ],
