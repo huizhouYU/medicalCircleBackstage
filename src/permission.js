@@ -41,32 +41,46 @@ router.beforeEach(async (to, from, next) => {
       if (hasRoles) {
         // next()
         //如果是店铺未认证，选择其他功能菜单时默认跳转到店铺认证页面让其进行认证
-        // console.log(store.getters.store)
-        if (store.getters.store) {
-          
-          if (to.path !== '/shop/storeAuthentication' && store.getters.store.state !== 1) {
-            var str = "请先等待店铺认证审核！"
-            if(store.getters.store.state ===3){
-              str = "审核认证失败，请重新提交认证信息！"
-            }
+        // console.log("store.getters.store:",store.getters.store == null)
+        // NProgress.done()
+        // var flag = store.getters.store == null
+        // if (store.getters.store) {
+        console.log("store.getters.store为true")
+        if (to.path !== '/shop/storeAuthentication') {
+          var str = ""
+          if (store.getters.store == null || store.getters.store.state !== 1) {
+            str = "请先等待店铺认证审核！"
             Message.warning(str)
             next({
               path: '/shop/storeAuthentication'
             })
             NProgress.done()
-          }else{
+          }else if (store.getters.store.state === 3) {
+            str = "审核认证失败，请重新提交认证信息！"
+            Message.warning(str)
+            next({
+              path: '/shop/storeAuthentication'
+            })
+            NProgress.done()
+          }else {
             next()
+            NProgress.done()
           }
+          
         } else {
-          Message.warning('请先进行店铺认证！')
-          // console.log("应该跳转到店铺认证页面")
-          // console.log("to.path:", to.path)
-          // this.$router.push('/shop/storeAuthentication')
-          next({
-            path: '/shop/storeAuthentication'
-          })
-          NProgress.done()
+          next()
         }
+        // } else {
+        //   console.log("应该跳转到店铺认证页面")
+        //   // Message.warning('请先进行店铺认证！')
+        //   // // console.log("应该跳转到店铺认证页面")
+        //   // // console.log("to.path:", to.path)
+        //   // // this.$router.push('/shop/storeAuthentication')
+        //   // next({
+        //   //   path: '/shop/storeAuthentication'
+        //   // })
+        //   // NProgress.done()
+        // }
 
       } else {
         try {

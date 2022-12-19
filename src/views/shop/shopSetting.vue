@@ -50,7 +50,7 @@
         <div label="图片可拖曳排序：" class="content-images">
           <div class="row">
             <DragUpload :imgList="imgList" :limit="5" @allList="trialImgs"  :limitWidth="800" :limitHeight="800"/>
-            <div class="gray-tip">请：图片上传不超过5张，图片支持jpg/png格式，不超过500kb，尺寸为800*800</div>
+            <div class="gray-tip">请：图片上传不超过5张，图片支持jpg/png格式，不超过3M，尺寸为800*800</div>
           </div>
         </div>
       </el-form-item>
@@ -276,7 +276,7 @@
       handleChange(file, fileList) {
         console.log(file)
         const isJPG = file.raw.type === "image/jpeg" || file.raw.type === "image/png";
-        const isLt2M = file.size / 1024 / 1024 < 2;
+        const isLt3M = file.size / 1024 / 1024 < 3;
         if (!isJPG) {
           this.$message.error("上传头像图片只能是 JPG 、png 格式!");
           fileList.splice(-1, 1); //移除错误文件
@@ -288,8 +288,8 @@
           return false;
         }
        //判断图片大小是否符合要求
-        if (!isLt2M) {
-          this.$message.error("上传图片大小不能超过 2MB!");
+        if (!isLt3M) {
+          this.$message.error("上传图片大小不能超过3MB!");
           fileList.splice(-1, 1);
           return false;
         }

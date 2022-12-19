@@ -26,7 +26,6 @@
         </el-dialog>
       </div>
     </draggable>
-
   </div>
 </template>
 
@@ -69,8 +68,9 @@
           // 3.监听 fr 的 onload 事件
           fr.onload = (e) => {
             let _this = this;
-            const isLt2M = files[0].size / 1024  < 500;
-            if (isLt2M) {
+            // const isLt3M = files[0].size / 1024  < 3*1024;
+            const isLt3M = files[0].size / 1024 / 1024 < 3;
+            if (isLt3M) {
               let imgWidth = "";
               let imgHight = "";
               new Promise(function(resolve, reject) {
@@ -102,14 +102,15 @@
                 return files[0]
               }, () => {
                 _this.$message.warning({
-                  message: '上传文件的图片大小不合符标准,宽需要为' + this.limitWidth + 'px，高需要为' + this.limitHeight +'px。当前上传图片的宽高分别为：' + imgWidth + 'px和' + imgHight + 'px',
+                  message: '上传文件的图片大小不合符标准,宽需要为' + this.limitWidth + 'px，高需要为' + this.limitHeight +
+                    'px。当前上传图片的宽高分别为：' + imgWidth + 'px和' + imgHight + 'px',
                   btn: false
                 })
                 return Promise.reject();
               });
             } else {
               _this.$message.warning({
-                message: '上传文件的图片大小不能超过500kb!',
+                message: '上传文件的图片大小不能超过3M!',
                 btn: false
               })
             }

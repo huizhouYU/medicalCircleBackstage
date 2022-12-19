@@ -94,8 +94,8 @@
           // 3.监听 fr 的 onload 事件
           fr.onload = (e) => {
             let _this = this;
-            const isLt2M = files[0].size / 1024 / 1024 < 2;
-            if(isLt2M){
+            const isLt3M = files[0].size / 1024 / 1024 < 3;
+            if(isLt3M){
               let imgWidth = "";
               let imgHight = "";
               const isSize = new Promise(function(resolve, reject) {
@@ -129,7 +129,7 @@
               });
             }else{
               _this.$message.warning({
-                message: '上传文件的图片大小不能超过2M!' ,
+                message: '上传文件的图片大小不能超过3M!' ,
                 btn: false
               })
             }

@@ -61,7 +61,7 @@
           <div label="图片可拖曳排序：" prop="trialImgs" class="content-images">
             <div class="row">
               <DragUpload :limit="limit" @allList="trialImgs" :imgList="imgList" :limitWidth="800" :limitHeight="800" />
-              <div class="el-upload__tip gray-tip">请：图片上传不超过5张，图片支持jpg/png格式，不超过500kb，尺寸为800*800</div>
+              <div class="el-upload__tip gray-tip">请：图片上传不超过5张，图片支持jpg/png格式，不超过3M，尺寸为800*800</div>
             </div>
           </div>
         </el-form-item>
@@ -93,7 +93,7 @@
           <div label="图片可拖曳排序：" prop="trialImgs" class="content-images">
             <div class="row">
               <DragUpload :limit="limit" @allList="trialImgs" :imgList="imgList" :limitWidth="800" :limitHeight="800" />
-              <div class="el-upload__tip gray-tip">请：图片上传不超过5张，图片支持jpg/png格式，不超过500kb，尺寸为800*800</div>
+              <div class="el-upload__tip gray-tip">请：图片上传不超过5张，图片支持jpg/png格式，不超过3M，尺寸为800*800</div>
             </div>
           </div>
         </el-form-item>

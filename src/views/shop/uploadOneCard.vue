@@ -35,7 +35,7 @@
       handleChange(file, fileList) {
         console.log(file)
         const isJPG = file.raw.type === "image/jpeg" || file.raw.type === "image/png";
-        const isLt5M = file.size / 1024 / 1024 < 2;
+        const isLt3M = file.size / 1024 / 1024 < 3;
         if (!isJPG) {
           this.$message.error("上传头像图片只能是 JPG 、png 格式!");
           fileList.splice(-1, 1); //移除错误文件
@@ -70,8 +70,8 @@
           fileList.splice(-1, 1);
           return false;
         }
-        if (!isLt5M) {
-          this.$message.error("上传头像图片大小不能超过 2MB!");
+        if (!isLt3M) {
+          this.$message.error("上传头像图片大小不能超过 3MB!");
           fileList.splice(-1, 1);
           return false;
         }

@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <!-- 第二模块 类目搜索 -->
-    <div class="searchSort">
+    <div class="searchSort" v-show="showSearch">
       <span>类目搜索:</span>
       <div class="input-box">
         <el-select v-model="inputKey" filterable remote reserve-keyword placeholder="请输入关键词"
@@ -50,11 +50,11 @@
         <span>您当前选择的是：</span>
         <span class="selectedTitle">{{chooseClassify}}</span>
       </div>
-      <div class="next-box">
+      <div class="next-box" v-show="showSearch">
         <el-button type="primary" class="public-el-btn" :disabled="!isNextFlag" @click="nextStep">下一步，发布商品</el-button>
       </div>
       <!-- 协议明细 -->
-      <div class="agreement-box">
+      <div class="agreement-box" v-show="showSearch">
         <span>
           特别提醒用户认真阅读本《用户服务协议》(下称《协议》) 中各条款。除非您接受本《协议》条款，否则您无权使用本网站提供的相关服务。您的使用行为将视为对本《协议》的接受，并同意接受本《协议》各项条款的约束。
           一、定义
@@ -86,6 +86,12 @@
           deleted: 'danger'
         }
         return statusMap[status]
+      }
+    },
+    props: {
+      showSearch: {
+        type: Boolean,
+        default: true
       }
     },
     data() {
@@ -337,6 +343,10 @@
         }
 
       },
+      //给父组件带值（传递选择的类目）
+      getData() {
+        this.$emit("getCartData", JSON.stringify(this.chosedData))
+      },
       //选择一级分类
       chooseItem1(val, id) {
         //将选中的一栏进行标记
@@ -362,6 +372,7 @@
         }
         //没选择二级分类，不展示三级分类
         this.isShowFlag3 = false
+        this.getData()
       },
       //选择二级分类
       chooseItem2(val, id) {
@@ -383,10 +394,11 @@
           this.isShowFlag3 = true
           //有三级类目，不允许跳转
           this.isNextFlag = false
-        }else{
+        } else {
           //没有三级类目，允许跳转
-           this.isNextFlag = true
+          this.isNextFlag = true
         }
+         this.getData()
       },
       //选择三级分类
       chooseItem3(val, id) {
@@ -397,6 +409,7 @@
         this.chosedData[2].label = this.item3ChildData[val].cateName
         //调用setData方法，将选中的类目拼接成字符串
         this.setData()
+         this.getData()
       },
       //下一步
       nextStep() {
@@ -406,15 +419,15 @@
           this.$store.dispatch('tagsView/delView', this.$route).then(({
             visitedViews
           }) => {
-           this.$router.replace({
-             path: 'publishGood',
-             query: {
-               chosedData: chosedDataString
-             }
-           })
+            this.$router.replace({
+              path: 'publishGood',
+              query: {
+                chosedData: chosedDataString
+              }
+            })
           })
-          
-         
+
+
         }
 
       },

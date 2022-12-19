@@ -4,7 +4,7 @@
     <el-form ref="goodInfo" :model="goodInfo" label-width="100px" class="eidt-box" label-position="right">
       <!-- 产品类目 -->
       <el-form-item label="产品类目：">
-        <span @click="preStep()" class="chooseClassify-span">{{goodInfo.chooseClassify}}</span>
+        <span @click="preStep()" class="chooseClassify-span">{{goodInfo.chooseClassify||'请重新选择类目'}}</span>
       </el-form-item>
       <!-- 展示区域 -->
       <el-form-item label="展示区域：" class="item-name">
@@ -114,8 +114,18 @@
         <el-button type="primary" class="public-el-submit-btn" @click="submit">提交</el-button>
       </div>
     </el-form>
+    <!-- 修改类目 -->
+    <el-dialog title="选择类目" :close-on-click-modal="false" :visible.sync="cartDialogVisible" width="800px"
+      class="el-dialog-box">
+      <add-goods :showSearch='showSearch' @getCartData="getCartData"></add-goods>
+      <span slot="footer" class="dialog-footer">
+        <el-button size="medium" @click="closeCartDialog">取 消</el-button>
+        <el-button size="medium" type="primary" @click="sureCartDialog">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
-  </div>
+
+  <!-- </div> -->
 </template>
 
 <script>
@@ -132,13 +142,17 @@
   } from '@/api/demand'
   import edit from '../utils/edit.vue'
   import DragUpload from '../utils/DragUpload.vue'; // 引入vue-draggable
+  import addGoods from '../../../src/views/goods/addGoods.vue'
   export default {
     components: {
       DragUpload,
-      edit
+      edit,addGoods
     },
     data() {
       return {
+        temporaryCartData:'',
+        cartDialogVisible: false,
+        showSearch:false,
         inputVisible: true,
         goodTag: '', //添加的商品标签
         isBack: true, //只有新增商品才能返回上一步
@@ -146,7 +160,7 @@
         imgList: [],
         //商品信息
         goodInfo: {
-          type:'material',//商品类型 material-配件 equipment-设备器械
+          type: 'material', //商品类型 material-配件 equipment-设备器械
           goodsName: '', //商品名称
           brandInputType: false, //是否自定义品牌,false-选择 true-自定义
           brandId: '', //所属品牌ID 如果自定义就不传
@@ -285,9 +299,14 @@
             var res = response.data.data
             this.goodInfo = res
             //产品类目
-            var category = JSON.parse(res.category)
-            this.goodInfo.chosedData = category.chosedData
-            this.goodInfo.chooseClassify = category.chooseClassify
+            if (res.category != '' && res.category != null && res.category != undefined) {
+              var category = JSON.parse(res.category)
+              this.goodInfo.chosedData = category.chosedData
+              this.goodInfo.chooseClassify = category.chooseClassify
+            } else {
+              this.goodInfo.chosedData = ''
+              this.goodInfo.chooseClassify = ''
+            }
             //相关图片
             this.imgList = this.goodInfo.imageList
             //是否上架
@@ -304,6 +323,26 @@
         }
 
       },
+      getCartData(cartData){
+        console.log("getCartData:",cartData)
+        this.temporaryCartData = cartData
+      },
+      closeCartDialog(){
+        this.cartDialogVisible = false
+      },
+      sureCartDialog(){
+        // var category = JSON.parse(this.temporaryCartData)
+        this.goodInfo.chosedData = JSON.parse(this.temporaryCartData)
+        this.goodInfo.chooseClassify = this.goodInfo.chosedData[0].label
+        if (this.goodInfo.chosedData[1].label != '') {
+          this.goodInfo.chooseClassify += " > " + this.goodInfo.chosedData[1].label
+          if (this.goodInfo.chosedData[2].label != '') {
+            this.goodInfo.chooseClassify += " > " + this.goodInfo.chosedData[2].label
+          }
+        }
+        this.closeCartDialog()
+
+      },
       //当选择“咨询议价”时，商品价格禁止输入
       isEditPrice() {
         if (this.goodInfo.saleType == 2) {
@@ -314,19 +353,29 @@
       },
       //点击‘类目’返回上一步
       preStep() {
-        if (this.isBack) {
-          this.$store.dispatch('tagsView/delView', this.$route).then(({
-            visitedViews
-          }) => {
-            this.$router.replace({
-              path: 'addGoods',
-              query: {
-                chosedData: JSON.stringify(this.goodInfo.chosedData)
-              }
-            })
-          })
+        this.cartDialogVisible = true
+        // console.log("hhh", this.goodInfo)
+        // // if (this.isBack) {
+        // this.$store.dispatch('tagsView/delView', this.$route).then(({
+        //   visitedViews
+        // }) => {
+        //   var params = {
+        //     chosedData: ''
+        //   }
+        //   if (this.goodInfo.chosedData != null && this.goodInfo.chosedData != undefined && this.goodInfo
+        //     .chosedData != '') {
+        //     params.chosedData = JSON.stringify(this.goodInfo.chosedData)
+        //   }
+        //   this.$router.replace({
+        //     path: 'addGoods',
+        //     query: {
+        //       params
+        //       // chosedData: JSON.stringify(this.goodInfo.chosedData)
+        //     }
+        //   })
+        // })
 
-        }
+        // }
       },
       // 图片可拖曳排序
       trialImgs(allList) {
@@ -594,5 +643,15 @@
       border: none;
       outline: none;
     }
+  }
+
+
+</style>
+<style>
+  .el-dialog{
+    height: auto !important;
+  }
+  .el-dialog__footer{
+    bottom: 10px;
   }
 </style>
