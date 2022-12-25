@@ -9,7 +9,11 @@
     </div>
     <div class="right">
       <!-- <div :class="[{flipLogin:isRegister},'login-content','public-content']"> -->
-      <div class="login-content public-content">
+      <!-- <div class="login-content public-content">
+
+      </div> -->
+      <!-- 注册 -->
+      <div class=" flipRegister register-content public-content">
         <div class="owl" id="owl" :class="[{password:isHide},'owl']">
           <div class="hand"></div>
           <div class="hand hand-r"></div>
@@ -18,9 +22,6 @@
             <div class="arm arm-r"></div>
           </div>
         </div>
-      </div>
-      <!-- 注册 -->
-      <div class=" flipRegister register-content public-content">
         <span class="form-title">欢迎注册</span>
         <div class="checking">
           <el-form label-position="top" label-width="80px" :model="registerForm" class="modular-form" ref="registerForm"
@@ -51,7 +52,7 @@
             <div class="agree-item">
               <div class="agree-left">
                 <el-checkbox label="我已阅读同意" v-model="isAgree"></el-checkbox>
-                <span class="agreement" @click="lookAgreement">《用户服务协议》</span>
+                <a class="agreement" target="_brank" href="http://www.yijiequan.com/#/residencyAgreement" >《用户服务协议》</a>
               </div>
               <span class="login-left" @click="login">立即登录</span>
             </div>
@@ -208,10 +209,6 @@ import utils from'../../utils/get-url-key.js'//获取url中参数
         }
 
 
-      },
-      //用户服务协议
-      lookAgreement() {
-        alert("看协议吗？给链接啊！！！")
       },
       immedRegister(formName) {
         if (this.isAgree && this.validityForm(formName)) {
