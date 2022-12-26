@@ -70,7 +70,7 @@
     validUsername
   } from '@/utils/validate'
   import {
-    sendMsg
+    registerMsg
   } from '@/api/user'
 import utils from'../../utils/get-url-key.js'//获取url中参数
   export default {
@@ -93,7 +93,6 @@ import utils from'../../utils/get-url-key.js'//获取url中参数
       }
       var validatePhone = (rule, value, callback) => {
         if (value === '') {
-          // let phoneReg = /(^1[3|4|5|6|7|8|9]\d{9}$)|(^09\d{8}$)/; if (value === '') {
           callback(new Error('请输入手机号'))
         } else if (!this.isCellPhone(
             value)) { // 引入methods中封装的检查手机格式的方法 callback(new Error('请输入正确的手机号!'))          } else {
@@ -160,7 +159,7 @@ import utils from'../../utils/get-url-key.js'//获取url中参数
     },
     methods: {
       isCellPhone(val) {
-        if (!/^1(3|4|5|6|7|8)\d{9}$/.test(val)) {
+        if (!/^1(3|4|5|6|7|8|9)\d{9}$/.test(val)) {
           return false
         } else {
           return true
@@ -190,8 +189,13 @@ import utils from'../../utils/get-url-key.js'//获取url中参数
         let data = {
           mobile: this.registerForm.mobile
         }
-        sendMsg(data).then(response => {
-          console.log(response.data.data)
+        registerMsg(data).then(response => {
+          console.log(response.data.code)
+          if(response.data.code != 10000){
+            this.$message.error(response.data.message)
+          }else{
+            this.$message.success(response.data.data)
+          }
         })
         // 验证码倒计时
         if (!this.timer) {

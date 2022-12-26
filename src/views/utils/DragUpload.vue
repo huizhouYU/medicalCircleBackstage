@@ -70,6 +70,7 @@
             let _this = this;
             // const isLt3M = files[0].size / 1024  < 3*1024;
             const isLt3M = files[0].size / 1024 / 1024 < 3;
+            console.log("files[0].size:",files[0].size)
             if (isLt3M) {
               let imgWidth = "";
               let imgHight = "";
@@ -80,7 +81,7 @@
                 img.onload = function() {
                   imgWidth = img.width;
                   imgHight = img.height;
-                  let valid = img.width == _this.limitWidth && img.height == _this.limitHeight;
+                  let valid = img.width <= _this.limitWidth && img.height <= _this.limitHeight;
                   valid ? resolve() : reject();
                 }
               }).then(() => {
@@ -102,7 +103,7 @@
                 return files[0]
               }, () => {
                 _this.$message.warning({
-                  message: '上传文件的图片大小不合符标准,宽需要为' + this.limitWidth + 'px，高需要为' + this.limitHeight +
+                  message: '上传文件的图片大小不合符标准,宽最大不超过' + this.limitWidth + 'px，高最大不超过' + this.limitHeight +
                     'px。当前上传图片的宽高分别为：' + imgWidth + 'px和' + imgHight + 'px',
                   btn: false
                 })

@@ -107,7 +107,7 @@
                 img.onload = function() {
                   imgWidth = img.width;
                   imgHight = img.height;
-                  let valid = img.width == _this.limitImgWidth && img.height == _this.limitImgHeight;
+                  let valid = img.width <= _this.limitImgWidth && img.height <= _this.limitImgHeight;
                   // console.log('当前上传图片的宽高分别为：' + imgWidth + 'px和' + imgHight + 'px')
                   console.log("valid:",valid)
                   valid ? resolve() : reject();
@@ -122,7 +122,7 @@
                 return files[0]
               }, () => {
                 _this.$message.warning({
-                  message: '上传文件的图片大小不合符标准,宽需要为'+this.limitImgWidth+'px，高需要为'+this.limitImgHeight+'px。当前上传图片的宽高分别为：' + imgWidth + 'px和' + imgHight + 'px',
+                  message: '上传文件的图片大小不合符标准,宽最大不超过'+this.limitImgWidth+'px，高最大不超过'+this.limitImgHeight+'px。当前上传图片的宽高分别为：' + imgWidth + 'px和' + imgHight + 'px',
                   btn: false
                 })
                 return Promise.reject();
