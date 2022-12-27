@@ -37,7 +37,7 @@
     mounted() {},
     watch: {
       imgUrl(val) {
-        this.cardImgUrl = "https://images.weserv.nl/?url=" + val
+        this.cardImgUrl = val
       }
     },
     methods: {

@@ -70,7 +70,7 @@
             let _this = this;
             // const isLt3M = files[0].size / 1024  < 3*1024;
             const isLt3M = files[0].size / 1024 / 1024 < 3;
-            console.log("files[0].size:",files[0].size)
+            // console.log("files[0].size:",files[0].size)
             if (isLt3M) {
               let imgWidth = "";
               let imgHight = "";
@@ -155,7 +155,7 @@
           for (var item of newVal) {
             var temp = {
               file: '',
-              imgUrl: 'https://images.weserv.nl/?url=' + item,
+              imgUrl: item,
               orderNumber: this.allListChild.length
             };
             this.allListChild.push(temp) // 启动拖拽功能

@@ -45,7 +45,7 @@ router.beforeEach(async (to, from, next) => {
         // NProgress.done()
         // var flag = store.getters.store == null
         // if (store.getters.store) {
-        console.log("store.getters.store为true")
+        // console.log("store.getters.store为true")
         if (to.path !== '/shop/storeAuthentication') {
           var str = ""
           if (store.getters.store == null || store.getters.store.state !== 1) {

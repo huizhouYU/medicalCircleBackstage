@@ -70,7 +70,17 @@
             <DragUpload @allList="trialImgs" :limit="limit" :limitWidth="800" :limitHeight="800" :imgList="imgList">
               <!-- <DragUpload :imgList="imgList" :limit="5" @allList="trialImgs"  :limitWidth="800" :limitHeight="800"/> -->
             </DragUpload>
-            <div class="gray-tip">请：主图按照图片上传顺序展示，图片支持jpg/png格式，不超过10M，尺寸为800*800，拖拽图片可调整排序</div>
+            <div class="gray-tip">请：主图按照图片上传顺序展示，图片支持jpg/png格式，不超过3M，尺寸最大为800*800，拖拽图片可调整排序</div>
+          </div>
+        </div>
+      </el-form-item>
+      <!-- 产品长图 -->
+      <el-form-item label="产品长图：" class="">
+        <div label="图片可拖曳排序：" prop="longTrialImgs" class="">
+          <div class="">
+            <DragUpload @allList="longTrialImgs" :limit="longLimit" :limitWidth="1500" :limitHeight="6000" :imgList="longImage">
+            </DragUpload>
+            <div class="gray-tip">请：图片支持jpg/png格式，不超过3M，尺寸最大为1500*6000</div>
           </div>
         </div>
       </el-form-item>
@@ -146,18 +156,21 @@
   export default {
     components: {
       DragUpload,
-      edit,addGoods
+      edit,
+      addGoods
     },
     data() {
       return {
-        temporaryCartData:'',
+        temporaryCartData: '',
         cartDialogVisible: false,
-        showSearch:false,
+        showSearch: false,
         inputVisible: true,
         goodTag: '', //添加的商品标签
         isBack: true, //只有新增商品才能返回上一步
         limit: 5,
+        longLimit:1,
         imgList: [],
+        longImage:'',
         //商品信息
         goodInfo: {
           type: 'material', //商品类型 material-配件 equipment-设备器械
@@ -178,6 +191,7 @@
           qualityTime: '', //保质期
           qualityTimeUnit: '日', //选择的保质期【年、月、日】
           defaultImage: '', //主图
+          longImage:'',//长图
           imageList: [],
           content: '', //产品详情
           tradeMode: 1, //选择的交易方式
@@ -266,7 +280,9 @@
         ruleForm: {
           imgUrl: '',
           trialImgs: [],
+          longTrialImgs:[]
         },
+
       }
     },
     mounted() {
@@ -309,6 +325,7 @@
             }
             //相关图片
             this.imgList = this.goodInfo.imageList
+            this.longImage = this.goodInfo.longImage
             //是否上架
             this.goodInfo.ifShow = this.goodInfo.ifShow == 1 ? true : false
             //是否推荐
@@ -323,14 +340,14 @@
         }
 
       },
-      getCartData(cartData){
-        console.log("getCartData:",cartData)
+      getCartData(cartData) {
+        console.log("getCartData:", cartData)
         this.temporaryCartData = cartData
       },
-      closeCartDialog(){
+      closeCartDialog() {
         this.cartDialogVisible = false
       },
-      sureCartDialog(){
+      sureCartDialog() {
         // var category = JSON.parse(this.temporaryCartData)
         this.goodInfo.chosedData = JSON.parse(this.temporaryCartData)
         this.goodInfo.chooseClassify = this.goodInfo.chosedData[0].label
@@ -381,6 +398,10 @@
       trialImgs(allList) {
         this.ruleForm.trialImgs = allList
       },
+      //产品长图
+      longTrialImgs(allList) {
+        this.ruleForm.longTrialImgs = allList
+      },
       getContentData(content) {
         this.goodInfo.content = content
       },
@@ -390,14 +411,22 @@
           chooseClassify: this.goodInfo.chooseClassify
         }
         this.goodInfo.category = JSON.stringify(params)
-        this.goodInfo.cateName = this.goodInfo.chosedData[this.goodInfo.chosedData.length - 1].label
-        this.goodInfo.cateId = Number(this.goodInfo.chosedData[this.goodInfo.chosedData.length - 1].value)
+        var i = this.goodInfo.chosedData.length - 1
+        for (i; i >= 0; i--) {
+          if (this.goodInfo.chosedData[i].value != '') {
+            console.log(i + ":" + this.goodInfo.chosedData[i].value)
+            this.goodInfo.cateName = this.goodInfo.chosedData[i].label
+            this.goodInfo.cateId = Number(this.goodInfo.chosedData[i].value)
+            i = -1
+          }
+        }
         this.goodInfo.ifShow = Number(this.goodInfo.ifShow)
         this.goodInfo.recommended = Number(this.goodInfo.recommended)
         this.goodInfo.price = Number(this.goodInfo.price)
         this.goodInfo.qualityTime = Number(this.goodInfo.qualityTime)
         this.goodInfo.saleType = Number(this.goodInfo.saleType)
         this.goodInfo.qty = Number(this.goodInfo.qty)
+
         //相关图片
         if (this.ruleForm.trialImgs.length > 0) {
           this.goodInfo.imageList = []
@@ -409,14 +438,34 @@
                 this.goodInfo.imageList.push(response.data.data)
               })
             } else {
-              var newImgUrl = item.imgUrl.split("https://images.weserv.nl/?url=").join("");
-              this.goodInfo.imageList.push(newImgUrl)
+              // var newImgUrl = item.imgUrl.split("https://images.weserv.nl/?url=").join("");
+              // this.goodInfo.imageList.push(newImgUrl)
+              this.goodInfo.imageList.push(item.imgUrl)
+            }
+          }
+        }
+        //长图
+        if (this.ruleForm.longTrialImgs.length > 0) {
+          this.goodInfo.longImage = ''
+          console.log("this.ruleForm.longTrialImgs：",this.ruleForm.longTrialImgs)
+          for (var item of this.ruleForm.longTrialImgs) {
+            if (item.file != '') {
+              let param = new FormData(); //创建form对象
+              param.append('file', item.file); //通过append向form对象添加数据
+              console.log("param：",param)
+              await uploadImage(param).then(response => {
+                this.goodInfo.longImage= response.data.data
+              })
+            } else {
+              // var newImgUrl = item.imgUrl.split("https://images.weserv.nl/?url=").join("");
+              // this.goodInfo.longImage=newImgUrl
+              this.goodInfo.longImage=item.imgUrl
             }
           }
         }
 
         this.goodInfo.defaultImage = this.goodInfo.imageList[0]
-        // console.log('商品信息', this.goodInfo)
+        console.log('商品信息', this.goodInfo)
         // console.log(JSON.stringify(this.goodInfo))
         if (this.goodInfo.goodsId != undefined) { //编辑商品
           goodsUpdate(JSON.stringify(this.goodInfo)).then(response => {
@@ -644,14 +693,13 @@
       outline: none;
     }
   }
-
-
 </style>
 <style>
-  .el-dialog{
+  .el-dialog {
     height: auto !important;
   }
-  .el-dialog__footer{
+
+  .el-dialog__footer {
     bottom: 10px;
   }
 </style>

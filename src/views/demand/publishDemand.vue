@@ -128,6 +128,9 @@
     updateDemand
   } from '@/api/demand'
   import {
+    mapGetters
+  } from 'vuex'
+  import {
     uploadImage
   } from '@/api/public'
   const city = require('../../../src/json/citys.json')
@@ -138,6 +141,13 @@
     components: {
       DragUpload,
       edit
+    },
+    computed: {
+      ...mapGetters([
+        'name',
+        'avatar',
+        'mobile'
+      ])
     },
     data() {
       var checkphone = (rule, value, callback) => {
@@ -194,6 +204,8 @@
         // brandList().then(response => {
         //   this.brandsOptions = response.data.data
         // })
+        this.demandInfo.linkMan = this.name
+        this.demandInfo.linkTel = this.mobile
         this.cities = city
       },
       // //选择 设备品牌
@@ -225,14 +237,17 @@
       changeFormat(key) {
         this.demandInfo.region = []
         var list = this.$refs[key].getCheckedNodes()
+        console.log("list:",this.$refs[key])
         for (var index in list) {
-          var item = {
-            name: '',
-            id: ''
+          if(!list[index].parent.checked){
+            var item = {
+              name: '',
+              id: ''
+            }
+            item.id = list[index].path
+            item.name = list[index].pathLabels
+            this.demandInfo.region.push(item)
           }
-          item.id = list[index].path
-          item.name = list[index].pathLabels
-          this.demandInfo.region.push(item)
         }
       },
       //深复制对象方法
@@ -263,8 +278,9 @@
               this.demandInfo.imageList.push(response.data.data)
             })
           } else {
-            var newImgUrl = item.imgUrl.split("https://images.weserv.nl/?url=").join("");
-            this.demandInfo.imageList.push(newImgUrl)
+            // var newImgUrl = item.imgUrl.split("https://images.weserv.nl/?url=").join("");
+            // this.demandInfo.imageList.push(newImgUrl)
+            this.demandInfo.imageList.push(item.imgUrl)
           }
         }
         // console.log("发送的数据：", JSON.stringify(this.demandInfo))

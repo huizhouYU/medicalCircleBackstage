@@ -60,8 +60,7 @@
           } else {
             this.tableData = res.list
             for (var index in this.tableData) {
-              this.tableData[index].defaultImage = "https://images.weserv.nl/?url=" + this.tableData[index]
-                .defaultImage
+              this.tableData[index].defaultImage = this.tableData[index].defaultImage
               if (this.tableData[index].ifShow == 1) {
                 this.tableData[index].ifShow = true
               } else {

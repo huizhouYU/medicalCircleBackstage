@@ -34,7 +34,7 @@ const toolbarOptions = [
   [{ 'font': ['SimSun', 'SimHei', 'Microsoft-YaHei', 'KaiTi', 'FangSong', 'Arial'] }], // 字体
   [{ 'align': [] }], // 居中
   ['clean'], // 清除样式,
-  ['image', 'video'] // 上传图片、上传视频
+  // ['image', 'video'] // 上传图片、上传视频
   // ['link', 'image', 'video'] // 上传图片、上传视频
 ]
 

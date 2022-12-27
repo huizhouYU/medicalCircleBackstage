@@ -172,10 +172,10 @@
           if (response.data.data != null) {
             this.shopInfo = response.data.data
             if (response.data.data.storeLogo != null) {
-              this.storeLogo = "https://images.weserv.nl/?url=" + this.shopInfo.storeLogo
+              this.storeLogo = this.shopInfo.storeLogo
             }
             if (response.data.data.storeBanner != null) {
-              this.storeBanner = "https://images.weserv.nl/?url=" + this.shopInfo.storeBanner
+              this.storeBanner = this.shopInfo.storeBanner
             }
             this.imgList = this.shopInfo.certificationList
           }
@@ -230,9 +230,9 @@
               this.shopInfo.certificationList.push(response.data.data)
             })
           } else {
-            var newImgUrl = item.imgUrl.split("https://images.weserv.nl/?url=").join("");
-            console.log("newImgUrl：", newImgUrl)
-            this.shopInfo.certificationList.push(newImgUrl)
+            // var newImgUrl = item.imgUrl.split("https://images.weserv.nl/?url=").join("");
+            // this.shopInfo.certificationList.push(newImgUrl)
+            this.shopInfo.certificationList.push(item.imgUrl)
           }
         }
         console.log("this.shopInfo:", JSON.stringify(this.shopInfo))
