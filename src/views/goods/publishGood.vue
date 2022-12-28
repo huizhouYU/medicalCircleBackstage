@@ -54,7 +54,7 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="保质期限" class="product-specs-item shelf-life">
+        <el-form-item label="质保期限" class="product-specs-item shelf-life">
           <el-input type="text" v-model="goodInfo.qualityTime" placeholder=""
             onkeyup="this.value=this.value.replace(/\D/g,'')"></el-input>
           <el-select v-model="goodInfo.qualityTimeUnit" class="select-item" placeholder="请选择">
