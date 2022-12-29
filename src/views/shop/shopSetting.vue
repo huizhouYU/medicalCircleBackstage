@@ -13,7 +13,7 @@
         </div>
       </el-form-item>
       <!-- 店铺横幅 -->
-      <el-form-item label="更换店铺横幅：" class="banner-box">
+      <el-form-item label="更换店铺横幅：" class="banner-box" v-if="false">
         <div class="banner-tip">
           <el-upload action="aaa" list-type="picture-card" :auto-upload="false" ref="upload" :on-change="handleChange"
             :on-preview="handlePictureCardPreview" :on-remove="handleRemove" :file-list="fileList"
@@ -23,7 +23,6 @@
           </el-upload>
           <span class="gray-tip">请上传1200*110的图片，大小不超过2M</span>
         </div>
-
       </el-form-item>
       <!-- 店铺名称 -->
       <el-form-item label="店铺名称：" prop="storeName">
@@ -49,8 +48,8 @@
      <el-form-item label="资质证书：">
         <div label="图片可拖曳排序：" class="content-images">
           <div class="row">
-            <DragUpload :imgList="imgList" :limit="5" @allList="trialImgs"  :limitWidth="800" :limitHeight="800"/>
-            <div class="gray-tip">请：图片上传不超过5张，图片支持jpg/png格式，不超过3M，尺寸为800*800</div>
+            <DragUpload :imgList="imgList" :limit="8" @allList="trialImgs"  :limitWidth="800" :limitHeight="800"/>
+            <div class="gray-tip">请：图片上传不超过8张，图片支持jpg/png格式，不超过3M，尺寸为800*800</div>
           </div>
         </div>
       </el-form-item>
@@ -163,6 +162,7 @@
       }
     },
     mounted() {
+      // document.documentElement.scrollTop = 0;
       this.getData()
     },
     methods: {

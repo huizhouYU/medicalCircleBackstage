@@ -78,9 +78,10 @@
       <el-form-item label="产品长图：" class="">
         <div label="图片可拖曳排序：" prop="longTrialImgs" class="">
           <div class="">
-            <DragUpload @allList="longTrialImgs" :limit="longLimit" :limitWidth="1500" :limitHeight="6000" :imgList="longImage">
+            <DragUpload @allList="longTrialImgs" :limit="longLimit" :limitWidth="750" :limitHeight="1000"
+              :imgList="longImages">
             </DragUpload>
-            <div class="gray-tip">请：图片支持jpg/png格式，不超过3M，尺寸最大为1500*6000</div>
+            <div class="gray-tip">请：图片支持jpg/png格式，不超过3M，尺寸最大为750*1000，拖拽图片可调整排序</div>
           </div>
         </div>
       </el-form-item>
@@ -168,9 +169,9 @@
         goodTag: '', //添加的商品标签
         isBack: true, //只有新增商品才能返回上一步
         limit: 5,
-        longLimit:1,
+        longLimit: 5,
         imgList: [],
-        longImage:'',
+        longImages: '',
         //商品信息
         goodInfo: {
           type: 'material', //商品类型 material-配件 equipment-设备器械
@@ -191,7 +192,7 @@
           qualityTime: '', //保质期
           qualityTimeUnit: '日', //选择的保质期【年、月、日】
           defaultImage: '', //主图
-          longImage:'',//长图
+          longImages: '', //长图
           imageList: [],
           content: '', //产品详情
           tradeMode: 1, //选择的交易方式
@@ -280,7 +281,7 @@
         ruleForm: {
           imgUrl: '',
           trialImgs: [],
-          longTrialImgs:[]
+          longTrialImgs: []
         },
 
       }
@@ -325,13 +326,13 @@
             }
             //相关图片
             this.imgList = this.goodInfo.imageList
-            this.longImage = this.goodInfo.longImage
+            this.longImages = this.goodInfo.longImages
             //是否上架
             this.goodInfo.ifShow = this.goodInfo.ifShow == 1 ? true : false
             //是否推荐
             this.goodInfo.recommended = this.goodInfo.recommended == 1 ? true : false
             //判断标签个数
-            if (this.goodInfo.tagList.length == 5) {
+            if (this.goodInfo.tagList != null && this.goodInfo.tagList.length == 5) {
               this.inputVisible = false
             }
             //判断价格是否能输入
@@ -446,20 +447,18 @@
         }
         //长图
         if (this.ruleForm.longTrialImgs.length > 0) {
-          this.goodInfo.longImage = ''
-          console.log("this.ruleForm.longTrialImgs：",this.ruleForm.longTrialImgs)
+          this.goodInfo.longImages = []
+          console.log("this.ruleForm.longTrialImgs：", this.ruleForm.longTrialImgs)
           for (var item of this.ruleForm.longTrialImgs) {
             if (item.file != '') {
               let param = new FormData(); //创建form对象
               param.append('file', item.file); //通过append向form对象添加数据
-              console.log("param：",param)
+              console.log("param：", param)
               await uploadImage(param).then(response => {
-                this.goodInfo.longImage= response.data.data
+                this.goodInfo.longImages.push(response.data.data)
               })
             } else {
-              // var newImgUrl = item.imgUrl.split("https://images.weserv.nl/?url=").join("");
-              // this.goodInfo.longImage=newImgUrl
-              this.goodInfo.longImage=item.imgUrl
+              this.goodInfo.longImages.push(item.imgUrl)
             }
           }
         }

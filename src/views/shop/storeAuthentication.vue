@@ -99,6 +99,10 @@
             <upload-one-img v-show="ruleForm.stype == 'company'" :mr-src="licenceTwo.cardImg"
               :title="licenceTwo.cardTitle" :imgUrl="ruleForm.businessCertificate" :remark="licenceTwo.cardRemark"
               @getImgFile="businessCertificateImgFile" :isLook="editForbidFlag" />
+              <!-- 产品注册证 -->
+            <upload-one-img v-show="ruleForm.stype == 'company'" :mr-src="licenceThree.cardImg"
+              :title="licenceThree.cardTitle" :imgUrl="ruleForm.productCertificate" :remark="licenceThree.cardRemark"
+              @getImgFile="productCertificateImgFile" :isLook="editForbidFlag" />
           </div>
         </el-form-item>
         <!-- 上一步 下一步 -->
@@ -211,6 +215,11 @@
           cardTitle: '经营许可证',
           cardRemark: '请上传企业经营许可证原件图，如果是医疗器械生产企业必传'
         },
+        licenceThree: {
+          cardImg: require('../../assets/images/pic_card_other.png'),
+          cardTitle: '产品注册证',
+          cardRemark: '请上传产品注册证原件图，如果是医疗器械生产企业必传'
+        },
         active: 0,
         // 主体类型选项
         shopTypeOption: [{
@@ -228,6 +237,7 @@
           identityBack: '', //身份证背面
           identityHandle: '', //手持身份证，个人工程师必传
           businessCertificate: '', //经营许可证，如果是代理商企业必传
+          productCertificate:'',//产品注册证
           businessLicense: '', //营业执照
           productionLicense: '', //生产许可证，如果是生产企业必传
           otherCertificate: '', //其他证件
@@ -244,6 +254,7 @@
           identityBack: '', //身份证背面
           identityHandle: '', //手持身份证，个人工程师必传
           businessCertificate: '', //经营许可证，如果是代理商企业必传
+          productCertificate:'',//产品注册证
           businessLicense: '', //营业执照
           productionLicense: '', //生产许可证，如果是生产企业必传
           otherCertificate: '', //其他证件
@@ -328,6 +339,10 @@
       businessCertificateImgFile(file) {
         this.imgFile.businessCertificate = file
       },
+      //产品注册证，如果是代理商企业必传
+      productCertificateImgFile(file) {
+        this.imgFile.productCertificate = file
+      },
       // 根据选择的主体类型不同，显示不同的信息,清空数据
       adjustLayout() {
         // if(this.ruleForm.shopType == 1){
@@ -375,8 +390,6 @@
             }, 1000)
           }
         })
-
-
       },
       // 提交
       submitForm(formName) {
@@ -444,6 +457,14 @@
             this.ruleForm.businessCertificate = response.data.data
           })
         }
+        //产品注册证【企业】
+        if (this.ruleForm.stype == 'company' && this.imgFile.productCertificate != '') {
+          let param = new FormData(); //创建form对象
+          param.append('file', this.imgFile.productCertificate); //通过append向form对象添加数据
+          await uploadImage(param).then(response => {
+            this.ruleForm.productCertificate = response.data.data
+          })
+        }
         //营业执照【企业】
         if (this.ruleForm.stype == 'company' && this.imgFile.businessLicense != '') {
           let param = new FormData(); //创建form对象
@@ -468,7 +489,7 @@
           this.ruleForm.regionIdList = this.ruleForm.regionIdList.map(Number)
         }
         console.log("要上传的数据：", JSON.stringify(this.ruleForm))
-        console.log("this.editForbidFlag:",this.editForbidFlag)
+        // console.log("this.editForbidFlag:",this.editForbidFlag)
         if(this.isLook && !this.editForbidFlag){
           console.log("商家认证重新提交")
           await applyUpdate(JSON.stringify(this.ruleForm)).then(response => {

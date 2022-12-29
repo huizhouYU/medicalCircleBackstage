@@ -34,10 +34,27 @@ export function sendMsg(data) {
     data:data
   })
 }
+
+//发送找回密码短信
+export function findPwdMsg(data) {
+  return request({
+    url: '/user/findPwdMsg',
+    method: 'post',
+    data:data
+  })
+}
 //发送注册短信
 export function registerMsg(data) {
   return request({
     url: '/user/registerMsg',
+    method: 'post',
+    data:data
+  })
+}
+//商家找回密码
+export function findPwd(data) {
+  return request({
+    url: '/user/findPwd',
     method: 'post',
     data:data
   })
@@ -50,7 +67,6 @@ export function register(data) {
     data:data
   })
 }
-
 
 //退出登录
 export function logout() {

@@ -27,7 +27,7 @@
           <el-form label-position="top" label-width="80px" :model="registerForm" class="modular-form" ref="registerForm"
             :rules="registerRules">
             <el-form-item label="" class="form-label" prop="mobile">
-              <el-input v-model="registerForm.mobile" placeholder="请输入手机号" oninput ="value=value.replace(/[^\d]/g,'')" clearable>
+              <el-input v-model="registerForm.mobile" placeholder="请输入手机号" :disabled="!showRegisterGetVCode" oninput ="value=value.replace(/[^\d]/g,'')" clearable>
                 <template #prefix>
                   <div class="prefix"><img src="../../../public/imgs/login/user.png" alt=""></div>
                 </template>

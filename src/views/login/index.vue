@@ -66,7 +66,7 @@
             <el-form label-position="top" label-width="80px" ref="loginCodeForm" :model="loginCodeForm"
               class="modular-form" :rules="loginCodeRules">
               <el-form-item label="" class="form-label" prop="mobile">
-                <el-input v-model="loginCodeForm.mobile" placeholder="请输入手机号" clearable>
+                <el-input v-model="loginCodeForm.mobile" placeholder="请输入手机号" :disabled="!showLoginGetVCode" clearable>
                   <template #prefix>
                     <div class="prefix"><img src="../../../public/imgs/login/user.png" alt=""></div>
                   </template>
@@ -104,23 +104,23 @@
           <div class="form-title">忘记密码</div>
           <el-form label-position="top" label-width="80px" :model="forgotForm" class="modular-form" ref="forgotForm"
             :rules="forgotFormRules">
-            <el-form-item label="" prop="phone">
-              <el-input v-model="forgotForm.phone" placeholder="请输入手机号" clearable>
+            <el-form-item label="" prop="mobile">
+              <el-input v-model="forgotForm.mobile" placeholder="请输入手机号" :disabled="!showForgetGetVCode" clearable>
                 <template #prefix>
                   <div class="prefix"><img src="../../../public/imgs/login/user.png" alt=""></div>
                 </template>
               </el-input>
             </el-form-item>
-            <el-form-item label="" prop="newPassword">
-              <el-input v-model="forgotForm.newPassword" placeholder="请输入新密码" show-password @focus="isHide = true"
+            <el-form-item label="" prop="password">
+              <el-input v-model="forgotForm.password" placeholder="请输入新密码" show-password @focus="isHide = true"
                 @blur="isHide = false">
                 <template #prefix>
                   <div class="prefix"><img src="../../../public/imgs/login/shield.png" alt=""></div>
                 </template>
               </el-input>
             </el-form-item>
-            <el-form-item label="" prop="againPassword">
-              <el-input v-model="forgotForm.againPassword" placeholder="再次确认密码" show-password @focus="isHide = true"
+            <el-form-item label="" prop="newPassword">
+              <el-input v-model="forgotForm.newPassword" placeholder="再次确认密码" show-password @focus="isHide = true"
                 @blur="isHide = false">
                 <template #prefix>
                   <div class="prefix"><img src="../../../public/imgs/login/shield.png" alt=""></div>
@@ -128,8 +128,8 @@
               </el-input>
             </el-form-item>
             <div class="getCode-item">
-              <el-form-item label="" prop="phoneCode">
-                <el-input v-model="forgotForm.phoneCode" placeholder="请输入验证码" clearable>
+              <el-form-item label="" prop="captcha">
+                <el-input v-model="forgotForm.captcha" placeholder="请输入验证码" clearable>
                   <template #prefix>
                     <div class="prefix"><img src="" alt=""></div>
                   </template>
@@ -156,7 +156,9 @@
     validUsername
   } from '@/utils/validate'
   import {
-    sendMsg
+    sendMsg,
+    findPwdMsg,
+    findPwd
   } from '@/api/user'
 
   export default {
@@ -252,28 +254,28 @@
           }]
         },
         forgotForm: {
-          phone: '',
+          mobile: '',
+          password: '',
           newPassword: '',
-          againPassword: '',
-          phoneCode: ''
+          captcha: ''
         },
         forgotFormRules: {
-          phone: [{
+          mobile: [{
             required: true,
             trigger: 'blur',
             validator: validatePhone
           }],
-          newPassword: [{
+          password: [{
             required: true,
             message: '请输入新密码',
             trigger: 'change'
           }],
-          againPassword: [{
+          newPassword: [{
             required: true,
             message: '请再次确认密码',
             trigger: 'change'
           }],
-          phoneCode: [{
+          captcha: [{
             required: true,
             message: '请输入短信验证码',
             trigger: 'change'
@@ -433,16 +435,16 @@
 
             this.$store.dispatch(requestPath, requestForm)
               .then((response) => {
-                 if(response.code ==10000){
-                   console.log("登录：",response)
-                   this.$router.push({
-                     path: this.redirect || '/',
-                     query: this.otherQuery
-                   })
-                   this.loading = false
-                 }else{
-                   this.$message.error(response.message)
-                 }
+                if (response.code == 10000) {
+                  console.log("登录：", response)
+                  this.$router.push({
+                    path: this.redirect || '/',
+                    query: this.otherQuery
+                  })
+                  this.loading = false
+                } else {
+                  this.$message.error(response.message)
+                }
 
               }).catch(() => {
                 this.loading = false
@@ -510,9 +512,9 @@
           }
           sendMsg(data).then(response => {
             console.log(response.data.data)
-            if(response.data.code != 10000){
+            if (response.data.code != 10000) {
               this.$message.error(response.data.message)
-            }else{
+            } else {
               this.$message.success(response.data.data)
             }
           })
@@ -531,15 +533,19 @@
             }, 1000);
           }
         } else { //忘记密码
-          if (!this.isCellPhone(this.forgotForm.phone)) {
+          if (!this.isCellPhone(this.forgotForm.mobile)) {
             this.$message.error('请先输入正确的手机号码！')
             return
           }
           let data = {
-            mobile: this.forgotForm.phone
+            mobile: this.forgotForm.mobile
           }
-          sendMsg(data).then(response => {
-            console.log(response.data.data)
+          findPwdMsg(data).then(response => {
+            if (response.data.code != 10000) {
+              this.$message.error(response.data.message)
+            } else {
+              this.$message.success(response.data.data)
+            }
           })
           // 验证码倒计时
           if (!this.timer) {
@@ -557,15 +563,17 @@
           }
         }
       },
-      //用户服务协议
-      lookAgreement() {
-        alert("看协议吗？给链接啊！！！")
-      },
       //忘记密码 提交
       updatePassWord(formName) {
         if (this.validityForm(formName)) {
-          this.$message.success('密码修改成功，请重新登录！')
-          this.flipLogin()
+          findPwd(this.forgotForm).then(response => {
+            if (response.data.code != 10000) {
+              this.$message.error(response.data.message)
+            } else {
+              this.$message.success('密码修改成功，请重新登录！')
+              this.flipLogin()
+            }
+          })
         }
       },
       validityForm(formName) {

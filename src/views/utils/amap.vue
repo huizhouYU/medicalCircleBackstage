@@ -33,18 +33,14 @@
     },
     watch: {
       longitude(val) {
-        console.log("longitude:",val)
         if (val != undefined && val != null && val != '') {
           this.position[0] = val
-          console.log("this.center[0]:", this.position[0])
           this.initMap()
         }
       },
       latitude(val) {
-        console.log("latitude:",val)
         if (val != undefined && val != null && val != '') {
           this.position[1] = val
-          console.log("this.center[1]:", this.position[1])
           this.initMap()
         }
       }
@@ -62,7 +58,7 @@
     },
     methods: {
       initMap() {
-        console.log("初始化this.position：",this.position)
+        // console.log("初始化this.position：",this.position)
         AMapLoader.load({
           "key": "351fa1549567026aba8fb335fe01e931", // 申请好的Web端开发者Key，首次调用 load 时必填
           "version": "2.0", // 指定要加载的 JSAPI 的版本，缺省时默认为 1.4.15
@@ -97,8 +93,8 @@
           // 鼠标点击获取经纬度
           var _this = this
           this.map.on('click', function(e) {
-            console.log("经度", e.lnglat.getLng())
-            console.log("纬度", e.lnglat.getLat())
+            // console.log("经度", e.lnglat.getLng())
+            // console.log("纬度", e.lnglat.getLat())
             _this.position = [e.lnglat.getLng(), e.lnglat.getLat()]
             let data = {
               lng: e.lnglat.getLng(),

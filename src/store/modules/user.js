@@ -22,6 +22,7 @@ const state = {
   introduction: '',
   regUrl:'',
   mobile:'',
+  realName:'',
   balance:'',
   roles: [],
   store:''
@@ -36,6 +37,9 @@ const mutations = {
   },
   SET_MOBILE: (state, mobile) => {
     state.mobile = mobile
+  },
+  SET_REALNAME: (state, realName) => {
+    state.realName = realName
   },
   SET_BALANCE: (state, balance) => {
     state.balance = balance
@@ -180,7 +184,8 @@ const actions = {
         commit('SET_AVATAR', "")
         commit('SET_INTRODUCTION', "固定无")
         commit('SET_REGURL', user.regUrl)
-        commit('SET_MOBILE',user.mobile)
+        commit('SET_MOBILE',user.phoneMob)
+        commit('SET_REALNAME',user.realName)
         commit('SET_BALANCE',user.balance)
         commit('SET_STORE',store)
         // commit('SET_ROLES', roles)

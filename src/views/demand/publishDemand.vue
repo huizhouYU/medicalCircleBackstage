@@ -144,8 +144,7 @@
     },
     computed: {
       ...mapGetters([
-        'name',
-        'avatar',
+        'realName',
         'mobile'
       ])
     },
@@ -204,7 +203,7 @@
         // brandList().then(response => {
         //   this.brandsOptions = response.data.data
         // })
-        this.demandInfo.linkMan = this.name
+        this.demandInfo.linkMan = this.realName
         this.demandInfo.linkTel = this.mobile
         this.cities = city
       },
