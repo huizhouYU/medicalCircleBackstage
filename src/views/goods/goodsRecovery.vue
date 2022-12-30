@@ -50,6 +50,7 @@
     methods: {
       //根据条件筛选数据
       selectData() {
+        this.listQuery.pageNo = 1
         this.getList()
       },
       getList(){

@@ -7,7 +7,9 @@ import { asyncRoutes, constantRoutes } from '@/router'
  */
 function hasPermission(roles, route) {
   if (route.meta && route.meta.roles) {
+    // console.log("route.meta.roles:",route.meta.roles)
     return roles.some(role => route.meta.roles.includes(role))
+    // return true
   } else {
     return true
   }
@@ -49,16 +51,16 @@ const mutations = {
 const actions = {
   generateRoutes({ commit }, roles) {
     return new Promise(resolve => {
-      
+
       //根据类型不同展示不同菜单
       // console.log("roles.includes('admin'):",roles.includes('admin'))
       let accessedRoutes
-      // if (roles.includes('admin')) {
-      //   accessedRoutes = asyncRoutes || []
-      // } else {
-      //   accessedRoutes = filterAsyncRoutes(asyncRoutes, roles)
-      // }
-      accessedRoutes = asyncRoutes || []
+      if (roles.includes('admin')) {
+        accessedRoutes = asyncRoutes || []
+      } else {
+        accessedRoutes = filterAsyncRoutes(asyncRoutes, roles)
+      }
+      // accessedRoutes = asyncRoutes || []
       commit('SET_ROUTES', accessedRoutes)
       resolve(accessedRoutes)
     })

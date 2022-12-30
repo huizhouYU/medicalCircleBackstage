@@ -227,7 +227,6 @@
               this.submitDemand()
             }
           } else {
-            // console.log('error submit!!')
             return false
           }
         })
@@ -236,7 +235,6 @@
       changeFormat(key) {
         this.demandInfo.region = []
         var list = this.$refs[key].getCheckedNodes()
-        console.log("list:",this.$refs[key])
         for (var index in list) {
           if(!list[index].parent.checked){
             var item = {
@@ -282,7 +280,6 @@
             this.demandInfo.imageList.push(item.imgUrl)
           }
         }
-        // console.log("发送的数据：", JSON.stringify(this.demandInfo))
         // 编辑
         if (this.isUpdate) {
           await updateDemand(JSON.stringify(this.demandInfo)).then(response => {

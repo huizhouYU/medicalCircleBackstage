@@ -123,6 +123,7 @@
       },
       //根据条件筛选数据
       selectData() {
+        this.listQuery.pageNo = 1
         this.getList()
         // alert("不要点啦！后台接口数据还没做呢。。。")
       },

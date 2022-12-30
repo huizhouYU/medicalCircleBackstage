@@ -137,7 +137,6 @@
         // this.listLoading = true
         goodsCategoryList().then(response => {
           this.linkageData = response.data.data
-          console.log(this.linkageData)
           this.loadData()
           // this.list = response.data.data
 
@@ -160,7 +159,6 @@
       },
 
       async loadData() {
-        // console.log(b)
         // this.linkageData = b.linkageData
         if (this.$route.query.chosedData !== undefined) {
           this.chosedData = JSON.parse(this.$route.query.chosedData)
@@ -203,13 +201,11 @@
           item.cateName.pop()
         }
         // await axios.get("../../../static/testData/classifyData.json").then(res => {
-        //   console.log(res);
         //   if (res.status == 200) {
         //     this.linkageData = res.data.linkageData
         //   } else {
         //     this.$message.error("数据请求失败，请稍后再试！")
         //   }
-        //   console.log(this.$route.query.chosedData)
         //   if (this.$route.query.chosedData !== undefined) {
 
         //     this.chosedData = JSON.parse(this.$route.query.chosedData)
@@ -242,7 +238,6 @@
             this.isNextFlag = true
             this.chooseClassify += " > " + this.chosedData[2].label
           }
-          // console.log("this.item3ChildData:", this.item3ChildData)
           // //没有三级类目，允许跳转
           // if (this.item3ChildData == null || this.item3ChildData.length < 1) {
           //   this.isNextFlag = true
@@ -312,7 +307,6 @@
         //循环一级菜单
         for (var i = 0; i < this.linkageData.length; i++) {
           if (this.linkageData[i].value == this.chosedData[0].value) {
-            console.log(i * 32)
             if (i * 32 > 370) {
               document.getElementById('item-a').scrollTop = i * 32
             }
@@ -415,7 +409,6 @@
       nextStep() {
         if (this.isNextFlag) {
           var chosedDataString = JSON.stringify(this.chosedData)
-          console.log(chosedDataString)
           this.$store.dispatch('tagsView/delView', this.$route).then(({
             visitedViews
           }) => {
@@ -432,10 +425,8 @@
 
       },
       handleChange(value) {
-        console.log(value);
       },
       hiddenDropdown() {
-        console.log("111")
       }
     }
   }

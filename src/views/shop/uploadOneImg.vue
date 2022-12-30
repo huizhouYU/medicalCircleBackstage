@@ -42,7 +42,6 @@
     },
     methods: {
       showCardDiv() {
-        console.log("isLook:", this.isLook)
         if (!this.isLook) {
           this.isShowCardImgDiv = true;
         }
@@ -58,8 +57,6 @@
         this.cardImgUrl = ''
       },
       previewFile(e) {
-        console.log("上传图片")
-        console.log(e.target.files)
         // 1.获取用户选择的文件对象
         const files = e.target.files
         if (files.length === 0) {
@@ -90,7 +87,6 @@
                 btn: false
               })
             }
-
           }
         }
       }

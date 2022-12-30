@@ -13,19 +13,21 @@ import {
 import router, {
   resetRouter
 } from '@/router'
-import { Message } from 'element-ui'
+import {
+  Message
+} from 'element-ui'
 
 const state = {
   token: getToken(),
   name: '',
   avatar: '',
   introduction: '',
-  regUrl:'',
-  mobile:'',
-  realName:'',
-  balance:'',
+  regUrl: '',
+  mobile: '',
+  realName: '',
+  balance: '',
   roles: [],
-  store:''
+  store: ''
 }
 
 const mutations = {
@@ -63,7 +65,9 @@ const mutations = {
 
 const actions = {
   // user login
-  login({ commit }, userInfo) {
+  login({
+    commit
+  }, userInfo) {
     const {
       username,
       password
@@ -75,24 +79,28 @@ const actions = {
       }).then(response => {
         // console.log("sdresponse：",response)
         const {
-          data,code,message
+          data,
+          code,
+          message
         } = response.data
-        if(code == 10000){
+        if (code == 10000) {
           commit('SET_TOKEN', data)
           setToken(data)
-        }else{
+        } else {
           console.log(message)
           // Message.error({ message })
         }
         resolve(response.data)
       }).catch(error => {
-        console.log("登录失败：",error)
+        console.log("登录失败：", error)
         reject(error)
       })
     })
   },
   // user msgLogin
-  msgLogin({ commit }, userInfo) {
+  msgLogin({
+    commit
+  }, userInfo) {
     const {
       mobile,
       captcha
@@ -102,53 +110,57 @@ const actions = {
         mobile: mobile.trim(),
         captcha: captcha.trim()
       }).then(response => {
-        console.log("store中sdresponse：",response)
+        console.log("store中sdresponse：", response)
         const {
-          data,code,message
+          data,
+          code,
+          message
         } = response.data
-        if(code == 10000){
+        if (code == 10000) {
           commit('SET_TOKEN', data)
           setToken(data)
-        }else{
+        } else {
           console.log(message)
           // Message.error({ message })
         }
         resolve(response.data)
       }).catch(error => {
-        console.log("登录失败：",error)
+        console.log("登录失败：", error)
         reject(error)
       })
     })
   },
 
-  register({ commit }, registerInfo) {
+  register({
+    commit
+  }, registerInfo) {
     const {
       mobile,
       captcha,
       activation
     } = registerInfo
     console.log("store中注册")
-    console.log("activation:",activation)
+    console.log("activation:", activation)
     return new Promise((resolve, reject) => {
       register({
         mobile: mobile.trim(),
         captcha: captcha.trim(),
-        activation: activation!=null?activation.trim():''
+        activation: activation != null ? activation.trim() : ''
       }).then(response => {
-        console.log("注册接口返回：",response)
+        console.log("注册接口返回：", response)
         console.log("将返回的token保存到store中")
         const {
           data
         } = response.data
-        if(data != null){
-          console.log("setToken:",data)
+        if (data != null) {
+          console.log("setToken:", data)
           commit('SET_TOKEN', data)
           setToken(data)
         }
 
         resolve(response.data)
       }).catch(error => {
-        console.log("注册接口返回失败：",error)
+        console.log("注册接口返回失败：", error)
         reject(error)
       })
     })
@@ -161,7 +173,9 @@ const actions = {
   }) {
     return new Promise((resolve, reject) => {
       getInfo(state.token).then(response => {
-        const {  data } = response.data
+        const {
+          data
+        } = response.data
         if (!data) {
           // reject('Verification failed, please Login again.')
           reject('请重新登录！')
@@ -171,9 +185,14 @@ const actions = {
           store,
           user
         } = data
-        const roles = ["admin"]
-        // roles.push(store.stype)
-        // roles = ["admin"]
+        var roles = []
+        //admin:具体最高权限； company personal
+        if (store.stype == null) {
+          roles.push('admin')
+        } else {
+          roles.push(store.stype)
+          // roles.push('personal')
+        }
 
         // roles must be a non-empty array
         if (!roles || roles.length <= 0) {
@@ -184,15 +203,15 @@ const actions = {
         commit('SET_AVATAR', "")
         commit('SET_INTRODUCTION', "固定无")
         commit('SET_REGURL', user.regUrl)
-        commit('SET_MOBILE',user.phoneMob)
-        commit('SET_REALNAME',user.realName)
-        commit('SET_BALANCE',user.balance)
-        commit('SET_STORE',store)
+        commit('SET_MOBILE', user.phoneMob)
+        commit('SET_REALNAME', user.realName)
+        commit('SET_BALANCE', user.balance)
+        commit('SET_STORE', store)
         // commit('SET_ROLES', roles)
         // commit('SET_NAME', name)
         // commit('SET_AVATAR', avatar)
         // commit('SET_INTRODUCTION', introduction)
-        resolve(data)
+        resolve(roles)
       }).catch(error => {
         reject(error)
       })

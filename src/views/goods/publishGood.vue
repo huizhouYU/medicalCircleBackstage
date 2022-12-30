@@ -18,7 +18,8 @@
       <!-- 所属品牌 -->
       <el-form-item label="所属品牌：" class="item-brand">
         <el-select v-model="goodInfo.brandId" class="select-brand" v-show="!goodInfo.brandInputType">
-          <el-option v-for="item in brandsOptions" :key="item.brandId" :label="item.brandName" :value="item.brandId">
+          <el-option v-for="item in brandsOptions" :key="item.brandId" :label="item.brandName||'-'"
+            :value="item.brandId">
           </el-option>
         </el-select>
         <el-input v-model="goodInfo.brandName" placeholder="请输入商品品牌" maxlength="40" show-word-limit
@@ -112,12 +113,12 @@
       </el-form-item>
       <!-- 立即上架 -->
       <el-form-item label="立即上架：" class="prodect-grounding-item">
-        <el-switch v-model="goodInfo.ifShow" active-color="#1890FF">
+        <el-switch v-model="goodIfShow" active-color="#1890FF">
         </el-switch>
       </el-form-item>
       <!-- 是否推荐 -->
       <el-form-item label="是否推荐：" class="prodect-recommendValue">
-        <el-switch v-model="goodInfo.recommended" active-color="#13ce66">
+        <el-switch v-model="goodRecommended" active-color="#13ce66">
         </el-switch>
         <span class="gray-tip">被推荐的商品会显示在店铺首页</span>
       </el-form-item>
@@ -154,11 +155,19 @@
   import edit from '../utils/edit.vue'
   import DragUpload from '../utils/DragUpload.vue'; // 引入vue-draggable
   import addGoods from '../../../src/views/goods/addGoods.vue'
+  import {
+    mapGetters
+  } from 'vuex'
   export default {
     components: {
       DragUpload,
       edit,
       addGoods
+    },
+    computed: {
+      ...mapGetters([
+        'roles',
+      ])
     },
     data() {
       return {
@@ -172,6 +181,8 @@
         longLimit: 5,
         imgList: [],
         longImages: '',
+        goodIfShow: false,
+        goodRecommended: false,
         //商品信息
         goodInfo: {
           type: 'material', //商品类型 material-配件 equipment-设备器械
@@ -192,7 +203,7 @@
           qualityTime: '', //保质期
           qualityTimeUnit: '日', //选择的保质期【年、月、日】
           defaultImage: '', //主图
-          longImages: '', //长图
+          longImages: [], //长图
           imageList: [],
           content: '', //产品详情
           tradeMode: 1, //选择的交易方式
@@ -291,6 +302,15 @@
     },
     methods: {
       getParams() {
+        // 销售类型
+        if (this.roles.includes('personal')) {
+          this.xsOptions = [{
+            value: 2,
+            label: '咨询议价'
+          }]
+          this.goodInfo.saleType = 2
+          this.isEditPrice()
+        }
         brandList().then(response => {
           this.brandsOptions = response.data.data
         })
@@ -328,9 +348,9 @@
             this.imgList = this.goodInfo.imageList
             this.longImages = this.goodInfo.longImages
             //是否上架
-            this.goodInfo.ifShow = this.goodInfo.ifShow == 1 ? true : false
+            this.goodIfShow = this.goodInfo.ifShow == 1 ? true : false
             //是否推荐
-            this.goodInfo.recommended = this.goodInfo.recommended == 1 ? true : false
+            this.goodRecommended = this.goodInfo.recommended == 1 ? true : false
             //判断标签个数
             if (this.goodInfo.tagList != null && this.goodInfo.tagList.length == 5) {
               this.inputVisible = false
@@ -342,7 +362,6 @@
 
       },
       getCartData(cartData) {
-        console.log("getCartData:", cartData)
         this.temporaryCartData = cartData
       },
       closeCartDialog() {
@@ -372,7 +391,6 @@
       //点击‘类目’返回上一步
       preStep() {
         this.cartDialogVisible = true
-        // console.log("hhh", this.goodInfo)
         // // if (this.isBack) {
         // this.$store.dispatch('tagsView/delView', this.$route).then(({
         //   visitedViews
@@ -415,14 +433,13 @@
         var i = this.goodInfo.chosedData.length - 1
         for (i; i >= 0; i--) {
           if (this.goodInfo.chosedData[i].value != '') {
-            console.log(i + ":" + this.goodInfo.chosedData[i].value)
             this.goodInfo.cateName = this.goodInfo.chosedData[i].label
             this.goodInfo.cateId = Number(this.goodInfo.chosedData[i].value)
             i = -1
           }
         }
-        this.goodInfo.ifShow = Number(this.goodInfo.ifShow)
-        this.goodInfo.recommended = Number(this.goodInfo.recommended)
+        this.goodInfo.ifShow = Number(this.goodIfShow)
+        this.goodInfo.recommended = Number(this.goodRecommended)
         this.goodInfo.price = Number(this.goodInfo.price)
         this.goodInfo.qualityTime = Number(this.goodInfo.qualityTime)
         this.goodInfo.saleType = Number(this.goodInfo.saleType)
@@ -448,12 +465,10 @@
         //长图
         if (this.ruleForm.longTrialImgs.length > 0) {
           this.goodInfo.longImages = []
-          console.log("this.ruleForm.longTrialImgs：", this.ruleForm.longTrialImgs)
           for (var item of this.ruleForm.longTrialImgs) {
             if (item.file != '') {
               let param = new FormData(); //创建form对象
               param.append('file', item.file); //通过append向form对象添加数据
-              console.log("param：", param)
               await uploadImage(param).then(response => {
                 this.goodInfo.longImages.push(response.data.data)
               })
@@ -464,8 +479,6 @@
         }
 
         this.goodInfo.defaultImage = this.goodInfo.imageList[0]
-        console.log('商品信息', this.goodInfo)
-        // console.log(JSON.stringify(this.goodInfo))
         if (this.goodInfo.goodsId != undefined) { //编辑商品
           goodsUpdate(JSON.stringify(this.goodInfo)).then(response => {
             var res = response.data.data
@@ -501,8 +514,6 @@
             }
           })
         }
-
-
       },
       deletTag(index) {
         this.goodInfo.tagList.splice(index, 1)
@@ -513,8 +524,14 @@
         }
       },
       addTag() {
+        if (this.goodInfo.tagList == null) {
+          this.goodInfo.tagList = []
+        }
         if (this.goodInfo.tagList.length < 5) {
-          this.goodInfo.tagList.push(this.goodTag.substring(0, 4))
+          this.goodTag = this.trim(this.goodTag)
+          if (this.goodTag != '') {
+            this.goodInfo.tagList.push(this.goodTag.substring(0, 4))
+          }
         }
         if (this.goodInfo.tagList.length < 5) {
           this.inputVisible = true
@@ -530,6 +547,9 @@
         } else {
           this.inputVisible = false
         }
+      },
+      trim(str) {
+        return str.replace(/(^\s*)|(\s*$)/g, "");
       }
 
     }
