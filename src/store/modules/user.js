@@ -27,7 +27,8 @@ const state = {
   realName: '',
   balance: '',
   roles: [],
-  store: ''
+  store: '',
+  email: ''
 }
 
 const mutations = {
@@ -60,7 +61,10 @@ const mutations = {
   },
   SET_STORE: (state, store) => {
     state.store = store
-  }
+  },
+  SET_EMAIL: (state, email) => {
+    state.email = email
+  },
 }
 
 const actions = {
@@ -77,7 +81,6 @@ const actions = {
         username: username.trim(),
         password: password
       }).then(response => {
-        // console.log("sdresponse：",response)
         const {
           data,
           code,
@@ -87,12 +90,10 @@ const actions = {
           commit('SET_TOKEN', data)
           setToken(data)
         } else {
-          console.log(message)
           // Message.error({ message })
         }
         resolve(response.data)
       }).catch(error => {
-        console.log("登录失败：", error)
         reject(error)
       })
     })
@@ -110,7 +111,6 @@ const actions = {
         mobile: mobile.trim(),
         captcha: captcha.trim()
       }).then(response => {
-        console.log("store中sdresponse：", response)
         const {
           data,
           code,
@@ -120,12 +120,10 @@ const actions = {
           commit('SET_TOKEN', data)
           setToken(data)
         } else {
-          console.log(message)
           // Message.error({ message })
         }
         resolve(response.data)
       }).catch(error => {
-        console.log("登录失败：", error)
         reject(error)
       })
     })
@@ -139,28 +137,22 @@ const actions = {
       captcha,
       activation
     } = registerInfo
-    console.log("store中注册")
-    console.log("activation:", activation)
     return new Promise((resolve, reject) => {
       register({
         mobile: mobile.trim(),
         captcha: captcha.trim(),
         activation: activation != null ? activation.trim() : ''
       }).then(response => {
-        console.log("注册接口返回：", response)
-        console.log("将返回的token保存到store中")
         const {
           data
         } = response.data
         if (data != null) {
-          console.log("setToken:", data)
           commit('SET_TOKEN', data)
           setToken(data)
         }
 
         resolve(response.data)
       }).catch(error => {
-        console.log("注册接口返回失败：", error)
         reject(error)
       })
     })
@@ -198,15 +190,22 @@ const actions = {
         if (!roles || roles.length <= 0) {
           reject('getInfo: roles must be a non-null array!')
         }
+        var portrait = 'https://image.yijiequan.cn/yijiequan/attach/default-logo.jpg'
+        if (user.portrait != undefined && user.portrait != null && user.portrait != '') {
+          if (user.portrait.indexOf("https://") != -1 || user.portrait.indexOf("http://") != -1) {
+            portrait = user.portrait
+          }
+        }
         commit('SET_ROLES', roles)
         commit('SET_NAME', user.username)
-        commit('SET_AVATAR', "")
+        commit('SET_AVATAR', portrait)
         commit('SET_INTRODUCTION', "固定无")
         commit('SET_REGURL', user.regUrl)
         commit('SET_MOBILE', user.phoneMob)
         commit('SET_REALNAME', user.realName)
         commit('SET_BALANCE', user.balance)
         commit('SET_STORE', store)
+        commit('SET_EMAIL', user.email)
         // commit('SET_ROLES', roles)
         // commit('SET_NAME', name)
         // commit('SET_AVATAR', avatar)

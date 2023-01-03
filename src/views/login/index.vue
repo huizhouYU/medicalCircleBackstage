@@ -418,11 +418,9 @@
       },
       // 登录
       login(formName) {
-        console.log("登录")
         if (this.validityForm(formName)) {
           if (this.checkLoginInfo()) {
             this.loading = true
-            console.log("登录前验证成功")
             var requestPath = ''
             var requestForm = ''
             if (this.loginWay == 1) { //密码登录
@@ -436,7 +434,6 @@
             this.$store.dispatch(requestPath, requestForm)
               .then((response) => {
                 if (response.code == 10000) {
-                  console.log("登录：", response)
                   this.$router.push({
                     path: this.redirect || '/',
                     query: this.otherQuery
@@ -448,11 +445,8 @@
 
               }).catch(() => {
                 this.loading = false
-                console.log("失败")
               })
-          } else {
-            console.log("登录前验证失败")
-          }
+          } 
         }
       },
 
@@ -511,7 +505,6 @@
             mobile: this.loginCodeForm.mobile
           }
           sendMsg(data).then(response => {
-            console.log(response.data.data)
             if (response.data.code != 10000) {
               this.$message.error(response.data.message)
             } else {
@@ -582,7 +575,6 @@
           if (valid) {
             result = true
           } else {
-            console.log('validity error!!');
             result = false
           }
         })

@@ -89,7 +89,6 @@
           keyword: this.keyword
         }
         demandList(data).then(response => {
-          console.log(response.data.data)
           this.demandList = response.data.data.list
           this.currentPage = response.data.data.pageNum //当前页
           this.totalPage = response.data.data.pageCount //总页面数

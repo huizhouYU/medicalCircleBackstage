@@ -6,7 +6,8 @@
       </div>
     </div>
     <!-- eslint-disable-next-line -->
-    <div :style="{backgroundImage: `url(${image})`}" class="pan-thumb"></div>
+    <!-- <div :style="{backgroundImage: `url(${image})`}" class="pan-thumb"></div> -->
+    <img :src="image" alt="" class="pan-thumb">
   </div>
 </template>
 
@@ -30,7 +31,7 @@ export default {
       type: String,
       default: '150px'
     }
-  }
+  },
 }
 </script>
 
@@ -82,6 +83,9 @@ export default {
   border-radius: 50%;
   overflow: hidden;
   box-shadow: inset 0 0 0 5px rgba(0, 0, 0, 0.05);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .pan-info h3 {

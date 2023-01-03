@@ -28,6 +28,7 @@
           </div>
         </div>
       </el-form-item>
+      <!-- <my-cascader></my-cascader> -->
       <!-- 基本信息 -->
       <div class="demand-item-title">基本信息</div>
       <div v-show="demandInfo.articleType ==1 || demandInfo.articleType ==2">
@@ -42,7 +43,7 @@
               show-word-limit />
           </el-form-item>
           <el-form-item label="设备品牌：" class="demandInfo-item" prop="brandId">
-           <!-- <el-select v-model="demandInfo.brandId" class="select-brand" @change="selectBrand">
+            <!-- <el-select v-model="demandInfo.brandId" class="select-brand" @change="selectBrand">
               <el-option v-for="item in brandsOptions" :key="item.brandId" :label="item.brandName" :value="item.brandId"
                 ref="brandSelect">
               </el-option>
@@ -86,7 +87,7 @@
         <!-- 维修区域 -->
         <el-form-item label="维修区域：" prop="regionIdList">
           <el-cascader v-model="demandInfo.regionIdList" :options="cities" @change="changeFormat('cascaderRegion3')"
-            :props="{ multiple: true }" collapse-tags ref="cascaderRegion3" clearable />
+            :props="{ multiple: true,checkStrictly:true }" collapse-tags ref="cascaderRegion3" clearable :show-all-levels="false" />
         </el-form-item>
         <!-- 个人图片 -->
         <el-form-item label="个人图片：" class="product-images">
@@ -112,7 +113,6 @@
           <el-input v-model="demandInfo.linkTel" type="text" placeholder="请输入联系手机" show-word-limit />
         </el-form-item>
       </div>
-
       <div class="submit">
         <el-button type="primary" class="public-el-submit-btn" @click="publish">发布</el-button>
       </div>
@@ -236,15 +236,22 @@
         this.demandInfo.region = []
         var list = this.$refs[key].getCheckedNodes()
         for (var index in list) {
-          if(!list[index].parent.checked){
-            var item = {
-              name: '',
-              id: ''
-            }
-            item.id = list[index].path
-            item.name = list[index].pathLabels
-            this.demandInfo.region.push(item)
+          // if (!list[index].parent.checked) {
+          //   var item = {
+          //     name: '',
+          //     id: ''
+          //   }
+          //   item.id = list[index].path
+          //   item.name = list[index].pathLabels
+          //   this.demandInfo.region.push(item)
+          // }
+          var item = {
+            name: '',
+            id: ''
           }
+          item.id = list[index].path
+          item.name = list[index].pathLabels
+          this.demandInfo.region.push(item)
         }
       },
       //深复制对象方法
@@ -261,6 +268,7 @@
       },
       //发布请求接口
       async submitDemand() {
+        var flag = true
         this.demandInfo.regionIdList = null
         this.demandInfo.region = JSON.stringify(this.demandInfo.region)
         if (this.demandInfo.brandId == '') {
@@ -268,41 +276,48 @@
         }
         this.demandInfo.imageList = []
         for (var item of this.ruleForm.trialImgs) {
-          if (item.file != '') {
-            let param = new FormData(); //创建form对象
-            param.append('file', item.file); //通过append向form对象添加数据
-            await uploadImage(param).then(response => {
-              this.demandInfo.imageList.push(response.data.data)
-            })
-          } else {
-            // var newImgUrl = item.imgUrl.split("https://images.weserv.nl/?url=").join("");
-            // this.demandInfo.imageList.push(newImgUrl)
-            this.demandInfo.imageList.push(item.imgUrl)
+          if (flag) {
+            if (item.file != '') {
+              let param = new FormData(); //创建form对象
+              param.append('file', item.file); //通过append向form对象添加数据
+              await uploadImage(param).then(response => {
+                if (response.data.code != 10000) {
+                  this.$message.error(response.data.message)
+                  flag = false
+                } else {
+                  this.demandInfo.imageList.push(response.data.data)
+                }
+              })
+            } else {
+              this.demandInfo.imageList.push(item.imgUrl)
+            }
           }
         }
-        // 编辑
-        if (this.isUpdate) {
-          await updateDemand(JSON.stringify(this.demandInfo)).then(response => {
-            if (response.data.code == 10000) {
-              this.$message.success("更新成功！")
-              this.$router.replace({
-                path: 'demandManage'
-              })
-            } else {
-              this.$message.error(response.data.message)
-            }
-          })
-        } else { //新建
-          await createDemand(JSON.stringify(this.demandInfo)).then(response => {
-            if (response.data.code == 10000) {
-              this.$message.success("发布成功！")
-              this.$router.replace({
-                path: 'demandManage'
-              })
-            } else {
-              this.$message.error(response.data.message)
-            }
-          })
+        if (flag) {
+          // 编辑
+          if (this.isUpdate) {
+            await updateDemand(JSON.stringify(this.demandInfo)).then(response => {
+              if (response.data.code == 10000) {
+                this.$message.success("更新成功！")
+                this.$router.replace({
+                  path: 'demandManage'
+                })
+              } else {
+                this.$message.error(response.data.message)
+              }
+            })
+          } else { //新建
+            await createDemand(JSON.stringify(this.demandInfo)).then(response => {
+              if (response.data.code == 10000) {
+                this.$message.success("发布成功！")
+                this.$router.replace({
+                  path: 'demandManage'
+                })
+              } else {
+                this.$message.error(response.data.message)
+              }
+            })
+          }
         }
       },
       //检查必填项

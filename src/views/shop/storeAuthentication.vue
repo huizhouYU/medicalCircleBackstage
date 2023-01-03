@@ -51,8 +51,8 @@
               oninput="value=value.replace(/[^\w\.\/]/ig,'')" />
           </el-form-item>
           <el-form-item label="所属地区：" class="item-left" v-show="!editForbidFlag">
-            <el-cascader v-model="ruleForm.regionIdList" :options="cities" :disabled="editForbidFlag" @change="changeFormat"
-              ref="cascaderRegion" />
+            <el-cascader v-model="ruleForm.regionIdList" :options="cities" :disabled="editForbidFlag"
+              @change="changeFormat" ref="cascaderRegion" />
           </el-form-item>
           <el-form-item label="所属地区：" class="item-left" v-show="editForbidFlag">
             <el-input v-model="ruleForm.regionName" placeholder="请选择所属地区" :disabled="editForbidFlag" />
@@ -98,8 +98,7 @@
             <!-- 经营许可证 -->
             <upload-one-img v-show="ruleForm.stype == 'company'" :mr-src="licenceTwo.cardImg"
               :title="licenceTwo.cardTitle" :imgUrl="ruleForm.businessCertificate" :remark="licenceTwo.cardRemark"
-              @getImgFile="businessCertificateImgFile" :isLook="editForbidFlag" />
-              <!-- 产品注册证 -->
+              @getImgFile="businessCertificateImgFile" :isLook="editForbidFlag" /> <!-- 产品注册证 -->
             <upload-one-img v-show="ruleForm.stype == 'company'" :mr-src="licenceThree.cardImg"
               :title="licenceThree.cardTitle" :imgUrl="ruleForm.productCertificate" :remark="licenceThree.cardRemark"
               @getImgFile="productCertificateImgFile" :isLook="editForbidFlag" />
@@ -237,7 +236,7 @@
           identityBack: '', //身份证背面
           identityHandle: '', //手持身份证，个人工程师必传
           businessCertificate: '', //经营许可证，如果是代理商企业必传
-          productCertificate:'',//产品注册证
+          productCertificate: '', //产品注册证
           businessLicense: '', //营业执照
           productionLicense: '', //生产许可证，如果是生产企业必传
           otherCertificate: '', //其他证件
@@ -248,13 +247,13 @@
           identityCard: '', //身份证,示例值(340111199901019876)
           categoryId: '', // 所属分类
           regionName: '', //所在地区名称
-          regionIdList:'',
+          regionIdList: '',
           address: '', // 详细地址
           identityFront: '', //身份证正面
           identityBack: '', //身份证背面
           identityHandle: '', //手持身份证，个人工程师必传
           businessCertificate: '', //经营许可证，如果是代理商企业必传
-          productCertificate:'',//产品注册证
+          productCertificate: '', //产品注册证
           businessLicense: '', //营业执照
           productionLicense: '', //生产许可证，如果是生产企业必传
           otherCertificate: '', //其他证件
@@ -296,8 +295,8 @@
         storeDetail().then(response => {
           if (response.data.data != null) {
             this.ruleForm = response.data.data
-            if(this.ruleForm.regionIdList != null){
-               this.ruleForm.regionIdList = this.ruleForm.regionIdList.map(String)
+            if (this.ruleForm.regionIdList != null) {
+              this.ruleForm.regionIdList = this.ruleForm.regionIdList.map(String)
             }
             this.isLook = true
             // 店铺状态 0-待审核 1-审核成功 3-审核失败
@@ -307,7 +306,6 @@
             } else {
               this.editForbidFlag = true
             }
-            // console.log("审核失败，放开编辑")
           }
         })
       },
@@ -373,7 +371,7 @@
       // 获取验证码
       getVcode() {
         // axios请求
-        applyMsg(JSON.stringify({})).then(response=>{
+        applyMsg(JSON.stringify({})).then(response => {
           this.$message.success(response.data.data)
           // 验证码倒计时
           if (!this.timer) {
@@ -400,15 +398,12 @@
               this.postData()
               // alert('submit!')
             }
-
           } else {
-            console.log('error submit!!')
             return false
           }
         })
       },
       changeFormat() {
-        console.log(this.$refs["cascaderRegion"])
         if (this.$refs["cascaderRegion"].getCheckedNodes()[0] != undefined) {
           let regionName = this.$refs["cascaderRegion"].getCheckedNodes()[0].pathLabels
           this.ruleForm.regionName = regionName.join("/")
@@ -417,103 +412,140 @@
         }
       },
       async postData() {
+        var flag = true
         //上传身份证正面
         if (this.imgFile.identityFront != '') {
           let param = new FormData(); //创建form对象
           param.append('file', this.imgFile.identityFront); //通过append向form对象添加数据
           await uploadImage(param).then(response => {
-            this.ruleForm.identityFront = response.data.data
+            if (response.data.code != 10000) {
+              this.$message.error(response.data.message)
+              flag = false
+            } else {
+              this.ruleForm.identityFront = response.data.data
+            }
           })
         }
         //上传身份证反面
-        if (this.imgFile.identityBack != '') {
+        if (flag && this.imgFile.identityBack != '') {
           let param = new FormData(); //创建form对象
           param.append('file', this.imgFile.identityBack); //通过append向form对象添加数据
           await uploadImage(param).then(response => {
-            this.ruleForm.identityBack = response.data.data
+            if (response.data.code != 10000) {
+              this.$message.error(response.data.message)
+              flag = false
+            } else {
+              this.ruleForm.identityBack = response.data.data
+            }
           })
         }
         //上传手持身份证【个人工程师】
-        if (this.ruleForm.stype == 'personal' && this.imgFile.identityHandle != '') {
+        if (flag && this.ruleForm.stype == 'personal' && this.imgFile.identityHandle != '') {
           let param = new FormData(); //创建form对象
           param.append('file', this.imgFile.identityHandle); //通过append向form对象添加数据
           await uploadImage(param).then(response => {
-            this.ruleForm.identityHandle = response.data.data
+            if (response.data.code != 10000) {
+              this.$message.error(response.data.message)
+              flag = false
+            } else {
+              this.ruleForm.identityHandle = response.data.data
+            }
           })
         }
         //上传其他证件【个人工程师】
-        if (this.ruleForm.stype == 'personal' && this.imgFile.otherCertificate != '') {
+        if (flag && this.ruleForm.stype == 'personal' && this.imgFile.otherCertificate != '') {
           let param = new FormData(); //创建form对象
           param.append('file', this.imgFile.otherCertificate); //通过append向form对象添加数据
           await uploadImage(param).then(response => {
-            this.ruleForm.otherCertificate = response.data.data
+            if (response.data.code != 10000) {
+              this.$message.error(response.data.message)
+              flag = false
+            } else {
+              this.ruleForm.otherCertificate = response.data.data
+            }
           })
         }
         //经营许可证【企业】
-        if (this.ruleForm.stype == 'company' && this.imgFile.businessCertificate != '') {
+        if (flag && this.ruleForm.stype == 'company' && this.imgFile.businessCertificate != '') {
           let param = new FormData(); //创建form对象
           param.append('file', this.imgFile.businessCertificate); //通过append向form对象添加数据
           await uploadImage(param).then(response => {
-            this.ruleForm.businessCertificate = response.data.data
+            if (response.data.code != 10000) {
+              this.$message.error(response.data.message)
+              flag = false
+            } else {
+              this.ruleForm.businessCertificate = response.data.data
+            }
           })
         }
         //产品注册证【企业】
-        if (this.ruleForm.stype == 'company' && this.imgFile.productCertificate != '') {
+        if (flag && this.ruleForm.stype == 'company' && this.imgFile.productCertificate != '') {
           let param = new FormData(); //创建form对象
           param.append('file', this.imgFile.productCertificate); //通过append向form对象添加数据
           await uploadImage(param).then(response => {
-            this.ruleForm.productCertificate = response.data.data
+            if (response.data.code != 10000) {
+              this.$message.error(response.data.message)
+              flag = false
+            } else {
+              this.ruleForm.productCertificate = response.data.data
+            }
           })
         }
         //营业执照【企业】
-        if (this.ruleForm.stype == 'company' && this.imgFile.businessLicense != '') {
+        if (flag && this.ruleForm.stype == 'company' && this.imgFile.businessLicense != '') {
           let param = new FormData(); //创建form对象
           param.append('file', this.imgFile.businessLicense); //通过append向form对象添加数据
           await uploadImage(param).then(response => {
-            this.ruleForm.businessLicense = response.data.data
+            if (response.data.code != 10000) {
+              this.$message.error(response.data.message)
+              flag = false
+            } else {
+              this.ruleForm.businessLicense = response.data.data
+            }
           })
         }
         //生产许可证【企业】
-        if (this.ruleForm.stype == 'company' && this.imgFile.productionLicense != '') {
+        if (flag && this.ruleForm.stype == 'company' && this.imgFile.productionLicense != '') {
           let param = new FormData(); //创建form对象
           param.append('file', this.imgFile.productionLicense); //通过append向form对象添加数据
           await uploadImage(param).then(response => {
-            this.ruleForm.productionLicense = response.data.data
+            if (response.data.code != 10000) {
+              this.$message.error(response.data.message)
+              flag = false
+            } else {
+              this.ruleForm.productionLicense = response.data.data
+            }
           })
         }
         if (this.ruleForm.regionIdList == null || this.ruleForm.regionIdList == '' || this.ruleForm.regionIdList
           .length < 0) {
           this.ruleForm.regionIdList = null
         }
-        if(this.ruleForm.regionIdList != null && this.ruleForm.regionIdList != ''){
+        if (this.ruleForm.regionIdList != null && this.ruleForm.regionIdList != '') {
           this.ruleForm.regionIdList = this.ruleForm.regionIdList.map(Number)
         }
-        console.log("要上传的数据：", JSON.stringify(this.ruleForm))
-        // console.log("this.editForbidFlag:",this.editForbidFlag)
-        if(this.isLook && !this.editForbidFlag){
-          console.log("商家认证重新提交")
-          await applyUpdate(JSON.stringify(this.ruleForm)).then(response => {
-            console.log(response.data.data)
-            if (response.data.code == 10000) {
-              this.$message.success("提交成功！")
-              //获取店铺详情
-              this.getStoreDetail()
-            } else {
-              this.$message.success(response.data.message)
-            }
-          })
-        }else{
-          console.log("商家认证")
-          await storeApply(JSON.stringify(this.ruleForm)).then(response => {
-            console.log(response.data.data)
-            if (response.data.code == 10000) {
-              this.$message.success("提交成功！")
-              //获取店铺详情
-              this.getStoreDetail()
-            } else {
-              this.$message.success(response.data.message)
-            }
-          })
+        if (flag) {
+          if (this.isLook && !this.editForbidFlag) {
+            await applyUpdate(JSON.stringify(this.ruleForm)).then(response => {
+              if (response.data.code == 10000) {
+                this.$message.success("提交成功！")
+                //获取店铺详情
+                this.getStoreDetail()
+              } else {
+                this.$message.success(response.data.message)
+              }
+            })
+          } else {
+            await storeApply(JSON.stringify(this.ruleForm)).then(response => {
+              if (response.data.code == 10000) {
+                this.$message.success("提交成功！")
+                //获取店铺详情
+                this.getStoreDetail()
+              } else {
+                this.$message.success(response.data.message)
+              }
+            })
+          }
         }
 
       },
@@ -542,7 +574,8 @@
           this.$message.error('请选择【认证信息】店铺分类！')
           return false
         }
-        if (this.ruleForm.regionIdList == null || this.ruleForm.regionIdList == '' || this.ruleForm.regionIdList.length < 1) {
+        if (this.ruleForm.regionIdList == null || this.ruleForm.regionIdList == '' || this.ruleForm.regionIdList
+          .length < 1) {
           this.$message.error('请选择【认证信息】所在地区！')
           return false
         }
@@ -550,10 +583,6 @@
           this.$message.error('请上传【认证信息】详细地址！')
           return false
         }
-        console.log("this.imgFile.identityFront:", this.imgFile.identityFront)
-        console.log("this.imgFile.identityFront:", this.imgFile.identityFront == null)
-        console.log("this.ruleForm.identityFront:", this.ruleForm.identityFront != null && this.ruleForm
-          .identityFront != '')
         if ((this.imgFile.identityFront == null || this.imgFile.identityFront == '') && (this.ruleForm.identityFront ==
             null && this.ruleForm.identityFront == '')) {
           this.$message.error('请上传【证明材料】身份证正面！')
@@ -708,8 +737,9 @@
       .iconfont {
         font-size: 50px;
       }
-      /deep/ .el-button{
-        border:none;
+
+      /deep/ .el-button {
+        border: none;
       }
     }
 

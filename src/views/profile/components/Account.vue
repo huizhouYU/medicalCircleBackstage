@@ -3,11 +3,14 @@
     <el-form-item label="用户名">
       <el-input v-model.trim="user.name" />
     </el-form-item>
+    <el-form-item label="手机号">
+      <el-input v-model.trim="user.mobile" disabled/>
+    </el-form-item>
     <el-form-item label="Email">
       <el-input v-model.trim="user.email" />
     </el-form-item>
     <el-form-item>
-      <el-button type="primary" class="public-el-submit-btn" @click="submit">更新</el-button>
+      <el-button type="primary" class="public-el-submit-btn" @click="submit" disabled>更新</el-button>
     </el-form-item>
   </el-form>
 </template>
@@ -20,7 +23,8 @@ export default {
       default: () => {
         return {
           name: '',
-          email: ''
+          email: '',
+          mobile:''
         }
       }
     }

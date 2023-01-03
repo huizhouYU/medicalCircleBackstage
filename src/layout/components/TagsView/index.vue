@@ -65,13 +65,9 @@
         let path = this.$route.path
         if (this.$route.meta.showZj != undefined) {
           if (this.$route.meta.showZj) {
-            // console.log("sdffsd")
-            // console.log(route.path)
             path = '/invitationList'
           }
         }
-        //  console.log(route.path)
-        // console.log(route.path === path)
         return route.path === path
       },
       isAffix(tag) {
@@ -138,9 +134,7 @@
         })
       },
       refreshSelectedTag(view) {
-        console.log(view)
         this.$store.dispatch('tagsView/delCachedView', view).then(() => {
-
           const {
             fullPath
           } = view
@@ -152,7 +146,6 @@
         })
       },
       closeSelectedTag(view) {
-        console.log("关闭：",view)
         this.$store.dispatch('tagsView/delView', view).then(({
           visitedViews
         }) => {

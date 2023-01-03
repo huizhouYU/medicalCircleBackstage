@@ -125,6 +125,11 @@ export default {
   created() {
   },
   mounted() {
+    window.scrollTo(0, 0)  //解决新增进来页面加载在底部
+    this.$refs.QuillEditor.quill.enable(false)  ////解决修改进来页面加载在底部
+    setTimeout(() => {
+            this.$refs.QuillEditor.quill.enable(true);//一秒之后可点击
+          }, 1000);
     this.initButton()
     this.initTitle()
   },
@@ -147,7 +152,6 @@ export default {
     },
     // 失去焦点
     onEditorBlur(editor) {
-      // console.log(this.formData.content)
       this.$emit('getContent', this.formData.content)
     },
     // 获得焦点
@@ -158,7 +162,6 @@ export default {
     onEditorChange(editor) {
       // 如果需要手动控制数据同步，父组件需要显式地处理changed事件
       // this.content = editor.html;
-      console.log(editor)
     }
   }
 }

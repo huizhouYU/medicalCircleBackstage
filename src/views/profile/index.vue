@@ -13,9 +13,9 @@
               <el-tab-pane label="账号信息" name="account">
                 <account :user="user" />
               </el-tab-pane>
-              <el-tab-pane label="信息通知" name="timeline">
+             <!-- <el-tab-pane label="信息通知" name="timeline">
                 <timeline />
-              </el-tab-pane>
+              </el-tab-pane> -->
               <el-tab-pane label="修改密码" name="activity" :user="user">
                 <activity />
               </el-tab-pane>
@@ -55,7 +55,8 @@
         'name',
         'avatar',
         'roles',
-        'mobile'
+        'mobile',
+        'email'
       ])
     },
     created() {
@@ -66,7 +67,7 @@
         this.user = {
           name: this.name,
           role: this.roles.join(' | '),
-          email: 'admin@test.com',
+          email: this.email,
           avatar: this.avatar,
           mobile: this.mobile
         }
