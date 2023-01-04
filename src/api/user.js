@@ -67,7 +67,22 @@ export function register(data) {
     data:data
   })
 }
-
+//发送修改短信
+export function updatePwdMsg(data) {
+  return request({
+    url: '/user/updatePwdMsg',
+    method: 'post',
+    data:data
+  })
+}
+//修改密码
+export function updatePwd(query) {
+  return request({
+    url: '/user/updatePwd',
+    method: 'get',
+    params:query
+  })
+}
 //退出登录
 export function logout() {
   return request({

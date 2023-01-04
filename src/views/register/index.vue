@@ -52,7 +52,7 @@
             <div class="agree-item">
               <div class="agree-left">
                 <el-checkbox label="我已阅读同意" v-model="isAgree"></el-checkbox>
-                <a class="agreement" target="_brank" href="http://www.yijiequan.com/#/residencyAgreement" >《用户服务协议》</a>
+                <a class="agreement" target="_brank" href="http://www.yijiequan.cn/#/residencyAgreement" >《用户服务协议》</a>
               </div>
               <span class="login-left" @click="login">立即登录</span>
             </div>

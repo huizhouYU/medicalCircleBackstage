@@ -1,10 +1,10 @@
 <template>
   <div class="sidebar-logo-container" :class="{'collapse':collapse}">
     <transition name="sidebarLogoFade">
-      <a v-if="collapse" key="collapse" class="sidebar-logo-link" href="http://www.yijiequan.com" target="_blank">
+      <a v-if="collapse" key="collapse" class="sidebar-logo-link" href="http://www.yijiequan.cn" target="_blank">
         <img v-if="logo" src="../../../assets/login_images/logo_img.png" class="sidebar-logo-collapse">
       </a>
-      <a v-else key="expand" class="sidebar-logo-link" href="http://www.yijiequan.com" target="_blank">
+      <a v-else key="expand" class="sidebar-logo-link" href="http://www.yijiequan.cn" target="_blank">
         <img v-if="logo" src="../../../assets/login_images/logo.png" class="sidebar-logo">
       </a>
     </transition>

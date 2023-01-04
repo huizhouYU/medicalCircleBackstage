@@ -2,11 +2,9 @@
   <div class="app-container">
     <div v-if="user">
       <el-row :gutter="20">
-
         <el-col :span="6" :xs="24">
           <user-card :user="user" />
         </el-col>
-
         <el-col :span="18" :xs="24" style="height: 100%;">
           <el-card>
             <el-tabs v-model="activeTab">
@@ -16,8 +14,8 @@
              <!-- <el-tab-pane label="信息通知" name="timeline">
                 <timeline />
               </el-tab-pane> -->
-              <el-tab-pane label="修改密码" name="activity" :user="user">
-                <activity />
+              <el-tab-pane label="修改密码" name="activity">
+                <activity :user="user"/>
               </el-tab-pane>
             </el-tabs>
           </el-card>

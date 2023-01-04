@@ -20,7 +20,7 @@
       <el-table-column label="价格" min-width="100">
         <template slot-scope="scope">
           <span v-if="scope.row.saleType == 1">{{scope.row.price}}</span>
-          <span v-else class="default-font">议价</span>
+          <span v-else class="default-font">询价</span>
         </template>
 
       </el-table-column>

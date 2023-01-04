@@ -7,7 +7,8 @@
       <el-form-item label="店铺店标：">
         <div label="图片可拖曳排序：" prop="trialImgs" class="content-images">
           <div class="row">
-            <uploadOne :mrSrc="storeLogo" :isWhole="true" @getImgFile="getStoreLogoImgFile" :limitWidth="limitWidth" :limitHeight="limitHeight"></uploadOne>
+            <uploadOne :mrSrc="storeLogo" :isWhole="true" @getImgFile="getStoreLogoImgFile" :limitWidth="limitWidth"
+              :limitHeight="limitHeight"></uploadOne>
             <div class="gray-tip">请上传300*300的图片，大小不超过2m</div>
           </div>
         </div>
@@ -41,15 +42,23 @@
         <el-input v-model="shopInfo.address" placeholder="请输入店铺地址" autocomplete="off" size="medium" type="text" />
       </el-form-item>
       <!-- 服务内容 -->
-      <el-form-item label="服务内容：">
+      <!-- <el-form-item label="服务内容：">
         <el-input v-model="shopInfo.serviceContent" placeholder="可以描述一下您提供的服务" autocomplete="off" size="medium"
           type="textarea" />
-      </el-form-item>
-     <el-form-item label="资质证书：">
+      </el-form-item> -->
+      <el-form-item label="客服二维码：">
         <div label="图片可拖曳排序：" class="content-images">
           <div class="row">
-            <DragUpload :imgList="imgList" :limit="8" @allList="trialImgs"  :limitWidth="800" :limitHeight="800"/>
-            <div class="gray-tip">请：图片上传不超过8张，图片支持jpg/png格式，不超过3M，尺寸为800*800</div>
+            <DragUpload :imgList="imgQrList" :limit="1" @allList="trialQrImgs" :limitWidth="800" :limitHeight="800" />
+            <div class="gray-tip">上传二维码用于客户及时与您咨询和沟通商品详情，图片支持jpg/png格式，不超过3M，尺寸最大不超过800*800</div>
+          </div>
+        </div>
+      </el-form-item>
+      <el-form-item label="资质证书：">
+        <div label="图片可拖曳排序：" class="content-images">
+          <div class="row">
+            <DragUpload :imgList="imgList" :limit="8" @allList="trialImgs" :limitWidth="800" :limitHeight="800" />
+            <div class="gray-tip">图片上传不超过8张，图片支持jpg/png格式，不超过3M，尺寸最大不超过800*800</div>
           </div>
         </div>
       </el-form-item>
@@ -112,9 +121,10 @@
         }
       }
       return {
-        limitWidth:300,
-        limitHeight:300,
-        imgList:'',
+        limitWidth: 300,
+        limitHeight: 300,
+        imgList: '',
+        imgQrList: '',
         storeLogoImgFile: '',
         storeBannerImgFile: '',
         // shopLogo: require('../../assets/images/shop_logo.png'),
@@ -140,7 +150,7 @@
           longitude: '', //经纬
           latitude: '', //纬度
           address: '', // 店铺地址
-          certificationList:[],//相关证书
+          certificationList: [], //相关证书
           serviceContent: '', //服务内容
           description: '', //店铺简介
         },
@@ -157,7 +167,8 @@
           }]
         },
         ruleForm: {
-          trialImgs: []
+          trialImgs: [],
+          trialQrImgs: []
         },
       }
     },
@@ -178,6 +189,10 @@
               this.storeBanner = this.shopInfo.storeBanner
             }
             this.imgList = this.shopInfo.certificationList
+            this.imgQrList = []
+            if (this.shopInfo.customerServiceQR != undefined && this.shopInfo.customerServiceQR != null) {
+              this.imgQrList.push(this.shopInfo.customerServiceQR)
+            }
           }
         })
       },
@@ -190,7 +205,6 @@
           if (valid) {
             this.submitData()
           } else {
-            console.log('error submit!!')
             return false
           }
         })
@@ -198,52 +212,85 @@
       trialImgs(allList) {
         this.ruleForm.trialImgs = allList
       },
+      trialQrImgs(allList) {
+        this.ruleForm.trialQrImgs = allList
+      },
       async submitData() {
+        var flag = true
         //上传店铺logo
-        console.log("this.storeLogoImgFile:", this.storeLogoImgFile)
         if (this.storeLogoImgFile != '') {
           let param = new FormData(); //创建form对象
           param.append('file', this.storeLogoImgFile); //通过append向form对象添加数据
           await uploadImage(param).then(response => {
-            this.shopInfo.storeLogo = response.data.data
+            if (response.data.code != 10000) {
+              this.$message.error(response.data.message)
+              flag = false
+            } else {
+              this.shopInfo.storeLogo = response.data.data
+            }
           })
         }
         // //上传店铺横幅
-        console.log("this.storeBannerImgFile:", this.storeBannerImgFile)
-        if (this.storeBannerImgFile != '') {
+        if (flag && this.storeBannerImgFile != '') {
           let param = new FormData(); //创建form对象
           param.append('file', this.storeBannerImgFile); //通过append向form对象添加数据
           await uploadImage(param).then(response => {
-            this.shopInfo.storeBanner = response.data.data
+            if (response.data.code != 10000) {
+              this.$message.error(response.data.message)
+              flag = false
+            } else {
+              this.shopInfo.storeBanner = response.data.data
+            }
           })
         }
-
-        console.log("this.ruleForm.trialImgs:",this.ruleForm.trialImgs)
-        //相关证书
-         this.shopInfo.certificationList = []
-        for (var item of this.ruleForm.trialImgs) {
+        // 客服二维码
+        this.shopInfo.customerServiceQR = ''
+        if (flag && this.ruleForm.trialQrImgs.length > 0) {
+          var item = this.ruleForm.trialQrImgs[0]
           if (item.file != '') {
             let param = new FormData(); //创建form对象
             param.append('file', item.file); //通过append向form对象添加数据
             await uploadImage(param).then(response => {
-              console.log(response.data.data)
-              this.shopInfo.certificationList.push(response.data.data)
+              if (response.data.code != 10000) {
+                this.$message.error(response.data.message)
+                flag = false
+              } else {
+                this.shopInfo.customerServiceQR = response.data.data
+              }
             })
           } else {
-            // var newImgUrl = item.imgUrl.split("https://images.weserv.nl/?url=").join("");
-            // this.shopInfo.certificationList.push(newImgUrl)
-            this.shopInfo.certificationList.push(item.imgUrl)
+            this.shopInfo.customerServiceQR = item.imgUrl
           }
         }
-        console.log("this.shopInfo:", JSON.stringify(this.shopInfo))
-        await storeUpdate(JSON.stringify(this.shopInfo)).then(response => {
-          console.log(response.data.data)
-          if (response.data.code == 10000) {
-            this.$message.success("提交成功！")
-          } else {
-            this.$message.success(response.data.message)
+        //相关证书
+        this.shopInfo.certificationList = []
+        for (var item of this.ruleForm.trialImgs) {
+          if (flag) {
+            if (item.file != '') {
+              let param = new FormData(); //创建form对象
+              param.append('file', item.file); //通过append向form对象添加数据
+              await uploadImage(param).then(response => {
+                if (response.data.code != 10000) {
+                  this.$message.error(response.data.message)
+                  flag = false
+                } else {
+                  this.shopInfo.certificationList.push(response.data.data)
+                }
+              })
+            } else {
+              this.shopInfo.certificationList.push(item.imgUrl)
+            }
           }
-        })
+        }
+        if (flag) {
+          await storeUpdate(JSON.stringify(this.shopInfo)).then(response => {
+            if (response.data.code == 10000) {
+              this.$message.success("提交成功！")
+            } else {
+              this.$message.success(response.data.message)
+            }
+          })
+        }
       },
       //先存储店铺logo文件
       getStoreLogoImgFile(file) {
@@ -274,7 +321,6 @@
       },
       // 更换店铺横幅
       handleChange(file, fileList) {
-        console.log(file)
         const isJPG = file.raw.type === "image/jpeg" || file.raw.type === "image/png";
         const isLt3M = file.size / 1024 / 1024 < 3;
         if (!isJPG) {
@@ -287,7 +333,7 @@
           fileList.splice(-1, 1);
           return false;
         }
-       //判断图片大小是否符合要求
+        //判断图片大小是否符合要求
         if (!isLt3M) {
           this.$message.error("上传图片大小不能超过3MB!");
           fileList.splice(-1, 1);
@@ -297,11 +343,11 @@
         this.hideUploadBtn = true
       },
       //判断宽高是否满足要求
-       async isSize(file) {
+      async isSize(file) {
         let imgWidth = "";
         let imgHight = "";
         let valid = false
-       await new Promise(function(resolve, reject) {
+        await new Promise(function(resolve, reject) {
           let width = 1200;
           let height = 110;
           let _URL = window.URL || window.webkitURL;
@@ -311,26 +357,23 @@
             imgWidth = img.width;
             imgHight = img.height;
             valid = img.width == width && img.height == height;
-            console.log(img.width == width && img.height == height)
             valid ? resolve() : reject();
           }
         }).then(() => {
           return file;
         }, () => {
           this.isLoad = true
-            this.$message.warning({
-              message: '上传文件的图片大小不合符标准,宽需要为1200px，高需要为110px。当前上传图片的宽高分别为：' + imgWidth + 'px和' + imgHight + 'px',
-              btn: false
-            })
+          this.$message.warning({
+            message: '上传文件的图片大小不合符标准,宽需要为1200px，高需要为110px。当前上传图片的宽高分别为：' + imgWidth + 'px和' + imgHight + 'px',
+            btn: false
+          })
           return false; //必须加上return false; 才能阻止
           return Promise.reject()
         })
-        console.log("isSize:",valid)
         return valid
       },
       // 删除活动展示照片
       handleRemove(file, fileList) {
-        console.log("删除活动展示照片:",fileList)
         // this.ruleForm.csAvatar = '';
         this.formdata = new FormData();
         this.hideUploadBtn = false
@@ -342,9 +385,8 @@
       },
       //搜索地址 查询结果
       getCoordinate(data) {
-        console.log("getCoordinate:", data)
-        this.shopInfo.longitude = data.lng+''
-        this.shopInfo.latitude = data.lat+''
+        this.shopInfo.longitude = data.lng + ''
+        this.shopInfo.latitude = data.lat + ''
       },
       back() {
         this.$router.back()
