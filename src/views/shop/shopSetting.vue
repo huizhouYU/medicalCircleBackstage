@@ -70,7 +70,7 @@
         <v-amap @mapDing="getCoordinate" :longitude="shopInfo.longitude" :latitude="shopInfo.latitude"></v-amap>
       </el-form-item>
       <el-form-item class="submmit-form-item">
-        <el-button type="primary" class="public-el-submit-btn" @click="submit">提交</el-button>
+        <el-button type="primary" class="public-el-submit-btn" @click="submit" :disabled="!isSubmit">提交</el-button>
       </el-form-item>
     </el-form>
     <!-- 预览图片 -->
@@ -121,6 +121,7 @@
         }
       }
       return {
+        isSubmit: true,
         limitWidth: 300,
         limitHeight: 300,
         imgList: '',
@@ -150,6 +151,7 @@
           longitude: '', //经纬
           latitude: '', //纬度
           address: '', // 店铺地址
+          domain:'',//客服二维码
           certificationList: [], //相关证书
           serviceContent: '', //服务内容
           description: '', //店铺简介
@@ -190,8 +192,8 @@
             }
             this.imgList = this.shopInfo.certificationList
             this.imgQrList = []
-            if (this.shopInfo.customerServiceQR != undefined && this.shopInfo.customerServiceQR != null) {
-              this.imgQrList.push(this.shopInfo.customerServiceQR)
+            if (this.shopInfo.domain != undefined && this.shopInfo.domain != null) {
+              this.imgQrList.push(this.shopInfo.domain)
             }
           }
         })
@@ -217,6 +219,7 @@
       },
       async submitData() {
         var flag = true
+         this.isSubmit = false
         //上传店铺logo
         if (this.storeLogoImgFile != '') {
           let param = new FormData(); //创建form对象
@@ -225,6 +228,7 @@
             if (response.data.code != 10000) {
               this.$message.error(response.data.message)
               flag = false
+              this.isSubmit = true
             } else {
               this.shopInfo.storeLogo = response.data.data
             }
@@ -238,13 +242,14 @@
             if (response.data.code != 10000) {
               this.$message.error(response.data.message)
               flag = false
+              this.isSubmit = true
             } else {
               this.shopInfo.storeBanner = response.data.data
             }
           })
         }
         // 客服二维码
-        this.shopInfo.customerServiceQR = ''
+        this.shopInfo.domain = ''
         if (flag && this.ruleForm.trialQrImgs.length > 0) {
           var item = this.ruleForm.trialQrImgs[0]
           if (item.file != '') {
@@ -254,12 +259,13 @@
               if (response.data.code != 10000) {
                 this.$message.error(response.data.message)
                 flag = false
+                this.isSubmit = true
               } else {
-                this.shopInfo.customerServiceQR = response.data.data
+                this.shopInfo.domain = response.data.data
               }
             })
           } else {
-            this.shopInfo.customerServiceQR = item.imgUrl
+            this.shopInfo.domain = item.imgUrl
           }
         }
         //相关证书
@@ -273,6 +279,7 @@
                 if (response.data.code != 10000) {
                   this.$message.error(response.data.message)
                   flag = false
+                  this.isSubmit = true
                 } else {
                   this.shopInfo.certificationList.push(response.data.data)
                 }
@@ -286,8 +293,10 @@
           await storeUpdate(JSON.stringify(this.shopInfo)).then(response => {
             if (response.data.code == 10000) {
               this.$message.success("提交成功！")
+              this.isSubmit = true
             } else {
               this.$message.success(response.data.message)
+              this.isSubmit = true
             }
           })
         }

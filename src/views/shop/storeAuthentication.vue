@@ -133,10 +133,10 @@
         <!-- 上一步 下一步 -->
         <div v-show="!isLook" class="item-btn lx-btn-pre-sub">
           <el-button class="public-el-submit-btn pre-but" @click="pre">上一步</el-button>
-          <el-button class="public-el-submit-btn" type="primary" plain @click="submitForm('ruleForm')">确认提交</el-button>
+          <el-button class="public-el-submit-btn" type="primary" plain @click="submitForm('ruleForm')" :disabled="!isSubmit">确认提交</el-button>
         </div>
         <div v-show="!editForbidFlag && isLook" class="item-btn">
-          <el-button class="public-el-submit-btn" type="primary" plain @click="submitForm('ruleForm')">重新提交</el-button>
+          <el-button class="public-el-submit-btn" type="primary" plain @click="submitForm('ruleForm')" :disabled="!isSubmit">重新提交</el-button>
         </div>
       </div>
     </el-form>
@@ -173,6 +173,7 @@
         }
       }
       return {
+        isSubmit:true,
         examineResult: '-1', // 审核状态
         cities: [],
         isLook: false, // 是否查看
@@ -413,6 +414,7 @@
       },
       async postData() {
         var flag = true
+        this.isSubmit = false
         //上传身份证正面
         if (this.imgFile.identityFront != '') {
           let param = new FormData(); //创建form对象
@@ -421,6 +423,7 @@
             if (response.data.code != 10000) {
               this.$message.error(response.data.message)
               flag = false
+              this.isSubmit = true
             } else {
               this.ruleForm.identityFront = response.data.data
             }
@@ -434,6 +437,7 @@
             if (response.data.code != 10000) {
               this.$message.error(response.data.message)
               flag = false
+              this.isSubmit = true
             } else {
               this.ruleForm.identityBack = response.data.data
             }
@@ -447,6 +451,7 @@
             if (response.data.code != 10000) {
               this.$message.error(response.data.message)
               flag = false
+              this.isSubmit = true
             } else {
               this.ruleForm.identityHandle = response.data.data
             }
@@ -460,6 +465,7 @@
             if (response.data.code != 10000) {
               this.$message.error(response.data.message)
               flag = false
+              this.isSubmit = true
             } else {
               this.ruleForm.otherCertificate = response.data.data
             }
@@ -473,6 +479,7 @@
             if (response.data.code != 10000) {
               this.$message.error(response.data.message)
               flag = false
+              this.isSubmit = true
             } else {
               this.ruleForm.businessCertificate = response.data.data
             }
@@ -486,6 +493,7 @@
             if (response.data.code != 10000) {
               this.$message.error(response.data.message)
               flag = false
+              this.isSubmit = true
             } else {
               this.ruleForm.productCertificate = response.data.data
             }
@@ -499,6 +507,7 @@
             if (response.data.code != 10000) {
               this.$message.error(response.data.message)
               flag = false
+              this.isSubmit = true
             } else {
               this.ruleForm.businessLicense = response.data.data
             }
@@ -512,6 +521,7 @@
             if (response.data.code != 10000) {
               this.$message.error(response.data.message)
               flag = false
+              this.isSubmit = true
             } else {
               this.ruleForm.productionLicense = response.data.data
             }
@@ -531,8 +541,10 @@
                 this.$message.success("提交成功！")
                 //获取店铺详情
                 this.getStoreDetail()
+                this.isSubmit = true
               } else {
                 this.$message.success(response.data.message)
+                this.isSubmit = true
               }
             })
           } else {
@@ -541,13 +553,14 @@
                 this.$message.success("提交成功！")
                 //获取店铺详情
                 this.getStoreDetail()
+                this.isSubmit = true
               } else {
                 this.$message.success(response.data.message)
+                this.isSubmit = true
               }
             })
           }
         }
-
       },
       checkData() {
         if (this.ruleForm.stype == null || this.ruleForm.stype == '') {

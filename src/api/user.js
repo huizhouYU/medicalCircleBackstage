@@ -76,11 +76,11 @@ export function updatePwdMsg(data) {
   })
 }
 //修改密码
-export function updatePwd(query) {
+export function updatePwd(data) {
   return request({
     url: '/user/updatePwd',
-    method: 'get',
-    params:query
+    method: 'post',
+    data:data
   })
 }
 //退出登录
