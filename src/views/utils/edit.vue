@@ -154,6 +154,9 @@ export default {
     onEditorBlur(editor) {
       this.$emit('getContent', this.formData.content)
     },
+    putContent(){
+      this.$emit('getContent', this.formData.content)
+    },
     // 获得焦点
     onEditorFocus(editor) { },
     // 开始

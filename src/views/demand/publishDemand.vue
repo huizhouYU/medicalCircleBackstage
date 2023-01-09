@@ -68,7 +68,7 @@
         </el-form-item>
         <!-- 详情描述 -->
         <el-form-item label="详情描述：" class="product-detail">
-          <edit class="edit" :description="demandInfo.description" @getContent="getDescription" />
+          <edit class="edit" ref="edit"  :description="demandInfo.description" @getContent="getDescription" />
         </el-form-item>
       </div>
       <div v-show="demandInfo.articleType ==2">
@@ -100,7 +100,7 @@
         </el-form-item>
         <!-- 个人简述 -->
         <el-form-item label="个人简述：" class="product-detail">
-          <edit class="edit" :description="demandInfo.description" @getContent="getDescription" />
+          <edit class="edit" ref="personEdit" :description="demandInfo.description" @getContent="getDescription" />
         </el-form-item>
       </div>
       <!-- 联系信息 -->
@@ -217,6 +217,7 @@
       // },
       //获取详情 内容
       getDescription(val) {
+        console.log("获取富文本：",val)
         this.demandInfo.description = val
       },
       //发布
@@ -224,6 +225,11 @@
         this.$refs['demandInfo'].validate((valid) => {
           if (valid) {
             if (this.checkData()) {
+              if(this.demandInfo.articleType == 3){
+                this.$refs.personEdit.putContent()
+              }else{
+               this.$refs.edit.putContent()
+              }
               this.submitDemand()
             }
           } else {

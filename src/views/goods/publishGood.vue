@@ -88,7 +88,7 @@
       </el-form-item>
       <!-- 产品详情 -->
       <el-form-item label="产品详情：" class="product-detail">
-        <edit class="edit" @getContent="getContentData" :description="goodInfo.content"></edit>
+        <edit class="edit" ref="edit"  @getContent="getContentData" :description="goodInfo.content"></edit>
       </el-form-item>
       <!-- 交易方式 -->
       <el-form-item label="交易方式：">
@@ -473,6 +473,8 @@
             }
           }
         }
+        //再次获取富文本信息
+        this.$refs.edit.putContent()
         if (flag) {
           this.goodInfo.defaultImage = this.goodInfo.imageList[0]
           if (this.goodInfo.goodsId != undefined) { //编辑商品
