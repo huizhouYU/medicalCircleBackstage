@@ -179,7 +179,7 @@ const actions = {
         } = data
         var roles = []
         //admin:具体最高权限； company personal
-        if (store.stype == null) {
+        if (store == null || store.stype == undefined || store.stype == null) {
           roles.push('admin')
         } else {
           roles.push(store.stype)
