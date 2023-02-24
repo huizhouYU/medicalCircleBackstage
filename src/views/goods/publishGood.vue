@@ -1,130 +1,200 @@
 <template>
-  <div>
+  <div class="publish-good-box">
     <!-- 编辑商品区域 -->
-    <el-form ref="goodInfo" :model="goodInfo" label-width="100px" class="eidt-box" label-position="right">
+    <el-form ref="goodInfo" :model="goodInfo" label-width="100px" class="eidt-form" label-position="right">
       <!-- 产品类目 -->
-      <el-form-item label="产品类目：">
+      <!-- <div class="cart-item"> -->
+      <el-form-item label="产品类目：" class="cart-item">
         <span @click="preStep()" class="chooseClassify-span">{{goodInfo.chooseClassify||'请重新选择类目'}}</span>
       </el-form-item>
-      <!-- 展示区域 -->
-      <el-form-item label="展示区域：" class="item-name">
-        <el-radio v-model="goodInfo.type" label="material">配件专区</el-radio>
-        <el-radio v-model="goodInfo.type" label="equipment">医疗器械</el-radio>
-      </el-form-item>
-      <!-- 产品名称 -->
-      <el-form-item label="产品名称：" class="item-name">
-        <el-input v-model="goodInfo.goodsName" placeholder="请输入商品名称" maxlength="40" show-word-limit></el-input>
-      </el-form-item>
-      <!-- 所属品牌 -->
-      <el-form-item label="所属品牌：" class="item-brand">
-        <el-select v-model="goodInfo.brandId" class="select-brand" v-show="!goodInfo.brandInputType">
-          <el-option v-for="item in brandsOptions" :key="item.brandId" :label="item.brandName||'-'"
-            :value="item.brandId">
-          </el-option>
-        </el-select>
-        <el-input v-model="goodInfo.brandName" placeholder="请输入商品品牌" maxlength="40" show-word-limit
-          v-show="goodInfo.brandInputType">
-        </el-input>
-        <el-checkbox v-model="goodInfo.brandInputType">自定义品牌</el-checkbox>
-      </el-form-item>
-      <!-- 产品规格： -->
-      <el-form-item label="产品规格：" class="product-specs">
-        <el-form-item label="销售类型" class="product-specs-item">
-          <el-select v-model="goodInfo.saleType" class="select-item" @change="isEditPrice()">
-            <el-option v-for="item in xsOptions" :key="item.value" :label="item.label" :value="item.value">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="价格" class="product-specs-item">
-          <el-input type="text" v-model="goodInfo.price" placeholder="请输入价格" :disabled="!isEditPriceFlag"
-            onkeyup="if(!this.value.match(/^[\+\-]?\d*?\.?\d*?$/))this.value=this.t_value;else this.t_value=this.value;if(this.value.match(/^(?:[\+\-]?\d+(?:\.\d+)?)?$/))this.o_value=this.value"
-            onblur="if(!this.value.match(/^(?:[\+\-]?\d+(?:\.\d+)?|\.\d*?)?$/))this.value=this.o_value;else{if(this.value.match(/^\.\d+$/))this.value=0+this.value;if(this.value.match(/^\.$/))this.value=0;this.o_value=this.value}">
-          </el-input>
-        </el-form-item>
-        <el-form-item label="商品编码" class="product-specs-item">
-          <el-input v-model="goodInfo.goodsPn" placeholder="产品P/N码或识别码" onkeyup="value=value.replace(/[^\w\.\/]/ig,'')">
-          </el-input>
-        </el-form-item>
-        <el-form-item label="库存" class="product-specs-item">
-          <el-input type="text" v-model="goodInfo.qty" placeholder="请输入商品库存"
-            onkeyup="this.value=this.value.replace(/\D/g,'')"></el-input>
-        </el-form-item>
-        <el-form-item label="新旧程度" class="product-specs-item">
-          <el-select v-model="goodInfo.degree" class="select-item" placeholder="请选择">
-            <el-option v-for="item in newOrOrdDegreeOptions" :key="item.value" :label="item.label" :value="item.value">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="质保期限" class="product-specs-item shelf-life">
-          <el-input type="text" v-model="goodInfo.qualityTime" placeholder=""
-            onkeyup="this.value=this.value.replace(/\D/g,'')"></el-input>
-          <el-select v-model="goodInfo.qualityTimeUnit" class="select-item" placeholder="请选择">
-            <el-option v-for="item in shelfLifeOptions" :key="item.value" :label="item.label" :value="item.value">
-            </el-option>
-          </el-select>
-        </el-form-item>
-      </el-form-item>
-      <!-- 产品主图 -->
-      <el-form-item label="产品主图：" class="">
-        <div label="图片可拖曳排序：" prop="trialImgs" class="">
-          <div class="">
-            <DragUpload @allList="trialImgs" :limit="limit" :limitWidth="800" :limitHeight="800" :imgList="imgList">
-              <!-- <DragUpload :imgList="imgList" :limit="5" @allList="trialImgs"  :limitWidth="800" :limitHeight="800"/> -->
-            </DragUpload>
-            <div class="gray-tip">请：主图按照图片上传顺序展示，图片支持jpg/png格式，不超过3M，尺寸最大为800*800，拖拽图片可调整排序</div>
-          </div>
-        </div>
-      </el-form-item>
-      <!-- 产品长图 -->
-      <el-form-item label="产品长图：" class="">
-        <div label="图片可拖曳排序：" prop="longTrialImgs" class="">
-          <div class="">
-            <DragUpload @allList="longTrialImgs" :limit="longLimit" :limitWidth="750" :limitHeight="1000"
-              :imgList="longImages">
-            </DragUpload>
-            <div class="gray-tip">请：图片支持jpg/png格式，不超过3M，尺寸最大为750*1000，拖拽图片可调整排序</div>
-          </div>
-        </div>
-      </el-form-item>
-      <!-- 产品详情 -->
-      <el-form-item label="产品详情：" class="product-detail">
-        <edit class="edit" ref="edit"  @getContent="getContentData" :description="goodInfo.content"></edit>
-      </el-form-item>
-      <!-- 交易方式 -->
-      <el-form-item label="交易方式：">
-        <el-select v-model="goodInfo.tradeMode" class="select-item">
-          <el-option v-for="item in fareOptions" :key="item.value" :label="item.label" :value="item.value">
-          </el-option>
-        </el-select>
-      </el-form-item>
-      <!-- 商品标签 -->
-      <el-form-item label="商品标签：" class="prodect-tag">
-        <div class="content">
-          <div class="tags-content">
-            <el-tag :key="tag" v-for="tag in goodInfo.tagList" closable :disable-transitions="false"
-              @close="handleClose(tag)">
-              {{tag}}
-            </el-tag>
-            <el-input v-model="goodTag" placeholder="添加标签" maxlength="4" @keyup.enter.native="addTag()"
-              v-show="inputVisible"></el-input>
-          </div>
-          <span class="gray-tip">最多可填写5个商品标签,每个标签最多4个字</span>
-        </div>
-      </el-form-item>
-      <!-- 立即上架 -->
-      <el-form-item label="立即上架：" class="prodect-grounding-item">
-        <el-switch v-model="goodIfShow" active-color="#1890FF">
-        </el-switch>
-      </el-form-item>
-      <!-- 是否推荐 -->
-      <el-form-item label="是否推荐：" class="prodect-recommendValue">
-        <el-switch v-model="goodRecommended" active-color="#13ce66">
-        </el-switch>
-        <span class="gray-tip">被推荐的商品会显示在店铺首页</span>
-      </el-form-item>
-      <div class="submit">
-        <el-button type="primary" class="public-el-submit-btn" @click="submit" :disabled="!isSubmit">提交</el-button>
+      <!-- </div> -->
+      <div class="eidt-box">
+        <el-tabs v-model="activeName" @tab-click="handleClick" class="publish-good-tabs">
+          <!-- TAB:基本信息 -->
+          <el-tab-pane label="基本信息" name="first">
+            <!-- 展示区域 -->
+            <div label="展示区域：" class="my-item">
+              <div class="my-item-key">展示区域：</div>
+              <span class="bule-font">
+                <template v-if="goodInfo.type == 'material' ">配件专区</template>
+                <template v-else-if="goodInfo.type == 'equipment' ">医疗器械</template>
+              </span>
+            </div>
+            <!-- 销售类型 -->
+            <el-form-item label="销售类型：" class="item-name">
+              <div class="sell-type-select">
+                <div :class="['sell-type-item',{'select':goodInfo.saleType == '1'}]" @click="goodInfo.saleType = '1'">
+                  <span class="type-title">咨询议价</span>
+                  <span class="type-remark">无需填写价格</span>
+                  <div class="img-box">
+                    <img src="../../assets/images/pic_yijia_def.png" alt="" v-show="goodInfo.saleType != '1'">
+                    <img src="../../assets/images/pic_yijia_sel.png" alt="" v-show="goodInfo.saleType == '1'">
+                  </div>
+                </div>
+                <div :class="['sell-type-item',{'select':goodInfo.saleType == '2'}]" @click="goodInfo.saleType = '2'">
+                  <span class="type-title">线上销售</span>
+                  <span class="type-remark">需填写价格</span>
+                  <div class="img-box">
+                    <img src="../../assets/images/pic_xiaoshou_def.png" alt="" v-show="goodInfo.saleType != '2'">
+                    <img src="../../assets/images/pic_xiaoshou_sel.png" alt="" v-show="goodInfo.saleType == '2'">
+                  </div>
+                </div>
+              </div>
+            </el-form-item>
+            <!-- 产品名称 -->
+            <el-form-item label="产品名称：" class="item-name">
+              <el-input v-model="goodInfo.goodsName" placeholder="请输入商品名称" maxlength="40" show-word-limit></el-input>
+            </el-form-item>
+            <!-- 所属品牌 -->
+            <el-form-item label="所属品牌：" class="item-brand">
+              <el-select v-model="goodInfo.brandId" class="select-brand" v-show="!goodInfo.brandInputType">
+                <el-option v-for="item in brandsOptions" :key="item.brandId" :label="item.brandName||'-'"
+                  :value="item.brandId">
+                </el-option>
+              </el-select>
+              <el-input v-model="goodInfo.brandName" placeholder="请输入商品品牌" maxlength="40" show-word-limit
+                v-show="goodInfo.brandInputType">
+              </el-input>
+              <el-checkbox v-model="goodInfo.brandInputType">自定义品牌</el-checkbox>
+            </el-form-item>
+            <!-- 产品主图 -->
+            <el-form-item label="产品主图：" class="">
+              <div label="图片可拖曳排序：" prop="trialImgs" class="">
+                <div class="">
+                  <!-- <DragUpload @allList="trialImgs" :limit="limit" :limitWidth="800" :limitHeight="800" :imgList="imgList"> -->
+                  <DragUpload @allList="trialImgs" :limit="limit" :imgList="imgList">
+                    <!-- <DragUpload :imgList="imgList" :limit="5" @allList="trialImgs"  :limitWidth="800" :limitHeight="800"/> -->
+                  </DragUpload>
+                  <div class="gray-tip">注：主图按照图片上传顺序展示，图片支持jpg/png格式，尺寸建议为800*800(1：1)，拖拽图片可调整排序</div>
+                </div>
+              </div>
+            </el-form-item>
+            <!-- 产品长图 -->
+            <!-- <el-form-item label="产品长图：" class="">
+              <div label="图片可拖曳排序：" prop="longTrialImgs" class="">
+                <div class="">
+                  <DragUpload @allList="longTrialImgs" :limit="longLimit" :imgList="longImages">
+                  </DragUpload>
+                  <div class="gray-tip">请：图片支持jpg/png格式，不超过3M，尺寸最大为750*1000，拖拽图片可调整排序</div>
+                </div>
+              </div>
+            </el-form-item> -->
+            <!-- 商品标签 -->
+            <el-form-item label="商品标签：" class="prodect-tag">
+              <div class="content">
+                <div class="tags-content">
+                  <el-tag :key="tag" v-for="tag in goodInfo.tagList" closable :disable-transitions="false"
+                    @close="handleClose(tag)">
+                    {{tag}}
+                  </el-tag>
+                  <el-input v-model="goodTag" placeholder="添加标签" maxlength="4" @keyup.enter.native="addTag()"
+                    v-show="inputVisible"></el-input>
+                </div>
+                <span class="gray-tip">填写商品卖点，每个标签不超过4个字，最多添加5个标签</span>
+              </div>
+            </el-form-item>
+            <!-- 立即上架 -->
+            <div class="my-item">
+              <div class="my-item-key">立即上架：</div>
+              <el-switch v-model="goodIfShow" active-color="#1890FF">
+              </el-switch>
+            </div>
+            <!-- 是否推荐 -->
+            <div class="my-item">
+              <div class="my-item-key">是否推荐：</div>
+              <el-switch v-model="goodRecommended" active-color="#13ce66">
+              </el-switch>
+               <span class="gray-tip">被推荐的商品会显示在店铺首页</span>
+            </div>
+           <!-- <el-form-item label="是否推荐：" class="prodect-recommendValue">
+              <el-switch v-model="goodRecommended" active-color="#13ce66">
+              </el-switch>
+              <span class="gray-tip">被推荐的商品会显示在店铺首页</span>
+            </el-form-item> -->
+
+            <div class="submit">
+              <el-button type="primary" class="public-el-submit-btn" @click="activeName = 'second'">下一步</el-button>
+            </div>
+          </el-tab-pane>
+          <!-- TAB:商品规格 -->
+          <el-tab-pane label="规格库存" name="second">
+            <!-- 选择规格 -->
+            <el-form-item label="选择规格：" class="">
+               <el-select v-model="specs.value" filterable placeholder="请选择">
+                   <el-option
+                     v-for="item in specs.options"
+                     :key="item.value"
+                     :label="item.label"
+                     :value="item.value">
+                   </el-option>
+                 </el-select>
+                 <el-button type="primary">确定</el-button>
+                 <el-button class="add-spaces-btn">添加规格模板</el-button>
+             </el-form-item>
+             <!-- 添加新规格 -->
+             <el-form-item label="" class="">
+                  <el-button type="primary" icon="el-icon-plus">添加新规格</el-button>
+                  <el-button type="success" class="add-spaces-btn">立即生成</el-button>
+              </el-form-item>
+            <!-- 产品规格： -->
+           <!-- <el-form-item label="产品规格：" class="product-specs">
+              <el-form-item label="销售类型" class="product-specs-item">
+                <el-select v-model="goodInfo.saleType" class="select-item" @change="isEditPrice()">
+                  <el-option v-for="item in xsOptions" :key="item.value" :label="item.label" :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="价格" class="product-specs-item">
+                <el-input type="text" v-model="goodInfo.price" placeholder="请输入价格" :disabled="!isEditPriceFlag"
+                  onkeyup="if(!this.value.match(/^[\+\-]?\d*?\.?\d*?$/))this.value=this.t_value;else this.t_value=this.value;if(this.value.match(/^(?:[\+\-]?\d+(?:\.\d+)?)?$/))this.o_value=this.value"
+                  onblur="if(!this.value.match(/^(?:[\+\-]?\d+(?:\.\d+)?|\.\d*?)?$/))this.value=this.o_value;else{if(this.value.match(/^\.\d+$/))this.value=0+this.value;if(this.value.match(/^\.$/))this.value=0;this.o_value=this.value}">
+                </el-input>
+              </el-form-item>
+              <el-form-item label="商品编码" class="product-specs-item">
+                <el-input v-model="goodInfo.goodsPn" placeholder="产品P/N码或识别码"
+                  onkeyup="value=value.replace(/[^\w\.\/]/ig,'')">
+                </el-input>
+              </el-form-item>
+              <el-form-item label="库存" class="product-specs-item">
+                <el-input type="text" v-model="goodInfo.qty" placeholder="请输入商品库存"
+                  onkeyup="this.value=this.value.replace(/\D/g,'')"></el-input>
+              </el-form-item>
+              <el-form-item label="新旧程度" class="product-specs-item" v-show="goodInfo.type == 'material'">
+                <el-select v-model="goodInfo.degree" class="select-item" placeholder="请选择">
+                  <el-option v-for="item in newOrOrdDegreeOptions" :key="item.value" :label="item.label"
+                    :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="质保期限" class="product-specs-item shelf-life">
+                <el-input type="text" v-model="goodInfo.qualityTime" placeholder=""
+                  onkeyup="this.value=this.value.replace(/\D/g,'')"></el-input>
+                <el-select v-model="goodInfo.qualityTimeUnit" class="select-item" placeholder="请选择">
+                  <el-option v-for="item in shelfLifeOptions" :key="item.value" :label="item.label" :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-form-item> -->
+            <div class="submit">
+              <el-button  class="public-el-submit-btn" @click="activeName = 'first'">上一步</el-button>
+              <el-button type="primary" class="public-el-submit-btn" @click="activeName = 'third'">下一步</el-button>
+            </div>
+          </el-tab-pane>
+          <!-- TAB:商品详情 -->
+          <el-tab-pane label="商品详情" name="third">
+            <!-- 产品详情 -->
+            <el-form-item label="产品详情：" class="product-detail">
+              <edit class="edit" ref="edit" @getContent="getContentData" :description="goodInfo.content"></edit>
+            </el-form-item>
+            <div class="submit">
+              <el-button  class="public-el-submit-btn" @click="activeName = 'second'">上一步</el-button>
+              <el-button type="primary" class="public-el-submit-btn" @click="submit" :disabled="!isSubmit">提交
+              </el-button>
+            </div>
+          </el-tab-pane>
+        </el-tabs>
       </div>
+
     </el-form>
     <!-- 修改类目 -->
     <el-dialog title="选择类目" :close-on-click-modal="false" :visible.sync="cartDialogVisible" width="800px"
@@ -171,6 +241,26 @@
     },
     data() {
       return {
+        specs:{
+          options: [{
+                    value: '选项1',
+                    label: '黄金糕'
+                  }, {
+                    value: '选项2',
+                    label: '双皮奶'
+                  }, {
+                    value: '选项3',
+                    label: '蚵仔煎'
+                  }, {
+                    value: '选项4',
+                    label: '龙须面'
+                  }, {
+                    value: '选项5',
+                    label: '北京烤鸭'
+                  }],
+                  value: ''
+        },
+        activeName: 'first',
         isSubmit: true,
         temporaryCartData: '',
         cartDialogVisible: false,
@@ -302,6 +392,9 @@
       this.getParams()
     },
     methods: {
+      handleClick(tab, event) {
+        console.log(tab, event);
+      },
       getParams() {
         // 销售类型
         if (this.roles.includes('personal')) {
@@ -499,7 +592,7 @@
             goodCreate(JSON.stringify(this.goodInfo)).then(response => {
               var res = response.data.data
               if (response.data.code != '10000') { //失败
-              this.isSubmit = true
+                this.isSubmit = true
                 this.$message.error(response.data.message)
               } else { //成功
                 this.$message({
@@ -558,33 +651,22 @@
 </script>
 
 <style scoped lang="less">
-  // 编辑商品区域
-  .eidt-box {
-    background-color: #FFFFFF;
-    padding: 20px 35px 30px 15px;
+  .bule-font {
+    color: #1890FF;
+  }
+
+  .cart-item {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    height: 74px;
+    background: #FFFFFF;
     box-shadow: 0px 2px 10px 1px rgba(0, 0, 0, 0.06);
     border-radius: 6px 6px 6px 6px;
-    font-size: 12px;
-    font-family: Microsoft YaHei-Regular, Microsoft YaHei;
-    font-weight: 400;
-    color: #333333;
-
-    /deep/ .el-form-item {
-      margin-bottom: 30px;
-    }
-
-    /deep/ .el-form-item__label {
-      padding-right: 30px;
-    }
-
-    /deep/ .el-input {
-      width: 250px;
-    }
-
-    /deep/ .el-input--medium .el-input__inner {
-      height: 34px;
-      line-height: 34px;
-    }
+    box-sizing: border-box;
+    margin-bottom: 32px;
+    padding-left: 15px;
 
     // 产品类目
     .chooseClassify-span {
@@ -593,6 +675,113 @@
       font-family: Microsoft YaHei-Regular, Microsoft YaHei;
       font-weight: 400;
     }
+
+    /deep/.el-form-item__content {
+      margin-left: 0px !important;
+    }
+  }
+
+  // 编辑商品区域
+  .eidt-box {
+    background-color: #FFFFFF;
+    padding: 0px 35px 30px 15px;
+    box-shadow: 0px 2px 10px 1px rgba(0, 0, 0, 0.06);
+    border-radius: 6px 6px 6px 6px;
+    font-size: 12px;
+    font-family: Microsoft YaHei-Regular, Microsoft YaHei;
+    font-weight: 400;
+    color: #333333;
+
+    .my-item:first-child {
+      margin-top: 30px;
+    }
+
+    .my-item {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      margin: 0px 0px 25px;
+
+      .my-item-key {
+        box-sizing: border-box;
+        padding-left: 10px;
+        width: 100px;
+        font-size: 12px;
+        font-family: Microsoft YaHei-Regular, Microsoft YaHei;
+        font-weight: 400;
+        color: #333333;
+      }
+    }
+
+    // 销售类型
+    .sell-type-select {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+
+      .sell-type-item {
+        position: relative;
+        box-sizing: border-box;
+        width: 140px;
+        height: 65px;
+        background: #FFFFFF;
+        border-radius: 4px 4px 4px 4px;
+        opacity: 1;
+        border: 1px solid #EBEEF5;
+        padding-left: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+
+        .type-title {
+          line-height: 12px;
+          font-size: 12px;
+          font-family: Microsoft YaHei-Regular, Microsoft YaHei;
+          font-weight: 400;
+          color: #333333;
+        }
+
+        .type-remark {
+          line-height: 16px;
+          font-size: 12px;
+          font-family: Microsoft YaHei-Regular, Microsoft YaHei;
+          font-weight: 400;
+          color: #999999;
+        }
+
+        .img-box {
+          position: absolute;
+          bottom: 5px;
+          right: 6px;
+          width: 40px;
+          height: 40px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+
+          img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+          }
+        }
+      }
+
+      .sell-type-item+.sell-type-item {
+        margin-left: 40px;
+      }
+
+      .select {
+        border: 1px solid #1890FF;
+      }
+    }
+
+  //添加规格模板
+  .add-spaces-btn{
+    margin-right: 20px;
+  }
+
 
     .item-brand {
       /deep/.el-form-item__content {
@@ -642,9 +831,9 @@
       flex-direction: column;
       margin-left: -1px;
 
-      /deep/.el-form-item__label {
-        flex: 1;
-      }
+      // /deep/.el-form-item__label {
+      //   flex: 1;
+      // }
 
       /deep/.el-form-item__content {
         width: 100%;
@@ -671,6 +860,7 @@
     font-weight: 400;
     color: #BBBBBB;
     margin-top: 5px;
+    line-height: 12px;
   }
 
   // 商品标签
@@ -700,17 +890,8 @@
     align-items: center;
     margin-top: 30px;
 
-    .but-submit {
-      width: 92px;
-      height: 34px;
-      background: #1890FF;
-      border-radius: 6px 6px 6px 6px;
-      font-size: 12px;
-      font-family: Microsoft YaHei-Regular, Microsoft YaHei;
-      font-weight: 400;
-      color: #FFFFFF;
-      border: none;
-      outline: none;
+    .public-el-submit-btn+.public-el-submit-btn {
+      margin-left: 40px;
     }
   }
 </style>
@@ -721,5 +902,48 @@
 
   .el-dialog__footer {
     bottom: 10px;
+  }
+
+  .el-dialog__header {
+    padding-bottom: 0px;
+  }
+
+  .el-dialog__body {
+    padding-top: 0px;
+  }
+
+  .el-tabs__item {
+    font-weight: 400;
+  }
+
+  .el-form-item {
+    margin-bottom: 25px;
+  }
+
+  .el-input {
+    width: 420px;
+  }
+
+  .el-input--medium .el-input__inner {
+    height: 34px;
+    line-height: 34px;
+  }
+
+  /* 标签 */
+  .tags-content .el-input {
+    width: 80px;
+  }
+
+  .tags-content .el-input--medium .el-input__inner {
+    height: 30px;
+    line-height: 30px;
+    border-radius: 15px;
+  }
+
+
+  .el-form-item__label {
+    font-size: 12px;
+    padding-right: 30px;
+    color: #333333;
   }
 </style>

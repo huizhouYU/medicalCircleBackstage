@@ -192,7 +192,7 @@
     border: 1px solid #EBEEF5;
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
+    justify-content: center;
     align-items: center;
     position: relative;
     cursor: pointer;
@@ -201,6 +201,7 @@
     img {
       width: 20px;
       height: 20px;
+      margin-bottom: 8px;
     }
 
     span {
