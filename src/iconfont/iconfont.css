@@ -13,6 +13,18 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-guanbishixin:before {
+  content: "\e8dc";
+}
+
+.icon-xiangshang1:before {
+  content: "\e600";
+}
+
+.icon-xiangxia:before {
+  content: "\e626";
+}
+
 .icon-zuojiantou:before {
   content: "\e610";
 }

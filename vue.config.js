@@ -40,7 +40,8 @@ module.exports = {
     proxy: { // 添加代理配置
       [process.env.VUE_APP_BASE_API]: {
         // target:"https://mobile-ms.uat.homecreditcfc.cn/mock/633261554fab890028c58115/yijiequan",
-        target: "http://seller-api.yijiequan.cn",
+        // target: "http://seller-api.yijiequan.cn",
+        target: process.env.VUE_APP_BASE_API,
         changeOrigin: true,
         pathRewrite: {
           ["^" + process.env.VUE_APP_BASE_API]: ""

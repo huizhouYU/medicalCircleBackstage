@@ -3,11 +3,9 @@
     <!-- 编辑商品区域 -->
     <el-form ref="goodInfo" :model="goodInfo" label-width="100px" class="eidt-form" label-position="right">
       <!-- 产品类目 -->
-      <!-- <div class="cart-item"> -->
       <el-form-item label="产品类目：" class="cart-item">
         <span @click="preStep()" class="chooseClassify-span">{{goodInfo.chooseClassify||'请重新选择类目'}}</span>
       </el-form-item>
-      <!-- </div> -->
       <div class="eidt-box">
         <el-tabs v-model="activeName" @tab-click="handleClick" class="publish-good-tabs">
           <!-- TAB:基本信息 -->
@@ -82,6 +80,11 @@
             <!-- 商品标签 -->
             <el-form-item label="商品标签：" class="prodect-tag">
               <div class="content">
+                <el-input v-model="goodTag" placeholder="请输入商品名称" maxlength="15" show-word-limit></el-input>
+                <span class="gray-tip">填写商品卖点，最多不超过15个字</span>
+              </div>
+
+              <!-- <div class="content">
                 <div class="tags-content">
                   <el-tag :key="tag" v-for="tag in goodInfo.tagList" closable :disable-transitions="false"
                     @close="handleClose(tag)">
@@ -90,8 +93,7 @@
                   <el-input v-model="goodTag" placeholder="添加标签" maxlength="4" @keyup.enter.native="addTag()"
                     v-show="inputVisible"></el-input>
                 </div>
-                <span class="gray-tip">填写商品卖点，每个标签不超过4个字，最多添加5个标签</span>
-              </div>
+              </div> -->
             </el-form-item>
             <!-- 立即上架 -->
             <div class="my-item">
@@ -102,16 +104,12 @@
             <!-- 是否推荐 -->
             <div class="my-item">
               <div class="my-item-key">是否推荐：</div>
-              <el-switch v-model="goodRecommended" active-color="#13ce66">
-              </el-switch>
-               <span class="gray-tip">被推荐的商品会显示在店铺首页</span>
+              <div class="prodect-recommendValue">
+                <el-switch v-model="goodRecommended" active-color="#13ce66">
+                </el-switch>
+                <span class="gray-tip">被推荐的商品会显示在店铺首页</span>
+              </div>
             </div>
-           <!-- <el-form-item label="是否推荐：" class="prodect-recommendValue">
-              <el-switch v-model="goodRecommended" active-color="#13ce66">
-              </el-switch>
-              <span class="gray-tip">被推荐的商品会显示在店铺首页</span>
-            </el-form-item> -->
-
             <div class="submit">
               <el-button type="primary" class="public-el-submit-btn" @click="activeName = 'second'">下一步</el-button>
             </div>
@@ -120,24 +118,61 @@
           <el-tab-pane label="规格库存" name="second">
             <!-- 选择规格 -->
             <el-form-item label="选择规格：" class="">
-               <el-select v-model="specs.value" filterable placeholder="请选择">
-                   <el-option
-                     v-for="item in specs.options"
-                     :key="item.value"
-                     :label="item.label"
-                     :value="item.value">
-                   </el-option>
-                 </el-select>
-                 <el-button type="primary">确定</el-button>
-                 <el-button class="add-spaces-btn">添加规格模板</el-button>
-             </el-form-item>
-             <!-- 添加新规格 -->
-             <el-form-item label="" class="">
-                  <el-button type="primary" icon="el-icon-plus">添加新规格</el-button>
-                  <el-button type="success" class="add-spaces-btn">立即生成</el-button>
+              <el-select v-model="specs.value" filterable placeholder="请选择">
+                <el-option v-for="item in specs.options" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
+              </el-select>
+              <el-button type="primary">确定</el-button>
+              <el-button class="add-spaces-btn" @click="openSpecs">添加规格模板</el-button>
+            </el-form-item>
+            <div class="tent-spec-box">
+              <el-form-item label="" prop="" v-for="(sp,ind) in tentSpecList" :key="ind">
+                <div class="edit-spec-detail-box">
+                  <div class="specName-div">
+                    {{sp.specName}}
+                    <i class="iconfont my-close" @click="delSpec(ind)">&#xe8dc;</i>
+                  </div>
+                  <div class="specValues-div">
+                    <div class="specValue-item" v-for="(item,index) in sp.specStringValues" :key="index">
+                      <div class="round"></div>
+                      <span>{{item}}</span>
+                      <i class="iconfont my-close-font" @click="delValues(ind,index)">&#xe630;</i>
+                    </div>
+                    <el-input v-model.trim="sp.tent" placeholder="请输入规格值" @keyup.native.enter="addValues(ind)"
+                      class="my-add-value-input">
+                      <el-button slot="append" @click="addValues(ind)">添加</el-button>
+                    </el-input>
+                  </div>
+                </div>
               </el-form-item>
+            </div>
+            <el-form-item v-show="showDialogSpecsItem">
+              <!-- 规格名称 + 规格值 -->
+              <el-form class="add-specs" :model="tentSpecsRuleForm" :rules="tentSpecsRules" ref="tentSpecsRuleForm"
+                label-width="130px">
+                <el-form-item label="规格名称:" prop="tentSpecName">
+                  <el-input v-model.trim="tentSpecsRuleForm.tentSpecName" placeholder="请填写规格名称"></el-input>
+                </el-form-item>
+                <el-form-item label="规格值:" prop="specValues">
+                  <el-input v-model.trim="tentSpecsRuleForm.specValues" placeholder="请填写规格值"
+                    @keyup.native.enter="tentSpecSure('tentSpecsRuleForm')"></el-input>
+                </el-form-item>
+                <el-button type="primary" class="sure-specs-btn" @click="tentSpecSure('tentSpecsRuleForm')">确定
+                </el-button>
+                <el-button @click="showDialogSpecsItem = false">取消</el-button>
+              </el-form>
+            </el-form-item>
+            <!-- 添加新规格 -->
+            <el-form-item label="" class="" v-show="!showDialogSpecsItem">
+              <el-button type="primary" icon="el-icon-plus" @click="addNewSpec">添加新规格</el-button>
+              <el-button type="success" class="add-spaces-btn" @click="showSetting = true">立即生成</el-button>
+            </el-form-item>
+            <el-form-item label="批量设置：" v-show="showSetting">
+
+            </el-form-item>
+
             <!-- 产品规格： -->
-           <!-- <el-form-item label="产品规格：" class="product-specs">
+            <!-- <el-form-item label="产品规格：" class="product-specs">
               <el-form-item label="销售类型" class="product-specs-item">
                 <el-select v-model="goodInfo.saleType" class="select-item" @change="isEditPrice()">
                   <el-option v-for="item in xsOptions" :key="item.value" :label="item.label" :value="item.value">
@@ -176,7 +211,7 @@
               </el-form-item>
             </el-form-item> -->
             <div class="submit">
-              <el-button  class="public-el-submit-btn" @click="activeName = 'first'">上一步</el-button>
+              <el-button class="public-el-submit-btn" @click="activeName = 'first'">上一步</el-button>
               <el-button type="primary" class="public-el-submit-btn" @click="activeName = 'third'">下一步</el-button>
             </div>
           </el-tab-pane>
@@ -187,7 +222,7 @@
               <edit class="edit" ref="edit" @getContent="getContentData" :description="goodInfo.content"></edit>
             </el-form-item>
             <div class="submit">
-              <el-button  class="public-el-submit-btn" @click="activeName = 'second'">上一步</el-button>
+              <el-button class="public-el-submit-btn" @click="activeName = 'second'">上一步</el-button>
               <el-button type="primary" class="public-el-submit-btn" @click="submit" :disabled="!isSubmit">提交
               </el-button>
             </div>
@@ -205,6 +240,8 @@
         <el-button size="medium" type="primary" @click="sureCartDialog">确 定</el-button>
       </span>
     </el-dialog>
+    <!-- 添加规格模板 -->
+    <specs-mould-dialog :specsDialogVisible="specsDialogVisible" @closeSpecs="closeSpecs"></specs-mould-dialog>
   </div>
 
   <!-- </div> -->
@@ -214,7 +251,8 @@
   import {
     goodCreate,
     goodsUpdate,
-    goodsDetail
+    goodsDetail,
+    specList
   } from '@/api/goods'
   import {
     uploadImage
@@ -225,6 +263,7 @@
   import edit from '../utils/edit.vue'
   import DragUpload from '../utils/DragUpload.vue'; // 引入vue-draggable
   import addGoods from '../../../src/views/goods/addGoods.vue'
+  import specsMouldDialog from '../../../src/views/goods/specsMouldDialog.vue'
   import {
     mapGetters
   } from 'vuex'
@@ -232,34 +271,75 @@
     components: {
       DragUpload,
       edit,
-      addGoods
+      addGoods,
+      specsMouldDialog
     },
     computed: {
       ...mapGetters([
         'roles',
       ])
     },
+
     data() {
       return {
-        specs:{
+        specs: {
           options: [{
-                    value: '选项1',
-                    label: '黄金糕'
-                  }, {
-                    value: '选项2',
-                    label: '双皮奶'
-                  }, {
-                    value: '选项3',
-                    label: '蚵仔煎'
-                  }, {
-                    value: '选项4',
-                    label: '龙须面'
-                  }, {
-                    value: '选项5',
-                    label: '北京烤鸭'
-                  }],
-                  value: ''
+            value: '选项1',
+            label: '黄金糕'
+          }, {
+            value: '选项2',
+            label: '双皮奶'
+          }, {
+            value: '选项3',
+            label: '蚵仔煎'
+          }, {
+            value: '选项4',
+            label: '龙须面'
+          }, {
+            value: '选项5',
+            label: '北京烤鸭'
+          }],
+          value: ''
         },
+        specsDialogVisible: false, //添加规格模板 -- 弹框
+        showDialogSpecsItem: false,
+        tentSpecList: [],
+        tentSpecsRuleForm: {
+          tentSpecName: '', //规格名称
+          specValues: '' //规格值
+        },
+        tentSpecsRules: {
+          tentSpecName: [{
+              required: true,
+              message: '请输入规格名称',
+              trigger: 'blur'
+            },
+            {
+              min: 0,
+              max: 25,
+              message: '长度在 0 到 25 个字符',
+              trigger: 'blur'
+            }
+          ],
+          specValues: [{
+              required: true,
+              message: '请输入规格值',
+              trigger: 'blur'
+            },
+            {
+              min: 0,
+              max: 25,
+              message: '长度在 0 到 25 个字符',
+              trigger: 'blur'
+            }
+          ]
+        },
+        //批量设置
+        showSetting: false,
+
+
+
+
         activeName: 'first',
         isSubmit: true,
         temporaryCartData: '',
@@ -389,11 +469,22 @@
       }
     },
     mounted() {
+      this.getSpecList() //获取规格列表
       this.getParams()
     },
     methods: {
       handleClick(tab, event) {
         console.log(tab, event);
+      },
+      //获取规格列表
+      getSpecList() {
+        let params = {
+          pageNo: 1,
+          pageSize: 9999
+        }
+        specList(JSON.stringify(params)).then(response => {
+          console.log("获取规格列表：", response)
+        })
       },
       getParams() {
         // 销售类型
@@ -644,17 +735,98 @@
       },
       trim(str) {
         return str.replace(/(^\s*)|(\s*$)/g, "");
-      }
-
+      },
+      openSpecs() {
+        this.specsDialogVisible = true
+      },
+      //关闭添加规格模板弹窗
+      closeSpecs() {
+        this.specsDialogVisible = false
+      },
+      addNewSpec() {
+        this.tentSpecsRuleForm = {
+          tentSpecName: '', //规格名称
+          specValues: '' //规格值
+        }
+        this.showDialogSpecsItem = true
+      },
+      tentSpecSure(formName) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            var param = {
+              specName: this.tentSpecsRuleForm.tentSpecName,
+              specStringValues: [],
+              tent: ''
+            }
+            param.specStringValues.push(this.tentSpecsRuleForm.specValues)
+            this.tentSpecList.push(param)
+            this.showDialogSpecsItem = false
+          } else {
+            return false;
+          }
+        });
+      },
+      clearTentData() {
+        this.tentSpecsRuleForm.tentSpecName = ''
+        this.tentSpecsRuleForm.specValues = ''
+      },
+      delSpec(key) {
+        this.tentSpecList.splice(key, 1)
+        this.clearTentData()
+      },
+      delValues(ind, key) {
+        this.tentSpecList[ind].specStringValues.splice(key, 1)
+      },
+      addValues(ind) {
+        if (this.tentSpecList[ind].tent) {
+          this.tentSpecList[ind].specStringValues.push(this.tentSpecList[ind].tent)
+          this.tentSpecList[ind].tent = ''
+        }
+      },
     }
   }
 </script>
 
 <style scoped lang="less">
+  .publish-good-box {
+
+    //修改el-tab样式
+    /deep/ .el-tabs__item {
+      font-weight: 400;
+    }
+
+    //修改产品类目的el-dialog弹框样式
+    /deep/.el-dialog {
+      height: auto !important;
+    }
+
+    /deep/.el-dialog__footer {
+      bottom: 10px;
+    }
+
+    /deep/ .el-dialog__header {
+      height: 50px;
+      background: #FAFAFA;
+      border-radius: 4px 4px 0px 0px;
+      font-size: 14px;
+      font-family: Microsoft YaHei-Bold, Microsoft YaHei;
+      font-weight: bold;
+      color: #333333;
+      display: flex;
+      align-items: center;
+      padding: 0px 0px 0px 22px;
+    }
+
+    /deep/.el-dialog__body {
+      padding-top: 0px;
+    }
+  }
+
   .bule-font {
     color: #1890FF;
   }
 
+  // 产品类目
   .cart-item {
     display: flex;
     justify-content: flex-start;
@@ -681,7 +853,7 @@
     }
   }
 
-  // 编辑商品区域
+  // 编辑商品信息区域
   .eidt-box {
     background-color: #FFFFFF;
     padding: 0px 35px 30px 15px;
@@ -691,6 +863,7 @@
     font-family: Microsoft YaHei-Regular, Microsoft YaHei;
     font-weight: 400;
     color: #333333;
+    width: 100%;
 
     .my-item:first-child {
       margin-top: 30px;
@@ -777,12 +950,28 @@
       }
     }
 
-  //添加规格模板
-  .add-spaces-btn{
-    margin-right: 20px;
-  }
+    //修改el-input样式
+    /deep/.el-form-item__label {
+      font-size: 12px;
+      padding-right: 30px;
+      color: #333333;
+    }
 
+    /deep/.el-form-item {
+      margin-bottom: 25px;
+    }
 
+    /deep/.el-input {
+      width: 420px;
+    }
+
+    /deep/.el-input--medium .el-input__inner {
+      height: 34px;
+      line-height: 34px;
+      padding-right: 50px;
+    }
+
+    // 所属品牌
     .item-brand {
       /deep/.el-form-item__content {
         display: flex;
@@ -801,57 +990,195 @@
         font-size: 12px;
         color: #333;
       }
+
+      /deep/ .el-select>.el-input {
+        width: 420px;
+      }
     }
   }
 
-  // 产品规格
-  .product-specs {
-    /deep/ .el-form-item__content {
-      display: flex;
-      justify-content: flex-start;
-      align-items: center;
-      flex-wrap: wrap;
-    }
+  //添加规格模板
+  .add-spaces-btn {
+    margin-left: 20px;
+  }
 
-    /deep/ .el-input {
-      width: 160px;
+  .tent-spec-box {
+
+    margin-bottom: 5px;
+
+    /deep/.el-input {
+      width: 200px;
     }
 
     /deep/ .el-form-item {
       margin-bottom: 0px;
     }
 
-    .product-specs-item {
-      border: 1px solid #EBEEF5;
-      height: 100px;
-      width: 215px;
+    .edit-spec-detail-box {
       display: flex;
-      justify-content: space-around;
-      align-items: center;
       flex-direction: column;
-      margin-left: -1px;
+      justify-content: flex-start;
+      align-items: flex-start;
 
-      // /deep/.el-form-item__label {
-      //   flex: 1;
-      // }
-
-      /deep/.el-form-item__content {
-        width: 100%;
-        border-top: 1px solid #EBEEF5;
-        flex: 2;
-        margin-left: 0px !important;
+      .specName-div {
+        margin-bottom: 15px;
+        font-size: 12px;
+        font-family: Microsoft YaHei-Regular, Microsoft YaHei;
+        font-weight: 400;
+        color: #333333;
         display: flex;
-        justify-content: center;
+        justify-content: flex-start;
         align-items: center;
+        line-height: 12px;
+
+        .my-close {
+          color: #BBBBBB;
+          margin-left: 8px;
+          margin-top: 4px;
+          cursor: pointer;
+          font-size: 10px;
+        }
+
+        .my-close:hover {
+          color: #1890FF;
+        }
+      }
+
+      // 规格值
+      .specValues-div {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        flex-wrap: wrap;
+
+        .specValue-item {
+          margin-right: 10px;
+          margin-bottom: 15px;
+          box-sizing: border-box;
+          padding: 0px 10px 0px 15px;
+          height: 34px;
+          background: #FFFFFF;
+          border-radius: 4px 4px 4px 4px;
+          opacity: 1;
+          border: 1px solid #EBEEF5;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          font-size: 12px;
+          font-family: Microsoft YaHei-Regular, Microsoft YaHei;
+          font-weight: 400;
+          color: #999999;
+
+          .round {
+            width: 10px;
+            height: 10px;
+            background: #1890FF;
+            border-radius: 50%;
+            margin-right: 12px;
+          }
+
+          .my-close-font {
+            cursor: pointer;
+            margin-left: 20px;
+            font-size: 12px;
+            font-family: Microsoft YaHei-Regular, Microsoft YaHei;
+            font-weight: 400;
+            color: #999999;
+          }
+
+          .my-close-font:hover {
+            color: #1890FF;
+          }
+
+        }
+
+        .my-add-value-input {
+          margin-bottom: 15px;
+        }
+
+        /deep/ .el-input-group__append {
+          background: #1890FF;
+          border: none;
+          color: #fff;
+        }
       }
     }
 
-    .shelf-life {
-      /deep/ .el-input {
-        width: 80px;
-      }
-    }
   }
+
+  .add-specs {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+
+    /deep/.el-input {
+      width: 200px;
+    }
+
+    /deep/ .el-form-item {
+      margin: 0px;
+    }
+
+    .sure-specs-btn {
+      margin-left: 45px;
+      margin-right: 20px;
+    }
+
+    /deep/.el-button+.el-button {
+      margin-left: 0px;
+    }
+
+  }
+
+  /deep/ .el-button--medium {
+    padding: 10px 15px;
+    font-size: 12px;
+  }
+
+  // 产品规格
+  // .product-specs {
+  //   /deep/ .el-form-item__content {
+  //     display: flex;
+  //     justify-content: flex-start;
+  //     align-items: center;
+  //     flex-wrap: wrap;
+  //   }
+
+  //   /deep/ .el-input {
+  //     width: 160px;
+  //   }
+
+  //   /deep/ .el-form-item {
+  //     margin-bottom: 0px;
+  //   }
+
+  //   .product-specs-item {
+  //     border: 1px solid #EBEEF5;
+  //     height: 100px;
+  //     width: 215px;
+  //     display: flex;
+  //     justify-content: space-around;
+  //     align-items: center;
+  //     flex-direction: column;
+  //     margin-left: -1px;
+
+  //     /deep/.el-form-item__content {
+  //       width: 100%;
+  //       border-top: 1px solid #EBEEF5;
+  //       flex: 2;
+  //       margin-left: 0px !important;
+  //       display: flex;
+  //       justify-content: center;
+  //       align-items: center;
+  //     }
+  //   }
+
+  //   .shelf-life {
+  //     /deep/ .el-input {
+  //       width: 80px;
+  //     }
+  //   }
+  // }
 
   //下标 注释
   .gray-tip {
@@ -869,17 +1196,13 @@
       display: flex;
       align-items: flex-start;
       flex-direction: column;
-
-      .el-tag {
-        margin-right: 10px;
-      }
     }
   }
 
   // 是否推荐
   .prodect-recommendValue {
     .gray-tip {
-      margin-left: 10px;
+      margin-left: 20px;
     }
   }
 
@@ -893,57 +1216,5 @@
     .public-el-submit-btn+.public-el-submit-btn {
       margin-left: 40px;
     }
-  }
-</style>
-<style>
-  .el-dialog {
-    height: auto !important;
-  }
-
-  .el-dialog__footer {
-    bottom: 10px;
-  }
-
-  .el-dialog__header {
-    padding-bottom: 0px;
-  }
-
-  .el-dialog__body {
-    padding-top: 0px;
-  }
-
-  .el-tabs__item {
-    font-weight: 400;
-  }
-
-  .el-form-item {
-    margin-bottom: 25px;
-  }
-
-  .el-input {
-    width: 420px;
-  }
-
-  .el-input--medium .el-input__inner {
-    height: 34px;
-    line-height: 34px;
-  }
-
-  /* 标签 */
-  .tags-content .el-input {
-    width: 80px;
-  }
-
-  .tags-content .el-input--medium .el-input__inner {
-    height: 30px;
-    line-height: 30px;
-    border-radius: 15px;
-  }
-
-
-  .el-form-item__label {
-    font-size: 12px;
-    padding-right: 30px;
-    color: #333333;
   }
 </style>

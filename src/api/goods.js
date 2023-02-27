@@ -73,6 +73,13 @@ export function goodsCategoryList() {
     method: 'get',
   })
 }
+//规格列表
+export function specList() {
+  return request({
+    url: 'spec/list',
+    method: 'get',
+  })
+}
 
 // export function fetchPv(pv) {
 //   return request({
