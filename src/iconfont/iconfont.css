@@ -12,7 +12,9 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
+.icon-tianjia:before {
+  content: "\e622";
+}
 .icon-guanbishixin:before {
   content: "\e8dc";
 }

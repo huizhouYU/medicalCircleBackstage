@@ -39,7 +39,7 @@ export function goodsDetail(query) {
   return request({
     url: 'goods/detail',
     method: 'get',
-    params:query
+    params: query
   })
 }
 //编辑需求  提交
@@ -74,12 +74,31 @@ export function goodsCategoryList() {
   })
 }
 //规格列表
-export function specList() {
+export function specList(query) {
   return request({
     url: 'spec/list',
     method: 'get',
+    params: query
   })
 }
+//新增规格
+export function specCreate(data) {
+  return request({
+    url: 'spec/create',
+    method: 'post',
+    data
+  })
+}
+//规格值列表
+export function specValueList(query) {
+  return request({
+    url: 'spec/valueList',
+    method: 'get',
+    params: query
+  })
+}
+
+
 
 // export function fetchPv(pv) {
 //   return request({

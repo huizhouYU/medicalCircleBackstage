@@ -3,56 +3,41 @@
   <el-dialog title="规格模板" :close-on-click-modal="false" :visible.sync="specsDialogVisible" width="950px"
     class="my-space-el-dialog-box" @close="closeDialog">
     <el-form :model="specsRuleForm" :rules="specsRules" ref="specsRuleForm" label-width="130px" class="specs-ruleForm">
-      <el-form-item label="规格模板名称:" prop="name">
-        <el-input v-model.trim="specsRuleForm.name" placeholder="请填写模板名称"></el-input>
+      <el-form-item label="规格名称:" prop="specName">
+        <el-input v-model.trim="specsRuleForm.specName" placeholder="请填写规格名称"></el-input>
       </el-form-item>
       <div class="spec-box">
-        <el-form-item label="" prop="" v-for="(sp,ind) in specsRuleForm.spec" :key="ind">
-          <div class="edit-spec-detail-box">
-            <div class="specName-div">
-              {{sp.specName}}
-              <i class="iconfont my-close" @click="delSpec(ind)">&#xe8dc;</i>
+        <el-form-item label="" prop="">
+          <div class="specValues-div" v-show="specsRuleForm.specStringValues.length>0">
+            <div class="specValue-item" v-for="(item,index) in specsRuleForm.specStringValues" :key="index">
+              <div class="round"></div>
+              <span>{{item}}</span>
+              <i class="iconfont my-close-font" @click="delValues(index)">&#xe630;</i>
             </div>
-            <div class="specValues-div">
-              <div class="specValue-item" v-for="(item,index) in sp.specStringValues" :key="index">
-                <div class="round"></div>
-                <span>{{item}}</span>
-                <i class="iconfont my-close-font" @click="delValues(ind,index)">&#xe630;</i>
-              </div>
-              <el-input v-model.trim="sp.tent" placeholder="请输入规格值" @keyup.native.enter="addValues(ind)"
-                class="my-add-value-input">
-                <el-button slot="append" @click="addValues(ind)">添加</el-button>
-              </el-input>
-            </div>
+            <el-input v-model.trim="specsRuleForm.specValues" placeholder="请输入规格值" @keyup.native.enter="addValues()"
+              class="my-add-value-input">
+              <el-button slot="append" @click="addValues()">添加</el-button>
+            </el-input>
           </div>
         </el-form-item>
       </div>
-
-      <!-- 规格名称 + 规格值 -->
-      <el-form class="add-specs-item" v-show="showDialogSpecsItem" :model="tentSpecsRuleForm" :rules="tentSpecsRules"
-        ref="tentSpecsRuleForm" label-width="130px">
-        <el-form-item label="规格名称:" prop="tentSpecName">
-          <el-input v-model.trim="tentSpecsRuleForm.tentSpecName" placeholder="请填写规格名称"></el-input>
-        </el-form-item>
-        <el-form-item label="规格值:" prop="specValues">
-          <el-input v-model.trim="tentSpecsRuleForm.specValues" placeholder="请填写规格值"
-            @keyup.native.enter="tentSpecSure('tentSpecsRuleForm')"></el-input>
-        </el-form-item>
-        <el-button type="primary" class="sure-specs-btn" @click="tentSpecSure('tentSpecsRuleForm')">确定</el-button>
-        <el-button @click="closeDialog">取消</el-button>
-      </el-form>
-
-      <el-form-item label="" prop="" v-show="!showDialogSpecsItem">
-        <el-button type="primary" icon="el-icon-plus" @click="addSpecs">添加新规格</el-button>
+      <el-form-item label="规格值:" prop="" v-show="!specsRuleForm.specStringValues.length>0">
+        <el-input v-model.trim="specsRuleForm.specValues" placeholder="请填写规格值" @keyup.native.enter="tentSpecSure()">
+        </el-input>
+        <el-button type="primary" @click="tentSpecSure()" class="add-spacesValue-btn">添加</el-button>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
       <el-button type="primary" @click="submitSpec('specsRuleForm')">确 定</el-button>
+      <el-button type="" @click="closeDialog()">取消</el-button>
     </span>
   </el-dialog>
 </template>
 
 <script>
+  import {
+    specCreate
+  } from '@/api/goods'
   export default {
     props: {
       'specsDialogVisible': {
@@ -63,31 +48,12 @@
     data() {
       return {
         specsRuleForm: {
-          name: '', //规格模板名称
-          spec: [], //规格列表
-          // specName: '', //规格名称
-          // specStringValues: [] //规格值
+          specName: '', //规格模板名称
+          specStringValues: [], //规格值
+          specValues: ''
         },
         specsRules: {
-          name: [{
-              required: true,
-              message: '请输入规格模板名称',
-              trigger: 'blur'
-            },
-            {
-              min: 0,
-              max: 25,
-              message: '长度在 0 到 25 个字符',
-              trigger: 'blur'
-            }
-          ]
-        },
-        tentSpecsRuleForm: {
-          tentSpecName: '', //规格名称
-          specValues: '' //规格值
-        },
-        tentSpecsRules: {
-          tentSpecName: [{
+          specName: [{
               required: true,
               message: '请输入规格名称',
               trigger: 'blur'
@@ -98,78 +64,58 @@
               message: '长度在 0 到 25 个字符',
               trigger: 'blur'
             }
-          ],
-          specValues: [{
-              required: true,
-              message: '请输入规格值',
-              trigger: 'blur'
-            },
-            {
-              min: 0,
-              max: 25,
-              message: '长度在 0 到 25 个字符',
-              trigger: 'blur'
-            }
           ]
-        },
-        showDialogSpecsItem: false, //添加规格模板中的 【添加新规格】一栏
+        }
 
       }
     },
     methods: {
-      addSpecs() {
-        this.showDialogSpecsItem = true
-      },
-      tentSpecSure(formName) {
-        this.$refs[formName].validate((valid) => {
-          if (valid) {
-            var param = {
-              specName: this.tentSpecsRuleForm.tentSpecName,
-              specStringValues: [],
-              tent: ''
-            }
-            param.specStringValues.push(this.tentSpecsRuleForm.specValues)
-            this.specsRuleForm.spec.push(param)
-            this.showDialogSpecsItem = false
-            this.clearTentData()
-          } else {
-            return false;
-          }
-        });
-      },
-      clearTentData() {
-        this.tentSpecsRuleForm.tentSpecName = ''
-        this.tentSpecsRuleForm.specValues = ''
-      },
-      delSpec(key) {
-        this.specsRuleForm.spec.splice(key, 1)
-        this.clearTentData()
-      },
-      delValues(ind, key) {
-        this.specsRuleForm.spec[ind].specStringValues.splice(key, 1)
-      },
-      addValues(ind) {
-        if (this.specsRuleForm.spec[ind].tent) {
-          this.specsRuleForm.spec[ind].specStringValues.push(this.specsRuleForm.spec[ind].tent)
-          this.specsRuleForm.spec[ind].tent = ''
+      tentSpecSure() {
+        if (this.specsRuleForm.specValues) {
+          this.specsRuleForm.specStringValues.push(this.specsRuleForm.specValues)
+          this.specsRuleForm.specValues = ''
         }
       },
+      delValues(key) {
+        this.specsRuleForm.specStringValues.splice(key, 1)
+      },
+      addValues() {
+        this.tentSpecSure()
+      },
       closeDialog() {
+        this.specsRuleForm = {
+          specName: '', //规格模板名称
+          specStringValues: [], //规格值
+          specValues: ''
+        }
         this.$emit("closeSpecs")
       },
       submitSpec(formName) {
-        this.$refs[formName].validate((valid) => {
-          if (valid) {
-            if (this.specsRuleForm.spec.length > 0) {
-              console.log("最后数据：", this.specsRuleForm)
+        try {
+          this.$refs[formName].validate((valid) => {
+            if (valid) {
+              if (this.specsRuleForm.specStringValues.length > 0) {
+                console.log("最后数据：", this.specsRuleForm)
+                specCreate(this.specsRuleForm).then(response => {
+                  if (response.data.code == 10000) {
+                    this.closeDialog()
+                  } else {
+                    this.$message.error("规格保存失败：" + response.data.message)
+                  }
+                })
+                // this.closeDialog()
+              } else {
+                this.$message.error("请输入规格值")
+              }
             } else {
-              this.$message.error("请添加新规格")
+              return false;
             }
-            // this.closeDialog()
-          } else {
-            return false;
-          }
-        });
+          });
+        } catch (e) {
+          console.log(e)
+          //TODO handle the exception
+        }
+
 
       },
 
@@ -251,119 +197,69 @@
           margin-bottom: 0px;
         }
 
-        .edit-spec-detail-box {
+        // 规格值
+        .specValues-div {
           display: flex;
-          flex-direction: column;
           justify-content: flex-start;
-          align-items: flex-start;
+          align-items: center;
+          flex-wrap: wrap;
 
-          .specName-div {
+          .specValue-item {
+            margin-right: 10px;
             margin-bottom: 15px;
+            box-sizing: border-box;
+            padding: 0px 10px 0px 15px;
+            height: 34px;
+            background: #FFFFFF;
+            border-radius: 4px 4px 4px 4px;
+            opacity: 1;
+            border: 1px solid #EBEEF5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             font-size: 12px;
             font-family: Microsoft YaHei-Regular, Microsoft YaHei;
             font-weight: 400;
-            color: #333333;
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-            line-height: 12px;
+            color: #999999;
 
-            .my-close {
-              color: #BBBBBB;
-              margin-left: 8px;
-              margin-top: 4px;
+            .round {
+              width: 10px;
+              height: 10px;
+              background: #1890FF;
+              border-radius: 50%;
+              margin-right: 12px;
+            }
+
+            .my-close-font {
               cursor: pointer;
-              font-size: 10px;
-            }
-
-            .my-close:hover {
-              color: #1890FF;
-            }
-          }
-
-          // 规格值
-          .specValues-div {
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-            flex-wrap: wrap;
-
-            .specValue-item {
-              margin-right: 10px;
-              margin-bottom: 15px;
-              box-sizing: border-box;
-              padding: 0px 10px 0px 15px;
-              height: 34px;
-              background: #FFFFFF;
-              border-radius: 4px 4px 4px 4px;
-              opacity: 1;
-              border: 1px solid #EBEEF5;
-              display: flex;
-              justify-content: center;
-              align-items: center;
+              margin-left: 20px;
               font-size: 12px;
               font-family: Microsoft YaHei-Regular, Microsoft YaHei;
               font-weight: 400;
               color: #999999;
-
-              .round {
-                width: 10px;
-                height: 10px;
-                background: #1890FF;
-                border-radius: 50%;
-                margin-right: 12px;
-              }
-
-              .my-close-font {
-                cursor: pointer;
-                margin-left: 20px;
-                font-size: 12px;
-                font-family: Microsoft YaHei-Regular, Microsoft YaHei;
-                font-weight: 400;
-                color: #999999;
-              }
-
-              .my-close-font:hover {
-                color: #1890FF;
-              }
-
             }
 
-            .my-add-value-input {
-              margin-bottom: 15px;
+            .my-close-font:hover {
+              color: #1890FF;
             }
 
-            /deep/ .el-input-group__append {
-              background: #1890FF;
-              border: none;
-              color: #fff;
-            }
+          }
+
+          .my-add-value-input {
+            margin-bottom: 15px;
+          }
+
+          /deep/ .el-input-group__append {
+            background: #1890FF;
+            border: none;
+            color: #fff;
           }
         }
       }
 
-
-
-      .add-specs-item {
-        display: flex;
-        justify-content: flex-start;
-        align-items: center;
-
-        /deep/ .el-form-item {
-          margin: 0px;
-        }
-
-        .sure-specs-btn {
-          margin-left: 45px;
-          margin-right: 20px;
-        }
-
-        /deep/.el-button+.el-button {
-          margin-left: 0px;
-        }
+      .add-spacesValue-btn {
+        margin-left: 20px;
       }
-
-
     }
   }
 </style>

@@ -118,11 +118,11 @@
           <el-tab-pane label="规格库存" name="second">
             <!-- 选择规格 -->
             <el-form-item label="选择规格：" class="">
-              <el-select v-model="specs.value" filterable placeholder="请选择">
-                <el-option v-for="item in specs.options" :key="item.value" :label="item.label" :value="item.value">
+              <el-select v-model="specs.value" filterable placeholder="请选择" @change="changeSpec">
+                <el-option v-for="item in specs.options" :key="item.id" :label="item.specName" :value="item.id">
                 </el-option>
               </el-select>
-              <el-button type="primary">确定</el-button>
+              <el-button type="primary" @click="sureChosedSpec">确定</el-button>
               <el-button class="add-spaces-btn" @click="openSpecs">添加规格模板</el-button>
             </el-form-item>
             <div class="tent-spec-box">
@@ -135,7 +135,7 @@
                   <div class="specValues-div">
                     <div class="specValue-item" v-for="(item,index) in sp.specStringValues" :key="index">
                       <div class="round"></div>
-                      <span>{{item}}</span>
+                      <span>{{item.specValue}}</span>
                       <i class="iconfont my-close-font" @click="delValues(ind,index)">&#xe630;</i>
                     </div>
                     <el-input v-model.trim="sp.tent" placeholder="请输入规格值" @keyup.native.enter="addValues(ind)"
@@ -167,9 +167,96 @@
               <el-button type="primary" icon="el-icon-plus" @click="addNewSpec">添加新规格</el-button>
               <el-button type="success" class="add-spaces-btn" @click="showSetting = true">立即生成</el-button>
             </el-form-item>
-            <el-form-item label="批量设置：" v-show="showSetting">
+            <el-form-item label="批量设置：" v-show="showSetting" class="batch-item">
+              <el-form ref="batchForm" :model="batchForm">
+                <el-table :data="batchData" style="width: 1076px;" border :header-cell-style="{'text-align':'center'}"
+                  :cell-style="{'text-align':'center',backgroundColor: '#fff'}">
+                  <el-table-column label="图片"  width="215">
+                    <template slot-scope="scope">
+                      <upload-one-img :imgList="scope.row.imgUrl"></upload-one-img>
+                    </template>
+                  </el-table-column>
 
+                  <el-table-column label="价格（元）"  width="215">
+                    <template slot-scope="scope">
+                      <el-form-item>
+                        <el-input v-model="scope.row.price"></el-input>
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
+                  <el-table-column label="编码"   width="215">
+                    <template slot-scope="scope">
+                      <el-form-item>
+                        <el-input v-model="scope.row.pnCode"></el-input>
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
+                  <el-table-column label="库存"  width="215">
+                    <template slot-scope="scope">
+                      <el-form-item>
+                        <el-input v-model="scope.row.qty"></el-input>
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
+                  <el-table-column label="操作"  width="215">
+                    <template slot-scope="scope">
+                      <div class="batch-opt-div">
+                        <span>批量添加</span>
+                        <span>清空</span>
+                      </div>
+                    </template>
+                  </el-table-column>
+                </el-table>
+              </el-form>
             </el-form-item>
+
+            <el-form-item label="商品规格：" v-show="showSetting" class="batch-item">
+              <el-form ref="batchForm" :model="batchForm">
+                <el-table :data="batchData" style="width: 1076px" border :header-cell-style="{'text-align':'center'}"
+                  :cell-style="{'text-align':'center',backgroundColor: '#fff'}">
+                  <el-table-column  width="190" label="" v-for="(item,index) in tentSpecList" :key="index">
+                    <template slot="header">
+                      {{item.specName}}
+                    </template>
+                  </el-table-column>
+                  <el-table-column label="图片"  width="120">
+                    <template slot-scope="scope">
+                      <upload-one-img :imgList="scope.row.imgUrl"></upload-one-img>
+                    </template>
+                  </el-table-column>
+                  <el-table-column label="价格（元）"  width="190">
+                    <template slot-scope="scope">
+                      <el-form-item>
+                        <el-input v-model="scope.row.price"></el-input>
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
+                  <el-table-column label="编码" width="190">
+                    <template slot-scope="scope">
+                      <el-form-item>
+                        <el-input v-model="scope.row.pnCode"></el-input>
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
+                  <el-table-column label="库存" width="190">
+                    <template slot-scope="scope">
+                      <el-form-item>
+                        <el-input v-model="scope.row.qty"></el-input>
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
+                  <el-table-column label="操作" width="215" fixed="right">
+                    <template slot-scope="scope">
+                      <div class="batch-opt-div">
+                        <span>批量添加</span>
+                        <span>清空</span>
+                      </div>
+                    </template>
+                  </el-table-column>
+                </el-table>
+              </el-form>
+            </el-form-item>
+
 
             <!-- 产品规格： -->
             <!-- <el-form-item label="产品规格：" class="product-specs">
@@ -252,7 +339,8 @@
     goodCreate,
     goodsUpdate,
     goodsDetail,
-    specList
+    specList,
+    specValueList
   } from '@/api/goods'
   import {
     uploadImage
@@ -262,6 +350,7 @@
   } from '@/api/demand'
   import edit from '../utils/edit.vue'
   import DragUpload from '../utils/DragUpload.vue'; // 引入vue-draggable
+  import uploadOneImg from '../utils/uploadOneImg.vue'
   import addGoods from '../../../src/views/goods/addGoods.vue'
   import specsMouldDialog from '../../../src/views/goods/specsMouldDialog.vue'
   import {
@@ -270,6 +359,7 @@
   export default {
     components: {
       DragUpload,
+      uploadOneImg,
       edit,
       addGoods,
       specsMouldDialog
@@ -283,26 +373,17 @@
     data() {
       return {
         specs: {
-          options: [{
-            value: '选项1',
-            label: '黄金糕'
-          }, {
-            value: '选项2',
-            label: '双皮奶'
-          }, {
-            value: '选项3',
-            label: '蚵仔煎'
-          }, {
-            value: '选项4',
-            label: '龙须面'
-          }, {
-            value: '选项5',
-            label: '北京烤鸭'
-          }],
+          options: [],
           value: ''
         },
         specsDialogVisible: false, //添加规格模板 -- 弹框
         showDialogSpecsItem: false,
+        chosedSpec: {
+          specName: '',
+          specId: '',
+          specStringValues: [],
+          tent: ''
+        },
         tentSpecList: [],
         tentSpecsRuleForm: {
           tentSpecName: '', //规格名称
@@ -336,7 +417,18 @@
         },
         //批量设置
         showSetting: false,
-
+        batchData: [{
+          imgUrl: {},
+          price: 0,
+          pnCode: '',
+          qty: '',
+        }],
+        batchForm: {
+          imgUrl: {},
+          price: 0,
+          pnCode: '',
+          qty: '',
+        },
 
 
 
@@ -482,8 +574,33 @@
           pageNo: 1,
           pageSize: 9999
         }
-        specList(JSON.stringify(params)).then(response => {
+        specList(params).then(response => {
           console.log("获取规格列表：", response)
+          this.specs.options = response.data.data.list
+        })
+      },
+      changeSpec(val) {
+        var obj = {}
+        obj = this.specs.options.find(function(i) {
+          return i.id === val
+        });
+        this.chosedSpec.specId = obj.id
+        this.chosedSpec.specName = obj.specName
+
+        //在change中获取到整条对象数据
+        console.log(obj);
+      },
+      //选择规格模板后确定
+      sureChosedSpec() {
+        specValueList({
+          specId: this.chosedSpec.specId
+        }).then(response => {
+          if (response.data.code == 10000) {
+            this.chosedSpec.specStringValues = response.data.data
+            this.tentSpecList.push(this.cloneObj(this.chosedSpec))
+          } else {
+            this.$message.error("获取规格值列表失败：" + response.data.message)
+          }
         })
       },
       getParams() {
@@ -758,7 +875,10 @@
               specStringValues: [],
               tent: ''
             }
-            param.specStringValues.push(this.tentSpecsRuleForm.specValues)
+            var specParam = {
+              specValue: this.tentSpecsRuleForm.specValues
+            }
+            param.specStringValues.push(specParam)
             this.tentSpecList.push(param)
             this.showDialogSpecsItem = false
           } else {
@@ -779,9 +899,23 @@
       },
       addValues(ind) {
         if (this.tentSpecList[ind].tent) {
-          this.tentSpecList[ind].specStringValues.push(this.tentSpecList[ind].tent)
+          this.tentSpecList[ind].specStringValues.push({
+            specValue: this.tentSpecList[ind].tent
+          })
           this.tentSpecList[ind].tent = ''
         }
+      },
+      //深复制对象方法
+      cloneObj(obj) {
+        var newObj = {};
+        if (obj instanceof Array) {
+          newObj = [];
+        }
+        for (var key in obj) {
+          var val = obj[key];
+          newObj[key] = typeof val === 'object' ? this.cloneObj(val) : val;
+        }
+        return newObj;
       },
     }
   }
@@ -1215,6 +1349,45 @@
 
     .public-el-submit-btn+.public-el-submit-btn {
       margin-left: 40px;
+    }
+
+  }
+
+  //批量设置
+  .batch-item {
+    /deep/ .el-table .cell {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /deep/ .el-input {
+      width: auto;
+    }
+
+    /deep/ .el-form-item {
+      margin-bottom: 0px !important;
+    }
+  }
+
+  //批量添加操作一栏
+
+  .batch-opt-div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    span {
+      font-size: 12px;
+      line-height: 12px;
+      color: #1890FF;
+      cursor: pointer;
+    }
+
+    span+span {
+      margin-left: 10px;
+      padding-left: 10px;
+      border-left: 1px solid #DBDBDB;
     }
   }
 </style>
