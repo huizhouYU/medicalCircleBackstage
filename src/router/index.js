@@ -128,7 +128,14 @@ export const asyncRoutes = [
           affix: true
         }
       },
-
+{
+        path: 'goodsSpec',
+        component: () => import('@/views/goods/goodsSpec'),
+        name: 'GoodsSpec',
+        meta: {
+          title: '商品规格'
+        }
+      },
       {
         path: 'publishGood',
         component: () => import('@/views/goods/publishGood'),

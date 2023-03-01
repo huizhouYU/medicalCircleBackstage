@@ -1,20 +1,11 @@
 <template>
   <div class="app-container">
     <el-table ref="multipleTable" :data="currentPageData" tooltip-effect="dark" style="width: 100%;min-height:200px"
-      :height="tableHeight" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55">
+      :height="tableHeight" >
+      <el-table-column label="ID" prop="id">
       </el-table-column>
-      <el-table-column label="信息类型">
-        <template slot-scope="scope">
-          <span v-if="scope.row.articleType == 1">求购设备</span>
-          <span v-else-if="scope.row.articleType == 2">项目外包</span>
-          <span v-else-if="scope.row.articleType == 3">灵活兼职</span>
-        </template>
-      </el-table-column>
-      <el-table-column prop="title" label="信息标题"></el-table-column>
-      <el-table-column prop="brandName" label="设备品牌"></el-table-column>
-      <el-table-column prop="equipmentName" label="设备名称"></el-table-column>
-      <el-table-column prop="createdAt" label="发布时间"></el-table-column>
+      <el-table-column prop="specName" label="规格名称"></el-table-column>
+      <el-table-column prop="specStringValues" label="规格值"></el-table-column>
       <el-table-column fixed="right" label="操作" width="120">
         <template slot-scope="scope">
           <el-button @click.native.prevent="editRow(scope.$index, currentPageData)" type="text" size="small">
@@ -28,8 +19,6 @@
     </el-table>
     <div class="bottoms-box">
       <div class="left">
-        <!-- <el-checkbox v-model="isAddAllTerminalStatus" @change="allSelectTerminal">全选</el-checkbox> -->
-        <!-- <el-button type="danger" class="public-el-btn" @click="deleteChoosed"> 取消任务</el-button> -->
       </div>
       <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange"
         :page-sizes="[1,5,10, 15, 20, 25]" :page-size="currentSize" :current-page.sync="pageNum" :pager-count="5"
@@ -44,15 +33,8 @@
     getDynamicHeight,
     debounce
   } from "../utils/elTableAutoHeight.js";
-  import {
-    demandDelete
-  } from '@/api/demand'
-  import {
-    demandList
-  } from '@/api/demand'
-  import axios from 'axios';
   export default {
-    props: ['demandList', 'currentPage', 'pageSize', 'totalPage', 'totalNum'],
+    props: ['dataList', 'currentPage', 'pageSize', 'totalPage', 'totalNum'],
     data() {
       return {
         tableHeight: 0,
@@ -67,7 +49,7 @@
       }
     },
     watch: {
-      demandList(val) { //列表数据
+      dataList(val) { //列表数据
         this.currentPageData = val
       },
       currentPage(val) { //当前页
@@ -119,19 +101,9 @@
       handleCurrentChange(val) {
         this.$emit("changePage", val)
       },
-      allSelectTerminal(e) {
-        if (e === true) {
-          this.$refs.multipleTable.toggleAllSelection()
-        } else {
-          this.$refs.multipleTable.clearSelection()
-        }
-      },
-      handleSelectionChange(val) {
-        this.multipleSelection = val;
-      },
       //删除需求
       deleteRow(index, rows) {
-        this.$confirm('该条数据删除后将无法找回, 是否继续?', '提示', {
+        this.$confirm('确定删除这个规格设置吗?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
@@ -139,15 +111,7 @@
           let param={
             id:rows[index].articleId
           }
-          demandDelete(JSON.stringify(param)).then(response => {
-            if (response.data.code == 10000) {
-              rows.splice(index, 1);
-              this.$message({
-                type: 'success',
-                message: '删除成功!'
-              });
-            }
-          })
+          //删除操作
         }).catch(() => {
           this.$message({
             type: 'info',
@@ -157,17 +121,6 @@
       },
       //编辑需求
       editRow(index, rows) {
-        this.$router.replace({
-          path: 'publishDemand',
-          query: {
-            eidtData: rows[index]
-          }
-        })
-      },
-      //批量删除
-      deleteChoosed() {
-        console.log(this.multipleSelection)
-        // rows.splice(index, 1);
       },
     }
   }

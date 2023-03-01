@@ -3,19 +3,18 @@
     <label>
       <div class="upload-img" v-show="isShowUpload">
         <i class="iconfont">&#xe622;</i>
-        <!-- <img src="../../../public/imgs/icon_add-pic.png" alt=""> -->
         <input type="file" id="inputFile" accept="image/png, image/jpeg, image/gif, image/jpg" @change="previewFile"
           style="display: none; " class="hiddenInput" multiple="multiple">
       </div>
     </label>
-    <div class="img-wrapper" v-for="(item,index) in allListChild" :key="index">
-      <el-image :src="item.imgUrl">
+    <div class="img-wrapper"  v-show="!isShowUpload">
+      <el-image :src="imgObj.imgUrl">
       </el-image>
       <!-- 鼠标经过图片放大icon和删除icon -->
       <div class="operate-wrap" :title="'拖曳图片可排序'">
         <div class="operate-bg"></div> <!-- 遮罩 -->
-        <i class="el-icon-delete del-icon" @click="deleImg(item.URL,index)"></i> <!-- 删除图片 -->
-        <i class="el-icon-zoom-in preview-icon" @click="handlePictureCardPreview(item.imgUrl,index)"></i>
+        <i class="el-icon-delete del-icon" @click="deleImg(imgObj.URL)"></i> <!-- 删除图片 -->
+        <i class="el-icon-zoom-in preview-icon" @click="handlePictureCardPreview(imgObj.imgUrl)"></i>
         <!-- 点击显示原图 -->
       </div>
       <!-- 原图显示弹框 -->
@@ -27,26 +26,19 @@
 </template>
 
 <script>
-  import draggable from "vuedraggable";
   export default {
     name: "uploadOneImg",
     props: ['imgList'],
-    components: {
-      draggable,
-    },
     data() {
       return {
         limit: 1,
         isShowUpload: true, //是否展示上传图片
-        allListChild: [],
-        // imgUrl: '',
-        drag: false,
+        imgObj:'',
         dialogVisible: false,
         dialogImageUrl: ''
       };
     },
     methods: {
-
       handlePictureCardPreview(file) {
         this.dialogImageUrl = file;
         this.dialogVisible = true;
@@ -70,16 +62,15 @@
             // 法1
             // this.$refs.imgRef.src = e.target.result
             // 法2
-            var temp = {
+
+            _this.imgObj = {
               file: files[0],
-              imgUrl: e.target.result,
-              orderNumber: _this.allListChild.length
-            };
-            _this.allListChild.push(temp) // 启动拖拽功能
-            if (_this.allListChild.length >= _this.limit) {
+              imgUrl: e.target.result
+            }
+            if(_this.imgObj){
               _this.isShowUpload = false;
             }
-            _this.$emit('allList', _this.allListChild)
+              _this.$emit('imgObj', _this.imgObj)
             return files[0]
 
 
@@ -88,44 +79,25 @@
       },
       //删除图片
       deleImg(data, index) {
-        this.allListChild.splice(index, 1)
-        if (this.allListChild.length >= this.limit) {
-          this.isShowUpload = false;
-        } else {
-          this.isShowUpload = true;
-        }
-        this.$emit('allList', this.allListChild)
-        // this.isShow()
-      },
-    },
-    computed: {
-      dragOptions() {
-        return {
-          animation: 200,
-          group: "description",
-          disabled: false,
-          ghostClass: "ghost"
-        };
+        this.imgObj = {}
+        this.isShowUpload = true;
+        this.$emit('imgObj', this.imgObj)
       },
     },
     watch: {
       //监听 需求  商品图片  或者  个人图片
       imgList(newVal) {
-        if (newVal != null) {
-          for (var item of newVal) {
-            var temp = {
-              file: '',
-              imgUrl: item,
-              orderNumber: this.allListChild.length
-            };
-            this.allListChild.push(temp) // 启动拖拽功能
-          }
-          if (this.allListChild.length >= this.limit) {
-            this.isShowUpload = false;
+        if (newVal) {
+          this.imgObj = newVal
+          console.log("this.imgObj:",this.imgObj)
+          if(this.imgObj){
+             console.log("true")
+            this.isShowUpload = false
+          }else{
+            console.log("false")
           }
         }
-      },
-
+      }
     }
   }
 </script>
@@ -182,11 +154,10 @@
   .img-wrapper {
     float: left;
     position: relative;
-    margin-right: 20px;
     border: 1px dashed #c0ccda;
     border-radius: 6px;
-    width: 70px;
-    height: 70px;
+    width: 40px;
+    height: 40px;
     overflow: hidden;
 
     &:hover {
@@ -202,8 +173,8 @@
 
   .operate-bg {
     background: #000000;
-    width: 70px;
-    height: 70px;
+    width: 40px;
+    height: 50px;
     opacity: 0.4;
     position: absolute;
     top: 0;
@@ -214,9 +185,9 @@
   .del-icon {
     position: absolute;
     top: 0;
-    right: 40px;
-    font-size: 20px;
-    line-height: 70px;
+    right: 22px;
+    font-size: 10px;
+    line-height: 40px;
     color: #ffffff;
     z-index: 10;
   }
@@ -224,9 +195,9 @@
   .preview-icon {
     position: absolute;
     top: 0;
-    left: 40px;
-    font-size: 20px;
-    line-height: 70px;
+    left: 22px;
+    font-size: 10px;
+    line-height: 40px;
     color: #ffffff;
     z-index: 10;
   }

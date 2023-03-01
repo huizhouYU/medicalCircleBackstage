@@ -1,6 +1,6 @@
 <template>
   <!-- 添加规格模板 -->
-  <el-dialog title="规格模板" :close-on-click-modal="false" :visible.sync="specsDialogVisible" width="950px"
+  <el-dialog title="商品规格" :close-on-click-modal="false" :visible.sync="specsDialogVisible" width="950px"
     class="my-space-el-dialog-box" @close="closeDialog">
     <el-form :model="specsRuleForm" :rules="specsRules" ref="specsRuleForm" label-width="130px" class="specs-ruleForm">
       <el-form-item label="规格名称:" prop="specName">
@@ -43,6 +43,13 @@
       'specsDialogVisible': {
         type: Boolean,
         default: false
+      },
+      editSpecsForm:{
+        type:Object
+      },
+      editFlag:{
+        type:Boolean,
+        default:false
       }
     },
     data() {
@@ -98,6 +105,7 @@
                 console.log("最后数据：", this.specsRuleForm)
                 specCreate(this.specsRuleForm).then(response => {
                   if (response.data.code == 10000) {
+                    this.$emit("updateData")
                     this.closeDialog()
                   } else {
                     this.$message.error("规格保存失败：" + response.data.message)
@@ -183,6 +191,7 @@
         font-family: Microsoft YaHei-Regular, Microsoft YaHei;
         font-weight: 400;
         color: #333333;
+        padding-right: 30px;
       }
 
       /deep/ .el-input {

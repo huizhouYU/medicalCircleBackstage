@@ -67,16 +67,7 @@
                 </div>
               </div>
             </el-form-item>
-            <!-- 产品长图 -->
-            <!-- <el-form-item label="产品长图：" class="">
-              <div label="图片可拖曳排序：" prop="longTrialImgs" class="">
-                <div class="">
-                  <DragUpload @allList="longTrialImgs" :limit="longLimit" :imgList="longImages">
-                  </DragUpload>
-                  <div class="gray-tip">请：图片支持jpg/png格式，不超过3M，尺寸最大为750*1000，拖拽图片可调整排序</div>
-                </div>
-              </div>
-            </el-form-item> -->
+
             <!-- 商品标签 -->
             <el-form-item label="商品标签：" class="prodect-tag">
               <div class="content">
@@ -84,16 +75,6 @@
                 <span class="gray-tip">填写商品卖点，最多不超过15个字</span>
               </div>
 
-              <!-- <div class="content">
-                <div class="tags-content">
-                  <el-tag :key="tag" v-for="tag in goodInfo.tagList" closable :disable-transitions="false"
-                    @close="handleClose(tag)">
-                    {{tag}}
-                  </el-tag>
-                  <el-input v-model="goodTag" placeholder="添加标签" maxlength="4" @keyup.enter.native="addTag()"
-                    v-show="inputVisible"></el-input>
-                </div>
-              </div> -->
             </el-form-item>
             <!-- 立即上架 -->
             <div class="my-item">
@@ -165,44 +146,43 @@
             <!-- 添加新规格 -->
             <el-form-item label="" class="" v-show="!showDialogSpecsItem">
               <el-button type="primary" icon="el-icon-plus" @click="addNewSpec">添加新规格</el-button>
-              <el-button type="success" class="add-spaces-btn" @click="showSetting = true">立即生成</el-button>
+              <el-button type="success" class="add-spaces-btn" @click="immediatelyCreate">立即生成</el-button>
             </el-form-item>
             <el-form-item label="批量设置：" v-show="showSetting" class="batch-item">
               <el-form ref="batchForm" :model="batchForm">
-                <el-table :data="batchData" style="width: 1076px;" border :header-cell-style="{'text-align':'center'}"
+                <el-table :data="batchData" style="width: 1075px;" border :header-cell-style="{'text-align':'center'}"
                   :cell-style="{'text-align':'center',backgroundColor: '#fff'}">
-                  <el-table-column label="图片"  width="215">
+                  <el-table-column label="图片">
                     <template slot-scope="scope">
-                      <upload-one-img :imgList="scope.row.imgUrl"></upload-one-img>
+                      <upload-one-img :imgList="batchForm.imgUrl" @imgObj="getImgObj($event,'-1')"></upload-one-img>
                     </template>
                   </el-table-column>
-
-                  <el-table-column label="价格（元）"  width="215">
+                  <el-table-column label="价格（元）">
                     <template slot-scope="scope">
                       <el-form-item>
-                        <el-input v-model="scope.row.price"></el-input>
+                        <el-input v-model="batchForm.price"></el-input>
                       </el-form-item>
                     </template>
                   </el-table-column>
-                  <el-table-column label="编码"   width="215">
+                  <el-table-column label="编码">
                     <template slot-scope="scope">
                       <el-form-item>
-                        <el-input v-model="scope.row.pnCode"></el-input>
+                        <el-input v-model="batchForm.pnCode"></el-input>
                       </el-form-item>
                     </template>
                   </el-table-column>
-                  <el-table-column label="库存"  width="215">
+                  <el-table-column label="库存">
                     <template slot-scope="scope">
                       <el-form-item>
-                        <el-input v-model="scope.row.qty"></el-input>
+                        <el-input v-model="batchForm.qty"></el-input>
                       </el-form-item>
                     </template>
                   </el-table-column>
-                  <el-table-column label="操作"  width="215">
+                  <el-table-column label="操作">
                     <template slot-scope="scope">
                       <div class="batch-opt-div">
                         <span>批量添加</span>
-                        <span>清空</span>
+                        <span @click="resetForm()">清空</span>
                       </div>
                     </template>
                   </el-table-column>
@@ -212,19 +192,21 @@
 
             <el-form-item label="商品规格：" v-show="showSetting" class="batch-item">
               <el-form ref="batchForm" :model="batchForm">
-                <el-table :data="batchData" style="width: 1076px" border :header-cell-style="{'text-align':'center'}"
+                <el-table :data="batchListData" style="width: 1076px" border
+                  :header-cell-style="{'text-align':'center'}"
                   :cell-style="{'text-align':'center',backgroundColor: '#fff'}">
-                  <el-table-column  width="190" label="" v-for="(item,index) in tentSpecList" :key="index">
-                    <template slot="header">
+                  <el-table-column width="190" :prop="'spValue'+index" :label="item.specName"
+                    v-for="(item,index) in tentSpecList" :key="index">
+                    <!-- <template slot="header">
                       {{item.specName}}
-                    </template>
+                    </template> -->
                   </el-table-column>
-                  <el-table-column label="图片"  width="120">
+                  <el-table-column label="图片" width="120">
                     <template slot-scope="scope">
-                      <upload-one-img :imgList="scope.row.imgUrl"></upload-one-img>
+                      <upload-one-img :imgList="scope.row.imgUrl" @imgObj="scope.row.imgUrl = $event"></upload-one-img>
                     </template>
                   </el-table-column>
-                  <el-table-column label="价格（元）"  width="190">
+                  <el-table-column label="价格（元）" width="190">
                     <template slot-scope="scope">
                       <el-form-item>
                         <el-input v-model="scope.row.price"></el-input>
@@ -248,55 +230,13 @@
                   <el-table-column label="操作" width="215" fixed="right">
                     <template slot-scope="scope">
                       <div class="batch-opt-div">
-                        <span>批量添加</span>
-                        <span>清空</span>
+                        <span class="red-font" @click="deleteSpecItem(scope.$index)">删除</span>
                       </div>
                     </template>
                   </el-table-column>
                 </el-table>
               </el-form>
             </el-form-item>
-
-
-            <!-- 产品规格： -->
-            <!-- <el-form-item label="产品规格：" class="product-specs">
-              <el-form-item label="销售类型" class="product-specs-item">
-                <el-select v-model="goodInfo.saleType" class="select-item" @change="isEditPrice()">
-                  <el-option v-for="item in xsOptions" :key="item.value" :label="item.label" :value="item.value">
-                  </el-option>
-                </el-select>
-              </el-form-item>
-              <el-form-item label="价格" class="product-specs-item">
-                <el-input type="text" v-model="goodInfo.price" placeholder="请输入价格" :disabled="!isEditPriceFlag"
-                  onkeyup="if(!this.value.match(/^[\+\-]?\d*?\.?\d*?$/))this.value=this.t_value;else this.t_value=this.value;if(this.value.match(/^(?:[\+\-]?\d+(?:\.\d+)?)?$/))this.o_value=this.value"
-                  onblur="if(!this.value.match(/^(?:[\+\-]?\d+(?:\.\d+)?|\.\d*?)?$/))this.value=this.o_value;else{if(this.value.match(/^\.\d+$/))this.value=0+this.value;if(this.value.match(/^\.$/))this.value=0;this.o_value=this.value}">
-                </el-input>
-              </el-form-item>
-              <el-form-item label="商品编码" class="product-specs-item">
-                <el-input v-model="goodInfo.goodsPn" placeholder="产品P/N码或识别码"
-                  onkeyup="value=value.replace(/[^\w\.\/]/ig,'')">
-                </el-input>
-              </el-form-item>
-              <el-form-item label="库存" class="product-specs-item">
-                <el-input type="text" v-model="goodInfo.qty" placeholder="请输入商品库存"
-                  onkeyup="this.value=this.value.replace(/\D/g,'')"></el-input>
-              </el-form-item>
-              <el-form-item label="新旧程度" class="product-specs-item" v-show="goodInfo.type == 'material'">
-                <el-select v-model="goodInfo.degree" class="select-item" placeholder="请选择">
-                  <el-option v-for="item in newOrOrdDegreeOptions" :key="item.value" :label="item.label"
-                    :value="item.value">
-                  </el-option>
-                </el-select>
-              </el-form-item>
-              <el-form-item label="质保期限" class="product-specs-item shelf-life">
-                <el-input type="text" v-model="goodInfo.qualityTime" placeholder=""
-                  onkeyup="this.value=this.value.replace(/\D/g,'')"></el-input>
-                <el-select v-model="goodInfo.qualityTimeUnit" class="select-item" placeholder="请选择">
-                  <el-option v-for="item in shelfLifeOptions" :key="item.value" :label="item.label" :value="item.value">
-                  </el-option>
-                </el-select>
-              </el-form-item>
-            </el-form-item> -->
             <div class="submit">
               <el-button class="public-el-submit-btn" @click="activeName = 'first'">上一步</el-button>
               <el-button type="primary" class="public-el-submit-btn" @click="activeName = 'third'">下一步</el-button>
@@ -307,6 +247,16 @@
             <!-- 产品详情 -->
             <el-form-item label="产品详情：" class="product-detail">
               <edit class="edit" ref="edit" @getContent="getContentData" :description="goodInfo.content"></edit>
+            </el-form-item>
+            <!-- 产品长图 -->
+            <el-form-item label="产品长图：" class="">
+              <div label="图片可拖曳排序：" prop="longTrialImgs" class="">
+                <div class="">
+                  <DragUpload @allList="longTrialImgs" :limit="longLimit" :imgList="longImages">
+                  </DragUpload>
+                  <div class="gray-tip">请：图片支持jpg/png格式，不超过3M，尺寸最大为750*1000，拖拽图片可调整排序</div>
+                </div>
+              </div>
             </el-form-item>
             <div class="submit">
               <el-button class="public-el-submit-btn" @click="activeName = 'second'">上一步</el-button>
@@ -328,7 +278,7 @@
       </span>
     </el-dialog>
     <!-- 添加规格模板 -->
-    <specs-mould-dialog :specsDialogVisible="specsDialogVisible" @closeSpecs="closeSpecs"></specs-mould-dialog>
+    <specs-mould-dialog :specsDialogVisible="specsDialogVisible" @closeSpecs="closeSpecs"  @updateData="getSpecList"></specs-mould-dialog>
   </div>
 
   <!-- </div> -->
@@ -418,10 +368,10 @@
         //批量设置
         showSetting: false,
         batchData: [{
-          imgUrl: {},
-          price: 0,
-          pnCode: '',
-          qty: '',
+          // imgUrl: {},
+          // price: 0,
+          // pnCode: '',
+          // qty: '',
         }],
         batchForm: {
           imgUrl: {},
@@ -429,6 +379,7 @@
           pnCode: '',
           qty: '',
         },
+        batchListData: [],
 
 
 
@@ -592,16 +543,65 @@
       },
       //选择规格模板后确定
       sureChosedSpec() {
-        specValueList({
-          specId: this.chosedSpec.specId
-        }).then(response => {
-          if (response.data.code == 10000) {
-            this.chosedSpec.specStringValues = response.data.data
-            this.tentSpecList.push(this.cloneObj(this.chosedSpec))
+        if (this.tentSpecList.length >= 5) {
+          this.$message.warning("最多只能添加五种规格!")
+          return
+        }
+        if (this.chosedSpec.specId) {
+          specValueList({
+            specId: this.chosedSpec.specId
+          }).then(response => {
+            if (response.data.code == 10000) {
+              this.chosedSpec.specStringValues = response.data.data
+              this.tentSpecList.push(this.cloneObj(this.chosedSpec))
+            } else {
+              this.$message.error("获取规格值列表失败：" + response.data.message)
+            }
+          })
+        }
+      },
+      // 立即生成
+      immediatelyCreate() {
+        if (this.tentSpecList.length <= 0) {
+          return
+        }
+        this.showSetting = true
+        //开始生成商品规格table数据
+        this.batchListData = []
+        for (var i = 0; i < this.tentSpecList.length; i++) {
+          var tentItem = this.tentSpecList[i].specStringValues
+          if (i == 0) {
+            for (var x = 0; x < tentItem.length; x++) {
+              this.batchListData.push({
+                spValue0: tentItem[x].specValue,
+                imgUrl: '',
+                price: 0,
+                pnCode: '',
+                qty: ''
+              })
+            }
           } else {
-            this.$message.error("获取规格值列表失败：" + response.data.message)
+            var emptyArry = []
+            for (var j = 0; j < this.batchListData.length; j++) {
+              for (var k = 0; k < tentItem.length; k++) {
+                var str = 'spValue' + i
+                var param = this.batchListData[j]
+                param['spValue' + i] = tentItem[k].specValue
+                // console.log("this.batchListData[j]",this.batchListData[j])
+                // param.add(this.batchListData[j])
+                emptyArry.push(this.cloneObj(param))
+              }
+            }
+            this.batchListData = this.cloneObj(emptyArry)
           }
-        })
+        }
+        console.log(this.batchListData)
+      },
+      //商品规格 - 删除
+      deleteSpecItem(index) {
+        this.batchListData.splice(index, 1)
+        console.log("-----------------")
+        console.log(this.batchListData)
       },
       getParams() {
         // 销售类型
@@ -853,6 +853,23 @@
       trim(str) {
         return str.replace(/(^\s*)|(\s*$)/g, "");
       },
+      //批量设置-清空操作
+      resetForm(formName) {
+        this.batchForm = {
+          imgUrl: '',
+          price: 0,
+          pnCode: '',
+          qty: '',
+        }
+      },
+      //上传图片组件回调函数
+      getImgObj(obj, key) {
+        console.log("获取的图片信息:", obj)
+        if (key == '-1') {
+          this.batchForm.imgUrl = obj
+          this.batchForm.price = 6
+        }
+      },
       openSpecs() {
         this.specsDialogVisible = true
       },
@@ -861,6 +878,10 @@
         this.specsDialogVisible = false
       },
       addNewSpec() {
+        if (this.tentSpecList.length >= 5) {
+          this.$message.warning("最多只能添加五种规格!")
+          return
+        }
         this.tentSpecsRuleForm = {
           tentSpecName: '', //规格名称
           specValues: '' //规格值
@@ -973,6 +994,13 @@
     box-sizing: border-box;
     margin-bottom: 32px;
     padding-left: 15px;
+
+    //修改el-input样式
+    /deep/.el-form-item__label {
+      font-size: 12px;
+      padding-right: 30px;
+      color: #333333;
+    }
 
     // 产品类目
     .chooseClassify-span {
@@ -1269,51 +1297,6 @@
     font-size: 12px;
   }
 
-  // 产品规格
-  // .product-specs {
-  //   /deep/ .el-form-item__content {
-  //     display: flex;
-  //     justify-content: flex-start;
-  //     align-items: center;
-  //     flex-wrap: wrap;
-  //   }
-
-  //   /deep/ .el-input {
-  //     width: 160px;
-  //   }
-
-  //   /deep/ .el-form-item {
-  //     margin-bottom: 0px;
-  //   }
-
-  //   .product-specs-item {
-  //     border: 1px solid #EBEEF5;
-  //     height: 100px;
-  //     width: 215px;
-  //     display: flex;
-  //     justify-content: space-around;
-  //     align-items: center;
-  //     flex-direction: column;
-  //     margin-left: -1px;
-
-  //     /deep/.el-form-item__content {
-  //       width: 100%;
-  //       border-top: 1px solid #EBEEF5;
-  //       flex: 2;
-  //       margin-left: 0px !important;
-  //       display: flex;
-  //       justify-content: center;
-  //       align-items: center;
-  //     }
-  //   }
-
-  //   .shelf-life {
-  //     /deep/ .el-input {
-  //       width: 80px;
-  //     }
-  //   }
-  // }
-
   //下标 注释
   .gray-tip {
     font-size: 12px;
@@ -1350,7 +1333,6 @@
     .public-el-submit-btn+.public-el-submit-btn {
       margin-left: 40px;
     }
-
   }
 
   //批量设置
@@ -1376,6 +1358,10 @@
     display: flex;
     justify-content: center;
     align-items: center;
+
+    .red-font {
+      color: #FF7575;
+    }
 
     span {
       font-size: 12px;

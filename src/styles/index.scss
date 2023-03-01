@@ -253,6 +253,7 @@ li {
   }
 }
 //  复合型输入框搜索按钮
+.my-search-input,
 .search-select-input{
   .el-input-group__append button.el-button {
     background-color: #1890FF;
@@ -275,6 +276,9 @@ li {
   .el-input__icon {
     line-height: 34px;
   }
+  .el-input-group__append .el-button{
+    font-size: 20px !important;
+  }
 }
 
  //复合型输入框 当输入框选中时,显示前面下拉框边框样式
@@ -286,9 +290,6 @@ li {
 .search-select-input{
   .el-input__inner {
     border-left: none;
-  }
-  .el-input-group__append .el-button{
-    font-size: 20px !important;
   }
 }
 //弹框
