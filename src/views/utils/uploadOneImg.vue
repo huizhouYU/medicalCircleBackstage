@@ -7,7 +7,7 @@
           style="display: none; " class="hiddenInput" multiple="multiple">
       </div>
     </label>
-    <div class="img-wrapper"  v-show="!isShowUpload">
+    <div class="img-wrapper" v-show="!isShowUpload">
       <el-image :src="imgObj.imgUrl">
       </el-image>
       <!-- 鼠标经过图片放大icon和删除icon -->
@@ -33,7 +33,7 @@
       return {
         limit: 1,
         isShowUpload: true, //是否展示上传图片
-        imgObj:'',
+        imgObj: '',
         dialogVisible: false,
         dialogImageUrl: ''
       };
@@ -67,35 +67,29 @@
               file: files[0],
               imgUrl: e.target.result
             }
-            if(_this.imgObj){
+            if (_this.imgObj) {
               _this.isShowUpload = false;
             }
-              _this.$emit('imgObj', _this.imgObj)
+            _this.$emit('imgObj', _this.imgObj)
             return files[0]
-
-
           }
         }
       },
       //删除图片
       deleImg(data, index) {
-        this.imgObj = {}
+        this.imgObj = ''
         this.isShowUpload = true;
         this.$emit('imgObj', this.imgObj)
       },
     },
     watch: {
-      //监听 需求  商品图片  或者  个人图片
+      //监听   商品图片  
       imgList(newVal) {
-        if (newVal) {
-          this.imgObj = newVal
-          console.log("this.imgObj:",this.imgObj)
-          if(this.imgObj){
-             console.log("true")
-            this.isShowUpload = false
-          }else{
-            console.log("false")
-          }
+        this.imgObj = newVal
+        if (this.imgObj) {
+          this.isShowUpload = false
+        } else {
+          this.isShowUpload = true;
         }
       }
     }

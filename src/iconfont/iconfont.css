@@ -12,6 +12,10 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+.icon-iconzhengli_gengduo:before {
+  content: "\e650";
+}
+
 .icon-tianjia:before {
   content: "\e622";
 }

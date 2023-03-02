@@ -1,6 +1,6 @@
 <template>
   <!-- 添加规格模板 -->
-  <el-dialog title="商品规格" :close-on-click-modal="false" :visible.sync="specsDialogVisible" width="950px"
+  <el-dialog title="商品规格" :close-on-click-modal="false" :visible.sync="dialogVisible" width="950px"
     class="my-space-el-dialog-box" @close="closeDialog">
     <el-form :model="specsRuleForm" :rules="specsRules" ref="specsRuleForm" label-width="130px" class="specs-ruleForm">
       <el-form-item label="规格名称:" prop="specName">
@@ -14,7 +14,7 @@
               <span>{{item}}</span>
               <i class="iconfont my-close-font" @click="delValues(index)">&#xe630;</i>
             </div>
-            <el-input v-model.trim="specsRuleForm.specValues" placeholder="请输入规格值" @keyup.native.enter="addValues()"
+            <el-input v-model.trim="specValues" placeholder="请输入规格值" @keyup.native.enter="addValues()"
               class="my-add-value-input">
               <el-button slot="append" @click="addValues()">添加</el-button>
             </el-input>
@@ -22,7 +22,7 @@
         </el-form-item>
       </div>
       <el-form-item label="规格值:" prop="" v-show="!specsRuleForm.specStringValues.length>0">
-        <el-input v-model.trim="specsRuleForm.specValues" placeholder="请填写规格值" @keyup.native.enter="tentSpecSure()">
+        <el-input v-model.trim="specValues" placeholder="请填写规格值" @keyup.native.enter="tentSpecSure()">
         </el-input>
         <el-button type="primary" @click="tentSpecSure()" class="add-spacesValue-btn">添加</el-button>
       </el-form-item>
@@ -36,7 +36,8 @@
 
 <script>
   import {
-    specCreate
+    specCreate,
+    specUpdate
   } from '@/api/goods'
   export default {
     props: {
@@ -44,21 +45,22 @@
         type: Boolean,
         default: false
       },
-      editSpecsForm:{
-        type:Object
+      editSpecsForm: {
+        type: Object
       },
-      editFlag:{
-        type:Boolean,
-        default:false
+      editFlag: {
+        type: Boolean,
+        default: false
       }
     },
     data() {
       return {
+        dialogVisible:false,
         specsRuleForm: {
           specName: '', //规格模板名称
           specStringValues: [], //规格值
-          specValues: ''
         },
+        specValues: '',
         specsRules: {
           specName: [{
               required: true,
@@ -76,11 +78,33 @@
 
       }
     },
+    watch: {
+      specsDialogVisible(newVal){
+        this.dialogVisible = newVal
+      },
+      editFlag(newVal) {
+        if (newVal) {
+          this.specsRuleForm = this.editSpecsForm
+          this.specsRuleForm.specStringValues = this.specsRuleForm.specValues.split(",")
+        }
+      },
+      editSpecsForm(newVal) {
+        if (!this.editFlag) {
+          this.specsRuleForm = {
+            specName: '', //规格模板名称
+            specStringValues: [] //规格值
+          }
+        } else {
+          this.specsRuleForm = this.editSpecsForm
+          this.specsRuleForm.specStringValues = this.specsRuleForm.specValues.split(",")
+        }
+      }
+    },
     methods: {
       tentSpecSure() {
-        if (this.specsRuleForm.specValues) {
-          this.specsRuleForm.specStringValues.push(this.specsRuleForm.specValues)
-          this.specsRuleForm.specValues = ''
+        if (this.specValues) {
+          this.specsRuleForm.specStringValues.push(this.specValues)
+          this.specValues = ''
         }
       },
       delValues(key) {
@@ -93,8 +117,8 @@
         this.specsRuleForm = {
           specName: '', //规格模板名称
           specStringValues: [], //规格值
-          specValues: ''
         }
+        this.specValues = ''
         this.$emit("closeSpecs")
       },
       submitSpec(formName) {
@@ -102,15 +126,25 @@
           this.$refs[formName].validate((valid) => {
             if (valid) {
               if (this.specsRuleForm.specStringValues.length > 0) {
-                console.log("最后数据：", this.specsRuleForm)
-                specCreate(this.specsRuleForm).then(response => {
-                  if (response.data.code == 10000) {
-                    this.$emit("updateData")
-                    this.closeDialog()
-                  } else {
-                    this.$message.error("规格保存失败：" + response.data.message)
-                  }
-                })
+                if (this.editFlag) {
+                  specUpdate(this.specsRuleForm).then(response => {
+                    if (response.data.code == 10000) {
+                      this.$emit("updateData")
+                      this.closeDialog()
+                    } else {
+                      this.$message.error("规格保存失败：" + response.data.message)
+                    }
+                  })
+                } else {
+                  specCreate(this.specsRuleForm).then(response => {
+                    if (response.data.code == 10000) {
+                      this.$emit("updateData")
+                      this.closeDialog()
+                    } else {
+                      this.$message.error("规格保存失败：" + response.data.message)
+                    }
+                  })
+                }
                 // this.closeDialog()
               } else {
                 this.$message.error("请输入规格值")
@@ -121,10 +155,7 @@
           });
         } catch (e) {
           console.log(e)
-          //TODO handle the exception
         }
-
-
       },
 
     }

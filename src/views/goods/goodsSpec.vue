@@ -6,7 +6,7 @@
       <div class="search">
         <!-- 输入关键字 -->
         <span class="title">规格搜索：</span>
-        <el-input placeholder="请输入规格名称" v-model="keyword" class="input-with-select my-search-input public-interval">
+        <el-input placeholder="请输入规格名称" v-model="keyword" @keyup.native.enter="initData" class="input-with-select my-search-input public-interval">
           <el-button slot="append" icon="el-icon-search" @click="initData"></el-button>
         </el-input>
       </div>
@@ -14,10 +14,10 @@
       <el-button type="primary" class="public-el-btn" @click="toAddSpec">添加规格模板</el-button>
     </div>
     <!-- 模块三 规格列表 -->
-    <spec-items class="items" @changePageSize="changePageSize" @changePage="changePage" :dataList="dataList"
+    <spec-items class="items" @changePageSize="changePageSize" @changePage="changePage" @updateSpec="updateSpec" :dataList="dataList"
       :currentPage="currentPage" :pageSize="pageSize" :totalPage="totalPage" :totalNum="totalNum"></spec-items>
     <!-- 添加规格模板 -->
-    <specs-mould-dialog :specsDialogVisible="specsDialogVisible" @closeSpecs="closeSpecs" @updateData="updateData"></specs-mould-dialog>
+    <specs-mould-dialog :specsDialogVisible="specsDialogVisible" @closeSpecs="closeSpecs" @updateData='updateData' :editFlag="editSpecFlag" :editSpecsForm="editSpec"></specs-mould-dialog>
   </div>
 </template>
 
@@ -42,8 +42,9 @@
         pageSize: 20, //当前显示条数
         totalPage: 0, //总页数
         totalNum: 0, //总条数
-        specsDialogVisible: false
-
+        specsDialogVisible: false,
+        editSpecFlag:false,
+        editSpec:{}
       }
     },
     mounted() {
@@ -77,7 +78,13 @@
       },
       //添加规格模板
       toAddSpec() {
+        this.editSpecFlag = false
         this.specsDialogVisible = true
+      },
+      updateSpec(obj){
+        this.editSpecFlag = true
+        this.specsDialogVisible = true
+        this.editSpec = obj
       },
       updateData(){
         this.initData()

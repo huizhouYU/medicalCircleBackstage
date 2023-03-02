@@ -5,7 +5,11 @@
       <el-table-column label="ID" prop="id">
       </el-table-column>
       <el-table-column prop="specName" label="规格名称"></el-table-column>
-      <el-table-column prop="specStringValues" label="规格值"></el-table-column>
+      <el-table-column prop="specValues" label="规格值">
+    <!--    <template slot-scope="scope">
+JSON.parse('["地方官","饭给","购房人"]').join()
+        </template> -->
+      </el-table-column>
       <el-table-column fixed="right" label="操作" width="120">
         <template slot-scope="scope">
           <el-button @click.native.prevent="editRow(scope.$index, currentPageData)" type="text" size="small">
@@ -33,6 +37,9 @@
     getDynamicHeight,
     debounce
   } from "../utils/elTableAutoHeight.js";
+  import {
+    specDelete
+  } from '@/api/goods'
   export default {
     props: ['dataList', 'currentPage', 'pageSize', 'totalPage', 'totalNum'],
     data() {
@@ -109,8 +116,15 @@
           type: 'warning'
         }).then(() => {
           let param={
-            id:rows[index].articleId
+            specId:rows[index].id
           }
+          specDelete(param).then(response=>{
+            if(response.data.code==10000){
+              rows.splice(index, 1);
+            }else{
+              this.$message.error(response.data.message)
+            }
+          })
           //删除操作
         }).catch(() => {
           this.$message({
@@ -121,6 +135,7 @@
       },
       //编辑需求
       editRow(index, rows) {
+         this.$emit("updateSpec", rows[index])
       },
     }
   }

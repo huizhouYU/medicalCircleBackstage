@@ -98,6 +98,24 @@ export function specValueList(query) {
   })
 }
 
+//更新规格
+export function specUpdate(data) {
+  return request({
+    url: 'spec/update',
+    method: 'post',
+    data
+  })
+}
+
+//删除规格
+export function specDelete(data) {
+  return request({
+    url: 'spec/delete',
+    method: 'post',
+    data
+  })
+}
+
 
 
 // export function fetchPv(pv) {

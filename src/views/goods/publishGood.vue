@@ -103,29 +103,43 @@
                 <el-option v-for="item in specs.options" :key="item.id" :label="item.specName" :value="item.id">
                 </el-option>
               </el-select>
-              <el-button type="primary" @click="sureChosedSpec">确定</el-button>
+              <el-button type="primary" @click="sureChosedSpec" v-no-more-click>确定</el-button>
               <el-button class="add-spaces-btn" @click="openSpecs">添加规格模板</el-button>
             </el-form-item>
             <div class="tent-spec-box">
-              <el-form-item label="" prop="" v-for="(sp,ind) in tentSpecList" :key="ind">
-                <div class="edit-spec-detail-box">
-                  <div class="specName-div">
-                    {{sp.specName}}
-                    <i class="iconfont my-close" @click="delSpec(ind)">&#xe8dc;</i>
-                  </div>
-                  <div class="specValues-div">
-                    <div class="specValue-item" v-for="(item,index) in sp.specStringValues" :key="index">
-                      <div class="round"></div>
-                      <span>{{item.specValue}}</span>
-                      <i class="iconfont my-close-font" @click="delValues(ind,index)">&#xe630;</i>
+              <draggable :list="tentSpecList" @start="dragging = true" @end="dragging = false" handle=".mover-div">
+                <transition-group>
+                  <el-form-item label="" prop="" v-for="(sp,ind) in tentSpecList" :key="ind">
+                    <div class="edit-spec-detail-box">
+                      <div class="mover-div">
+                        <i class="iconfont">&#xe650;</i>
+                        <i class="iconfont">&#xe650;</i>
+                        <i class="iconfont">&#xe650;</i>
+                        <i class="iconfont">&#xe650;</i>
+                        <i class="iconfont">&#xe650;</i>
+                        <i class="iconfont">&#xe650;</i>
+                        <i class="iconfont">&#xe650;</i>
+                      </div>
+                      <div class="specName-div">
+                        {{sp.specName}}
+                        <i class="iconfont my-close" @click="delSpec(ind)">&#xe8dc;</i>
+                      </div>
+                      <div class="specValues-div">
+                        <div class="specValue-item" v-for="(item,index) in sp.specStringValues" :key="index">
+                          <div class="round"></div>
+                          <span>{{item.specValue}}</span>
+                          <i class="iconfont my-close-font" @click="delValues(ind,index)">&#xe630;</i>
+                        </div>
+                        <el-input v-model.trim="sp.tent" placeholder="请输入规格值" @keyup.native.enter="addValues(ind)"
+                          class="my-add-value-input">
+                          <el-button slot="append" @click="addValues(ind)">添加</el-button>
+                        </el-input>
+                      </div>
                     </div>
-                    <el-input v-model.trim="sp.tent" placeholder="请输入规格值" @keyup.native.enter="addValues(ind)"
-                      class="my-add-value-input">
-                      <el-button slot="append" @click="addValues(ind)">添加</el-button>
-                    </el-input>
-                  </div>
-                </div>
-              </el-form-item>
+                  </el-form-item>
+                </transition-group>
+              </draggable>
+
             </div>
             <el-form-item v-show="showDialogSpecsItem">
               <!-- 规格名称 + 规格值 -->
@@ -138,7 +152,7 @@
                   <el-input v-model.trim="tentSpecsRuleForm.specValues" placeholder="请填写规格值"
                     @keyup.native.enter="tentSpecSure('tentSpecsRuleForm')"></el-input>
                 </el-form-item>
-                <el-button type="primary" class="sure-specs-btn" @click="tentSpecSure('tentSpecsRuleForm')">确定
+                <el-button type="primary" class="sure-specs-btn" @click="tentSpecSure('tentSpecsRuleForm')" >确定
                 </el-button>
                 <el-button @click="showDialogSpecsItem = false">取消</el-button>
               </el-form>
@@ -160,7 +174,7 @@
                   <el-table-column label="价格（元）">
                     <template slot-scope="scope">
                       <el-form-item>
-                        <el-input v-model="batchForm.price"></el-input>
+                        <el-input v-model="batchForm.price" oninput="value=value.replace(/[^0-9.]/g,'')"></el-input>
                       </el-form-item>
                     </template>
                   </el-table-column>
@@ -174,14 +188,14 @@
                   <el-table-column label="库存">
                     <template slot-scope="scope">
                       <el-form-item>
-                        <el-input v-model="batchForm.qty"></el-input>
+                        <el-input v-model="batchForm.qty" oninput="value=value.replace(/[^\d]/g,'')"></el-input>
                       </el-form-item>
                     </template>
                   </el-table-column>
                   <el-table-column label="操作">
                     <template slot-scope="scope">
                       <div class="batch-opt-div">
-                        <span>批量添加</span>
+                        <span @click="batchSet">批量添加</span>
                         <span @click="resetForm()">清空</span>
                       </div>
                     </template>
@@ -209,7 +223,7 @@
                   <el-table-column label="价格（元）" width="190">
                     <template slot-scope="scope">
                       <el-form-item>
-                        <el-input v-model="scope.row.price"></el-input>
+                        <el-input v-model="scope.row.price" oninput="value=value.replace(/[^0-9.]/g,'')"></el-input>
                       </el-form-item>
                     </template>
                   </el-table-column>
@@ -223,7 +237,7 @@
                   <el-table-column label="库存" width="190">
                     <template slot-scope="scope">
                       <el-form-item>
-                        <el-input v-model="scope.row.qty"></el-input>
+                        <el-input v-model="scope.row.qty" oninput="value=value.replace(/[^\d]/g,'')"></el-input>
                       </el-form-item>
                     </template>
                   </el-table-column>
@@ -278,7 +292,8 @@
       </span>
     </el-dialog>
     <!-- 添加规格模板 -->
-    <specs-mould-dialog :specsDialogVisible="specsDialogVisible" @closeSpecs="closeSpecs"  @updateData="getSpecList"></specs-mould-dialog>
+    <specs-mould-dialog :specsDialogVisible="specsDialogVisible" @closeSpecs="closeSpecs" @updateData="getSpecList">
+    </specs-mould-dialog>
   </div>
 
   <!-- </div> -->
@@ -303,6 +318,7 @@
   import uploadOneImg from '../utils/uploadOneImg.vue'
   import addGoods from '../../../src/views/goods/addGoods.vue'
   import specsMouldDialog from '../../../src/views/goods/specsMouldDialog.vue'
+  import draggable from "vuedraggable";
   import {
     mapGetters
   } from 'vuex'
@@ -312,7 +328,8 @@
       uploadOneImg,
       edit,
       addGoods,
-      specsMouldDialog
+      specsMouldDialog,
+      draggable
     },
     computed: {
       ...mapGetters([
@@ -322,6 +339,7 @@
 
     data() {
       return {
+        dragging: false,
         specs: {
           options: [],
           value: ''
@@ -374,8 +392,8 @@
           // qty: '',
         }],
         batchForm: {
-          imgUrl: {},
-          price: 0,
+          imgUrl: '',
+          price: '',
           pnCode: '',
           qty: '',
         },
@@ -526,7 +544,6 @@
           pageSize: 9999
         }
         specList(params).then(response => {
-          console.log("获取规格列表：", response)
           this.specs.options = response.data.data.list
         })
       },
@@ -595,13 +612,19 @@
             this.batchListData = this.cloneObj(emptyArry)
           }
         }
-        console.log(this.batchListData)
+      },
+      // 批量添加
+      batchSet() {
+        this.batchListData.forEach(item => {
+          item.imgUrl = this.batchForm.imgUrl
+          item.price = this.batchForm.price
+          item.pnCode = this.batchForm.pnCode
+          item.qty = this.batchForm.qty
+        })
       },
       //商品规格 - 删除
       deleteSpecItem(index) {
         this.batchListData.splice(index, 1)
-        console.log("-----------------")
-        console.log(this.batchListData)
       },
       getParams() {
         // 销售类型
@@ -1181,6 +1204,23 @@
       flex-direction: column;
       justify-content: flex-start;
       align-items: flex-start;
+      position: relative;
+      padding-left: 40px;
+
+      .mover-div {
+        cursor: move;
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+        color: #EBEEF5;
+        font-size: 20px;
+        line-height: 5px;
+        left: 0px;
+        top: 20px;
+
+      }
 
       .specName-div {
         margin-bottom: 15px;
@@ -1349,6 +1389,10 @@
 
     /deep/ .el-form-item {
       margin-bottom: 0px !important;
+    }
+
+    /deep/ .el-input--medium .el-input__inner {
+      padding-right: 15px;
     }
   }
 

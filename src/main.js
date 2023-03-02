@@ -76,6 +76,19 @@ Vue.use(Element, {
 Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key])
 })
+// 提交以后禁用按钮一段时间，防止重复提交
+Vue.directive('noMoreClick', {
+  inserted(el, binding) {
+    el.addEventListener('click', e => {
+      el.classList.add('is-disabled')
+      el.disabled = true
+      setTimeout(() => {
+        el.disabled = false
+        el.classList.remove('is-disabled')
+      }, 2000)//我这里设置的是2000毫秒也就是2秒
+    })
+  }
+})
 
 Vue.config.productionTip = false
 
