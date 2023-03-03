@@ -184,18 +184,18 @@
                 for (var k = 0; k < child3.length; k++) {
                   item.cateId.push(child3[k].cateId)
                   item.cateName.push(child3[k].cateName)
-                  this.list.push(this.cloneObj(item))
+                  this.list.push( this.utils.cloneObj(item))
                   item.cateId.pop()
                   item.cateName.pop()
                 }
               } else {
-                this.list.push(this.cloneObj(item))
+                this.list.push( this.utils.cloneObj(item))
               }
               item.cateId.pop()
               item.cateName.pop()
             }
           } else {
-            this.list.push(this.cloneObj(item))
+            this.list.push( this.utils.cloneObj(item))
           }
           item.cateId.pop()
           item.cateName.pop()
@@ -213,17 +213,6 @@
         //     this.position1()
         //   }
         // })
-      },
-      cloneObj(obj) {
-        var newObj = {};
-        if (obj instanceof Array) {
-          newObj = [];
-        }
-        for (var key in obj) {
-          var val = obj[key];
-          newObj[key] = typeof val === 'object' ? this.cloneObj(val) : val;
-        }
-        return newObj;
       },
       back() {
         this.$router.back()

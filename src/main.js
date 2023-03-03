@@ -72,6 +72,10 @@ Vue.use(Element, {
   // locale: enLang // 如果使用中文，无需设置，请删除
 })
 
+
+import Utils from '../src/utils/public.js'
+Vue.prototype.utils = Utils
+
 // register global utility filters
 Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key])

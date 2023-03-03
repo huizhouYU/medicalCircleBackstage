@@ -33,7 +33,8 @@
   import draggable from "vuedraggable";
   export default {
     name: "DragUpload",
-    props: ['imgList', 'limit', 'limitWidth', 'limitHeight'],
+    // props: ['imgList', 'limit', 'limitWidth', 'limitHeight'],
+    props: ['imgList', 'limit'],
     components: {
       draggable,
     },
@@ -68,53 +69,51 @@
           // 3.监听 fr 的 onload 事件
           fr.onload = (e) => {
             let _this = this;
-            // const isLt3M = files[0].size / 1024  < 3*1024;
-            const isLt3M = files[0].size / 1024 / 1024 < 3;
-            // console.log("files[0].size:",files[0].size)
-            if (isLt3M) {
-              let imgWidth = "";
-              let imgHight = "";
-              new Promise(function(resolve, reject) {
-                let _URL = window.URL || window.webkitURL;
-                let img = new Image();
-                img.src = _URL.createObjectURL(files[0]);
-                img.onload = function() {
-                  imgWidth = img.width;
-                  imgHight = img.height;
-                  let valid = img.width <= _this.limitWidth && img.height <= _this.limitHeight;
-                  valid ? resolve() : reject();
-                }
-              }).then(() => {
-                // 通过 e.target.result 获取到读取的结果，值是 BASE64 格式的字符串
-                // 法1
-                // this.$refs.imgRef.src = e.target.result
-                // 法2
-                var temp = {
-                  file: files[0],
-                  imgUrl: e.target.result,
-                  orderNumber: _this.allListChild.length
-                };
-                _this.allListChild.push(temp) // 启动拖拽功能
-                if (_this.allListChild.length >= _this.limit) {
-                  _this.isShowUpload = false;
-                }
-                _this.$emit('allList', _this.allListChild)
-
-                return files[0]
-              }, () => {
-                _this.$message.warning({
-                  message: '上传文件的图片大小不合符标准,宽最大不超过' + this.limitWidth + 'px，高最大不超过' + this.limitHeight +
-                    'px。当前上传图片的宽高分别为：' + imgWidth + 'px和' + imgHight + 'px',
-                  btn: false
-                })
-                return Promise.reject();
-              });
-            } else {
-              _this.$message.warning({
-                message: '上传文件的图片大小不能超过3M!',
-                btn: false
-              })
+            // 通过 e.target.result 获取到读取的结果，值是 BASE64 格式的字符串
+            // 法1
+            // this.$refs.imgRef.src = e.target.result
+            // 法2
+            var temp = {
+              file: files[0],
+              imgUrl: e.target.result,
+              orderNumber: _this.allListChild.length
+            };
+            _this.allListChild.push(temp) // 启动拖拽功能
+            if (_this.allListChild.length >= _this.limit) {
+              _this.isShowUpload = false;
             }
+            _this.$emit('allList', _this.allListChild)
+            return files[0]
+            // const isLt3M = files[0].size / 1024 / 1024 < 3;
+            // if (isLt3M) {
+            //   let imgWidth = "";
+            //   let imgHight = "";
+            //   new Promise(function(resolve, reject) {
+            //     let _URL = window.URL || window.webkitURL;
+            //     let img = new Image();
+            //     img.src = _URL.createObjectURL(files[0]);
+            //     img.onload = function() {
+            //       imgWidth = img.width;
+            //       imgHight = img.height;
+            //       let valid = img.width <= _this.limitWidth && img.height <= _this.limitHeight;
+            //       valid ? resolve() : reject();
+            //     }
+            //   }).then(() => {
+
+            //   }, () => {
+            //     _this.$message.warning({
+            //       message: '上传文件的图片大小不合符标准,宽最大不超过' + this.limitWidth + 'px，高最大不超过' + this.limitHeight +
+            //         'px。当前上传图片的宽高分别为：' + imgWidth + 'px和' + imgHight + 'px',
+            //       btn: false
+            //     })
+            //     return Promise.reject();
+            //   });
+            // } else {
+            //   _this.$message.warning({
+            //     message: '上传文件的图片大小不能超过3M!',
+            //     btn: false
+            //   })
+            // }
 
           }
         }

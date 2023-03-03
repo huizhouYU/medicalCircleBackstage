@@ -106,41 +106,68 @@
               <el-button type="primary" @click="sureChosedSpec" v-no-more-click>确定</el-button>
               <el-button class="add-spaces-btn" @click="openSpecs">添加规格模板</el-button>
             </el-form-item>
-            <div class="tent-spec-box">
-              <draggable :list="tentSpecList" @start="dragging = true" @end="dragging = false" handle=".mover-div">
-                <transition-group>
-                  <el-form-item label="" prop="" v-for="(sp,ind) in tentSpecList" :key="ind">
-                    <div class="edit-spec-detail-box">
-                      <div class="mover-div">
-                        <i class="iconfont">&#xe650;</i>
-                        <i class="iconfont">&#xe650;</i>
-                        <i class="iconfont">&#xe650;</i>
-                        <i class="iconfont">&#xe650;</i>
-                        <i class="iconfont">&#xe650;</i>
-                        <i class="iconfont">&#xe650;</i>
-                        <i class="iconfont">&#xe650;</i>
-                      </div>
-                      <div class="specName-div">
-                        {{sp.specName}}
-                        <i class="iconfont my-close" @click="delSpec(ind)">&#xe8dc;</i>
-                      </div>
-                      <div class="specValues-div">
-                        <div class="specValue-item" v-for="(item,index) in sp.specStringValues" :key="index">
-                          <div class="round"></div>
-                          <span>{{item.specValue}}</span>
-                          <i class="iconfont my-close-font" @click="delValues(ind,index)">&#xe630;</i>
-                        </div>
-                        <el-input v-model.trim="sp.tent" placeholder="请输入规格值" @keyup.native.enter="addValues(ind)"
-                          class="my-add-value-input">
-                          <el-button slot="append" @click="addValues(ind)">添加</el-button>
-                        </el-input>
-                      </div>
-                    </div>
+            <!-- 规格类型 -->
+            <el-form-item label="" class="">
+              <div class="whole-spec-item">
+                <span class="spec-item-title">
+                  规格类型<span class="remark">（最多添加1种属性类型）</span>
+                </span>
+                <!-- 规格名称 + 规格值 -->
+                <el-form class="marginBottom add-specs" :model="tentSpecsRuleForm" :rules="tentSpecsRules" ref="tentSpecsRuleForm"
+                  label-width="130px">
+                  <el-form-item label="规格名称:" prop="tentSpecName">
+                    <el-input v-model.trim="tentSpecsRuleForm.tentSpecName" placeholder="请填写规格名称"></el-input>
                   </el-form-item>
-                </transition-group>
-              </draggable>
+                  <el-form-item label="规格值:" prop="specValues">
+                    <el-input v-model.trim="tentSpecsRuleForm.specValues" placeholder="请填写规格值"
+                      @keyup.native.enter="tentSpecSure('tentSpecsRuleForm')"></el-input>
+                  </el-form-item>
+                  <el-button type="primary" class="sure-specs-btn" @click="tentSpecSure('tentSpecsRuleForm')">确定
+                  </el-button>
+                  <el-button @click="showDialogSpecsItem = false">取消</el-button>
+                </el-form>
+                <div class="tent-spec-box">
+                  <draggable :list="tentSpecList" @start="dragging = true" @end="dragging = false" handle=".mover-div">
+                    <transition-group>
+                      <el-form-item label="" prop="" v-for="(sp,ind) in tentSpecList" :key="ind">
+                        <div class="edit-spec-detail-box">
+                          <div class="mover-div">
+                            <i class="iconfont">&#xe650;</i>
+                            <i class="iconfont">&#xe650;</i>
+                            <i class="iconfont">&#xe650;</i>
+                            <i class="iconfont">&#xe650;</i>
+                            <i class="iconfont">&#xe650;</i>
+                            <i class="iconfont">&#xe650;</i>
+                            <i class="iconfont">&#xe650;</i>
+                          </div>
+                          <div class="specName-div">
+                            {{sp.specName}}
+                            <i class="iconfont my-close" @click="delSpec(ind)">&#xe8dc;</i>
+                          </div>
+                          <div class="specValues-div">
+                            <div class="specValue-item" v-for="(item,index) in sp.specStringValues" :key="index">
+                              <div class="round"></div>
+                              <span>{{item.specValue}}</span>
+                              <i class="iconfont my-close-font" @click="delValues(ind,index)">&#xe630;</i>
+                            </div>
+                            <el-input v-model.trim="sp.tent" placeholder="请输入规格值" @keyup.native.enter="addValues(ind)"
+                              class="my-add-value-input">
+                              <el-button slot="append" @click="addValues(ind)">添加</el-button>
+                            </el-input>
+                          </div>
+                        </div>
+                      </el-form-item>
+                    </transition-group>
+                  </draggable>
+                </div>
+              </div>
+            </el-form-item>
 
-            </div>
+
+
+
+
+
             <el-form-item v-show="showDialogSpecsItem">
               <!-- 规格名称 + 规格值 -->
               <el-form class="add-specs" :model="tentSpecsRuleForm" :rules="tentSpecsRules" ref="tentSpecsRuleForm"
@@ -152,7 +179,7 @@
                   <el-input v-model.trim="tentSpecsRuleForm.specValues" placeholder="请填写规格值"
                     @keyup.native.enter="tentSpecSure('tentSpecsRuleForm')"></el-input>
                 </el-form-item>
-                <el-button type="primary" class="sure-specs-btn" @click="tentSpecSure('tentSpecsRuleForm')" >确定
+                <el-button type="primary" class="sure-specs-btn" @click="tentSpecSure('tentSpecsRuleForm')">确定
                 </el-button>
                 <el-button @click="showDialogSpecsItem = false">取消</el-button>
               </el-form>
@@ -203,41 +230,49 @@
                 </el-table>
               </el-form>
             </el-form-item>
+            <!-- entityImage:"",
+                entityName:"",
+                entityPrice:'',
+                entityStock:'',
+                goodsId:'',
+                goodsSkuItemList:[],
+ -->
 
             <el-form-item label="商品规格：" v-show="showSetting" class="batch-item">
               <el-form ref="batchForm" :model="batchForm">
                 <el-table :data="batchListData" style="width: 1076px" border
                   :header-cell-style="{'text-align':'center'}"
                   :cell-style="{'text-align':'center',backgroundColor: '#fff'}">
-                  <el-table-column width="190" :prop="'spValue'+index" :label="item.specName"
-                    v-for="(item,index) in tentSpecList" :key="index">
-                    <!-- <template slot="header">
-                      {{item.specName}}
-                    </template> -->
+                  <el-table-column width="190" :label="item.specName" v-for="(item,index) in tentSpecList" :key="index">
+                    <template slot-scope="scope">
+                      {{scope.row.goodsSkuItemList[index].specValue}}
+                    </template>
                   </el-table-column>
                   <el-table-column label="图片" width="120">
                     <template slot-scope="scope">
-                      <upload-one-img :imgList="scope.row.imgUrl" @imgObj="scope.row.imgUrl = $event"></upload-one-img>
+                      <upload-one-img :imgList="scope.row.entityImage" @imgObj="scope.row.entityImage = $event">
+                      </upload-one-img>
                     </template>
                   </el-table-column>
                   <el-table-column label="价格（元）" width="190">
                     <template slot-scope="scope">
                       <el-form-item>
-                        <el-input v-model="scope.row.price" oninput="value=value.replace(/[^0-9.]/g,'')"></el-input>
+                        <el-input v-model="scope.row.entityPrice" oninput="value=value.replace(/[^0-9.]/g,'')">
+                        </el-input>
                       </el-form-item>
                     </template>
                   </el-table-column>
                   <el-table-column label="编码" width="190">
                     <template slot-scope="scope">
                       <el-form-item>
-                        <el-input v-model="scope.row.pnCode"></el-input>
+                        <el-input v-model="scope.row.entityPn"></el-input>
                       </el-form-item>
                     </template>
                   </el-table-column>
                   <el-table-column label="库存" width="190">
                     <template slot-scope="scope">
                       <el-form-item>
-                        <el-input v-model="scope.row.qty" oninput="value=value.replace(/[^\d]/g,'')"></el-input>
+                        <el-input v-model="scope.row.entityStock" oninput="value=value.replace(/[^\d]/g,'')"></el-input>
                       </el-form-item>
                     </template>
                   </el-table-column>
@@ -258,19 +293,19 @@
           </el-tab-pane>
           <!-- TAB:商品详情 -->
           <el-tab-pane label="商品详情" name="third">
-            <!-- 产品详情 -->
-            <el-form-item label="产品详情：" class="product-detail">
-              <edit class="edit" ref="edit" @getContent="getContentData" :description="goodInfo.content"></edit>
-            </el-form-item>
             <!-- 产品长图 -->
             <el-form-item label="产品长图：" class="">
               <div label="图片可拖曳排序：" prop="longTrialImgs" class="">
                 <div class="">
                   <DragUpload @allList="longTrialImgs" :limit="longLimit" :imgList="longImages">
                   </DragUpload>
-                  <div class="gray-tip">请：图片支持jpg/png格式，不超过3M，尺寸最大为750*1000，拖拽图片可调整排序</div>
+                  <div class="gray-tip">请：图片支持jpg/png格式，尺寸建议为750*1000，拖拽图片可调整排序</div>
                 </div>
               </div>
+            </el-form-item>
+            <!-- 产品详情 -->
+            <el-form-item label="产品详情：" class="product-detail">
+              <edit class="edit" ref="edit" @getContent="getContentData" :description="goodInfo.content"></edit>
             </el-form-item>
             <div class="submit">
               <el-button class="public-el-submit-btn" @click="activeName = 'second'">上一步</el-button>
@@ -589,37 +624,53 @@
           var tentItem = this.tentSpecList[i].specStringValues
           if (i == 0) {
             for (var x = 0; x < tentItem.length; x++) {
-              this.batchListData.push({
-                spValue0: tentItem[x].specValue,
-                imgUrl: '',
-                price: 0,
-                pnCode: '',
-                qty: ''
-              })
+              var params = {
+                entityImage: "",
+                entityName: "",
+                entityPrice: '',
+                entityStock: '',
+                goodsId: '',
+                goodsSkuItemList: [],
+                id: ''
+              }
+              var item = {
+                specId: '',
+                specName: this.tentSpecList[i].specName,
+                specTypeId: '',
+                specValue: tentItem[x].specValue,
+                specValueId: ''
+              }
+              params.goodsSkuItemList.push(this.utils.cloneObj(item))
+              this.batchListData.push(this.utils.cloneObj(params))
             }
           } else {
             var emptyArry = []
             for (var j = 0; j < this.batchListData.length; j++) {
               for (var k = 0; k < tentItem.length; k++) {
-                var str = 'spValue' + i
-                var param = this.batchListData[j]
-                param['spValue' + i] = tentItem[k].specValue
-                // console.log("this.batchListData[j]",this.batchListData[j])
-                // param.add(this.batchListData[j])
-                emptyArry.push(this.cloneObj(param))
+                var params = this.utils.cloneObj(this.batchListData[j])
+                var item = {
+                  specId: '',
+                  specName: this.tentSpecList[i].specName,
+                  specTypeId: '',
+                  specValue: tentItem[k].specValue,
+                  specValueId: ''
+                }
+                params.goodsSkuItemList.push(this.utils.cloneObj(item))
+                emptyArry.push(this.utils.cloneObj(params))
               }
             }
-            this.batchListData = this.cloneObj(emptyArry)
+            this.batchListData = this.utils.cloneObj(emptyArry)
           }
         }
+        console.log("生成的商品规格数据：", this.batchListData)
       },
       // 批量添加
       batchSet() {
         this.batchListData.forEach(item => {
-          item.imgUrl = this.batchForm.imgUrl
-          item.price = this.batchForm.price
-          item.pnCode = this.batchForm.pnCode
-          item.qty = this.batchForm.qty
+          item.entityImage = this.batchForm.imgUrl
+          item.entityPrice = this.batchForm.price
+          item.entityPn = this.batchForm.pnCode
+          item.entityStocky = this.batchForm.qty
         })
       },
       //商品规格 - 删除
@@ -949,18 +1000,6 @@
           this.tentSpecList[ind].tent = ''
         }
       },
-      //深复制对象方法
-      cloneObj(obj) {
-        var newObj = {};
-        if (obj instanceof Array) {
-          newObj = [];
-        }
-        for (var key in obj) {
-          var val = obj[key];
-          newObj[key] = typeof val === 'object' ? this.cloneObj(val) : val;
-        }
-        return newObj;
-      },
     }
   }
 </script>
@@ -1179,6 +1218,37 @@
       /deep/ .el-select>.el-input {
         width: 420px;
       }
+    }
+  }
+
+  .whole-spec-item {
+    border-radius: 8px;
+    border: 1px dashed #EBEEF5;
+    padding: 35px 0px;
+    padding-left: 30px;
+    position: relative;
+
+    .spec-item-title {
+      z-index: 1;
+      position: absolute;
+      top: -8px;
+      left: 20px;
+      font-size: 14px;
+      font-family: Microsoft YaHei-Regular, Microsoft YaHei;
+      font-weight: 400;
+      color: #333333;
+      background: #fff;
+      line-height: 14px;
+
+      .remark {
+        font-size: 12px;
+        font-family: Microsoft YaHei-Regular, Microsoft YaHei;
+        font-weight: 400;
+        color: #BBBBBB;
+      }
+    }
+    .marginBottom{
+      margin-bottom: 25px;
     }
   }
 

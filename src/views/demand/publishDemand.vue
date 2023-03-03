@@ -62,7 +62,7 @@
           <div label="图片可拖曳排序：" prop="trialImgs" class="content-images">
             <div class="row">
               <DragUpload :limit="limit" @allList="trialImgs" :imgList="imgList" :limitWidth="800" :limitHeight="800" />
-              <div class="el-upload__tip gray-tip">请：图片上传不超过5张，图片支持jpg/png格式，不超过3M，尺寸为800*800</div>
+              <div class="el-upload__tip gray-tip">请：图片上传不超过5张，图片支持jpg/png格式，尺寸建议为800*800</div>
             </div>
           </div>
         </el-form-item>
@@ -93,8 +93,8 @@
         <el-form-item label="个人图片：" class="product-images">
           <div label="图片可拖曳排序：" prop="trialImgs" class="content-images">
             <div class="row">
-              <DragUpload :limit="limit" @allList="trialImgs" :imgList="imgList" :limitWidth="800" :limitHeight="800" />
-              <div class="el-upload__tip gray-tip">请：图片上传不超过5张，图片支持jpg/png格式，不超过3M，尺寸为800*800</div>
+               <DragUpload :limit="limit" @allList="trialImgs" :imgList="imgList" />
+              <div class="el-upload__tip gray-tip">请：图片上传不超过5张，图片支持jpg/png格式，尺寸建议为800*800</div>
             </div>
           </div>
         </el-form-item>
@@ -259,18 +259,6 @@
           item.name = list[index].pathLabels
           this.demandInfo.region.push(item)
         }
-      },
-      //深复制对象方法
-      cloneObj(obj) {
-        var newObj = {};
-        if (obj instanceof Array) {
-          newObj = [];
-        }
-        for (var key in obj) {
-          var val = obj[key];
-          newObj[key] = typeof val === 'object' ? cloneObj(val) : val;
-        }
-        return newObj;
       },
       //发布请求接口
       async submitDemand() {
@@ -592,6 +580,7 @@
         font-weight: 400;
         color: #BBBBBB;
         margin-top: 5px;
+        line-height: 12px;
       }
 
       /deep/.el-form-item__content {

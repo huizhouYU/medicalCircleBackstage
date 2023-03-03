@@ -9,7 +9,7 @@
           <div class="row">
             <uploadOne :mrSrc="storeLogo" :isWhole="true" @getImgFile="getStoreLogoImgFile" :limitWidth="limitWidth"
               :limitHeight="limitHeight"></uploadOne>
-            <div class="gray-tip">请上传300*300的图片，大小不超过2m</div>
+            <div class="gray-tip">图片建议上传300*300(1：1)</div>
           </div>
         </div>
       </el-form-item>
@@ -49,16 +49,16 @@
       <el-form-item label="客服二维码：">
         <div label="图片可拖曳排序：" class="content-images">
           <div class="row">
-            <DragUpload :imgList="imgQrList" :limit="1" @allList="trialQrImgs" :limitWidth="800" :limitHeight="800" />
-            <div class="gray-tip">上传二维码用于客户及时与您咨询和沟通商品详情，图片支持jpg/png格式，不超过3M，尺寸最大不超过800*800</div>
+            <DragUpload :imgList="imgQrList" :limit="1" @allList="trialQrImgs" />
+            <div class="gray-tip">上传二维码用于客户及时与您咨询和沟通商品详情，图片支持jpg/png格式，建议图片尺寸按照1：1上传</div>
           </div>
         </div>
       </el-form-item>
       <el-form-item label="资质证书：">
         <div label="图片可拖曳排序：" class="content-images">
           <div class="row">
-            <DragUpload :imgList="imgList" :limit="8" @allList="trialImgs" :limitWidth="800" :limitHeight="800" />
-            <div class="gray-tip">图片上传不超过8张，图片支持jpg/png格式，不超过3M，尺寸最大不超过800*800</div>
+            <DragUpload :imgList="imgList" :limit="8" @allList="trialImgs" />
+            <div class="gray-tip">图片上传不超过8张，图片支持jpg/png格式</div>
           </div>
         </div>
       </el-form-item>
@@ -151,7 +151,7 @@
           longitude: '', //经纬
           latitude: '', //纬度
           address: '', // 店铺地址
-          domain:'',//客服二维码
+          domain: '', //客服二维码
           certificationList: [], //相关证书
           serviceContent: '', //服务内容
           description: '', //店铺简介
@@ -192,7 +192,7 @@
             }
             this.imgList = this.shopInfo.certificationList
             this.imgQrList = []
-            if (this.shopInfo.domain != undefined && this.shopInfo.domain != null) {
+            if (this.shopInfo.domain != undefined && this.shopInfo.domain != null && this.shopInfo.domain != '') {
               this.imgQrList.push(this.shopInfo.domain)
             }
           }
@@ -219,7 +219,7 @@
       },
       async submitData() {
         var flag = true
-         this.isSubmit = false
+        this.isSubmit = false
         //上传店铺logo
         if (this.storeLogoImgFile != '') {
           let param = new FormData(); //创建form对象

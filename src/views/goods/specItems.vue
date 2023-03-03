@@ -1,14 +1,17 @@
 <template>
   <div class="app-container">
     <el-table ref="multipleTable" :data="currentPageData" tooltip-effect="dark" style="width: 100%;min-height:200px"
-      :height="tableHeight" >
+      :height="tableHeight">
       <el-table-column label="ID" prop="id">
+      </el-table-column>
+      <el-table-column label="类型">
+        <template slot-scope="scope">
+          <span v-if="scope.row.typeId==1">规格类型</span>
+          <span v-else-if="scope.row.typeId==2">属性类型</span>
+        </template>
       </el-table-column>
       <el-table-column prop="specName" label="规格名称"></el-table-column>
       <el-table-column prop="specValues" label="规格值">
-    <!--    <template slot-scope="scope">
-JSON.parse('["地方官","饭给","购房人"]').join()
-        </template> -->
       </el-table-column>
       <el-table-column fixed="right" label="操作" width="120">
         <template slot-scope="scope">
@@ -115,13 +118,13 @@ JSON.parse('["地方官","饭给","购房人"]').join()
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          let param={
-            specId:rows[index].id
+          let param = {
+            specId: rows[index].id
           }
-          specDelete(param).then(response=>{
-            if(response.data.code==10000){
+          specDelete(param).then(response => {
+            if (response.data.code == 10000) {
               rows.splice(index, 1);
-            }else{
+            } else {
               this.$message.error(response.data.message)
             }
           })
@@ -134,8 +137,7 @@ JSON.parse('["地方官","饭给","购房人"]').join()
         });
       },
       //编辑需求
-      editRow(index, rows) {
-         this.$emit("updateSpec", rows[index])
+      editRow(index, rows) {         this.$emit("updateSpec", rows[index])
       },
     }
   }

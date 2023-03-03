@@ -84,11 +84,11 @@
       updateSpec(obj){
         this.editSpecFlag = true
         this.specsDialogVisible = true
-        this.editSpec = obj
+        this.editSpec = this.utils.cloneObj(obj)
       },
       updateData(){
         this.initData()
-      }
+      },
     }
   }
 </script>

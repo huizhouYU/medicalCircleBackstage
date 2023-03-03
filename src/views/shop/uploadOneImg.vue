@@ -1,6 +1,7 @@
 <template>
   <div class="upload-img-item">
-    <div v-if="cardImgUrl != undefined && cardImgUrl != ''" class="upload-img card-img" @mouseenter="showCardDiv" @mouseleave="hideCardDiv">
+    <div v-if="cardImgUrl != undefined && cardImgUrl != ''" class="upload-img card-img" @mouseenter="showCardDiv"
+      @mouseleave="hideCardDiv">
       <img :src="cardImgUrl" alt="" class="card-img-info">
       <!-- 预览+删除 -->
       <div class="preview-del-div" v-show="isShowCardImgDiv">
@@ -71,22 +72,12 @@
           fr.readAsDataURL(files[0])
           // 3.监听 fr 的 onload 事件
           fr.onload = (e) => {
-            let _this = this;
-            // const isLt3M = files[0].size / 1024  < 3*1024;
-            const isLt3M = files[0].size / 1024 / 1024 < 3;
-            if (isLt3M) {
-              // 通过 e.target.result 获取到读取的结果，值是 BASE64 格式的字符串
-              // 法1
-              // this.$refs.imgRef.src = e.target.result
-              // 法2
-              this.cardImgUrl = e.target.result
-              this.$emit("getImgFile", files[0])
-            } else {
-              _this.$message.warning({
-                message: '上传文件的图片大小不能超过3M!',
-                btn: false
-              })
-            }
+            // 通过 e.target.result 获取到读取的结果，值是 BASE64 格式的字符串
+            // 法1
+            // this.$refs.imgRef.src = e.target.result
+            // 法2
+            this.cardImgUrl = e.target.result
+            this.$emit("getImgFile", files[0])
           }
         }
       }
