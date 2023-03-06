@@ -21,20 +21,21 @@
             <!-- 销售类型 -->
             <el-form-item label="销售类型：" class="item-name">
               <div class="sell-type-select">
-                <div :class="['sell-type-item',{'select':goodInfo.saleType == '1'}]" @click="goodInfo.saleType = '1'">
+                <div :class="['sell-type-item',{'select':goodInfo.saleType == '2'}]" @click="goodInfo.saleType = '2'">
                   <span class="type-title">咨询议价</span>
                   <span class="type-remark">无需填写价格</span>
                   <div class="img-box">
-                    <img src="../../assets/images/pic_yijia_def.png" alt="" v-show="goodInfo.saleType != '1'">
+                    <img src="../../assets/images/pic_yijia_def.png" alt="" v-show="goodInfo.saleType != '2'">
                     <img src="../../assets/images/pic_yijia_sel.png" alt="" v-show="goodInfo.saleType == '1'">
                   </div>
                 </div>
-                <div :class="['sell-type-item',{'select':goodInfo.saleType == '2'}]" @click="goodInfo.saleType = '2'">
+                <div :class="['sell-type-item',{'select':goodInfo.saleType == '1'}]" @click="goodInfo.saleType = '1'"
+                  v-if="!this.roles.includes('personal')">
                   <span class="type-title">线上销售</span>
                   <span class="type-remark">需填写价格</span>
                   <div class="img-box">
-                    <img src="../../assets/images/pic_xiaoshou_def.png" alt="" v-show="goodInfo.saleType != '2'">
-                    <img src="../../assets/images/pic_xiaoshou_sel.png" alt="" v-show="goodInfo.saleType == '2'">
+                    <img src="../../assets/images/pic_xiaoshou_def.png" alt="" v-show="goodInfo.saleType != '1'">
+                    <img src="../../assets/images/pic_xiaoshou_sel.png" alt="" v-show="goodInfo.saleType == '1'">
                   </div>
                 </div>
               </div>
@@ -59,15 +60,12 @@
             <el-form-item label="产品主图：" class="">
               <div label="图片可拖曳排序：" prop="trialImgs" class="">
                 <div class="">
-                  <!-- <DragUpload @allList="trialImgs" :limit="limit" :limitWidth="800" :limitHeight="800" :imgList="imgList"> -->
                   <DragUpload @allList="trialImgs" :limit="limit" :imgList="imgList">
-                    <!-- <DragUpload :imgList="imgList" :limit="5" @allList="trialImgs"  :limitWidth="800" :limitHeight="800"/> -->
                   </DragUpload>
                   <div class="gray-tip">注：主图按照图片上传顺序展示，图片支持jpg/png格式，尺寸建议为800*800(1：1)，拖拽图片可调整排序</div>
                 </div>
               </div>
             </el-form-item>
-
             <!-- 商品标签 -->
             <el-form-item label="商品标签：" class="prodect-tag">
               <div class="content">
@@ -101,6 +99,17 @@
             <el-form-item label="选择规格：" class="">
               <el-select v-model="specs.value" filterable placeholder="请选择" @change="changeSpec">
                 <el-option v-for="item in specs.options" :key="item.id" :label="item.specName" :value="item.id">
+                  <div class="my-spec-option">
+                    {{item.specName}}
+                    <span class="tag">
+                      <template v-if="item.typeId==1">
+                        规
+                      </template>
+                      <template v-else-if="item.typeId==2">
+                        属
+                      </template>
+                    </span>
+                  </div>
                 </el-option>
               </el-select>
               <el-button type="primary" @click="sureChosedSpec" v-no-more-click>确定</el-button>
@@ -113,20 +122,20 @@
                   规格类型<span class="remark">（最多添加1种属性类型）</span>
                 </span>
                 <!-- 规格名称 + 规格值 -->
-                <el-form class="marginBottom add-specs" :model="tentSpecsRuleForm" :rules="tentSpecsRules" ref="tentSpecsRuleForm"
-                  label-width="130px">
+                <el-form class="marginBottom add-specs" :model="tentSpecsRuleForm" :rules="tentSpecsRules"
+                  ref="tentSpecsRuleForm" label-width="130px" v-show="tentSpecList.length<=0">
                   <el-form-item label="规格名称:" prop="tentSpecName">
                     <el-input v-model.trim="tentSpecsRuleForm.tentSpecName" placeholder="请填写规格名称"></el-input>
                   </el-form-item>
                   <el-form-item label="规格值:" prop="specValues">
                     <el-input v-model.trim="tentSpecsRuleForm.specValues" placeholder="请填写规格值"
-                      @keyup.native.enter="tentSpecSure('tentSpecsRuleForm')"></el-input>
+                      @keyup.native.enter="tentSpecSure('tentSpecsRuleForm','1')"></el-input>
                   </el-form-item>
-                  <el-button type="primary" class="sure-specs-btn" @click="tentSpecSure('tentSpecsRuleForm')">确定
+                  <el-button type="primary" class="sure-specs-btn" @click="tentSpecSure('tentSpecsRuleForm','1')">确定
                   </el-button>
-                  <el-button @click="showDialogSpecsItem = false">取消</el-button>
+                  <el-button @click="">取消</el-button>
                 </el-form>
-                <div class="tent-spec-box">
+                <div class="tent-spec-box" v-show="tentSpecList.length>0">
                   <draggable :list="tentSpecList" @start="dragging = true" @end="dragging = false" handle=".mover-div">
                     <transition-group>
                       <el-form-item label="" prop="" v-for="(sp,ind) in tentSpecList" :key="ind">
@@ -162,33 +171,69 @@
                 </div>
               </div>
             </el-form-item>
-
-
-
-
-
-
-            <el-form-item v-show="showDialogSpecsItem">
-              <!-- 规格名称 + 规格值 -->
-              <el-form class="add-specs" :model="tentSpecsRuleForm" :rules="tentSpecsRules" ref="tentSpecsRuleForm"
-                label-width="130px">
-                <el-form-item label="规格名称:" prop="tentSpecName">
-                  <el-input v-model.trim="tentSpecsRuleForm.tentSpecName" placeholder="请填写规格名称"></el-input>
-                </el-form-item>
-                <el-form-item label="规格值:" prop="specValues">
-                  <el-input v-model.trim="tentSpecsRuleForm.specValues" placeholder="请填写规格值"
-                    @keyup.native.enter="tentSpecSure('tentSpecsRuleForm')"></el-input>
-                </el-form-item>
-                <el-button type="primary" class="sure-specs-btn" @click="tentSpecSure('tentSpecsRuleForm')">确定
+            <!-- 属性类型 -->
+            <el-form-item label="" class="">
+              <div class="whole-attr-item">
+                <span class="attr-item-title">
+                  属性类型<span class="remark">（最多添加5种属性类型）</span>
+                </span>
+                <div class="tent-attr-box" v-show="tentAttrList.length>0">
+                  <draggable :list="tentAttrList" @start="dragging = true" @end="dragging = false" handle=".mover-div">
+                    <transition-group>
+                      <el-form-item label="" prop="" v-for="(sp,ind) in tentAttrList" :key="ind">
+                        <div class="edit-spec-detail-box">
+                          <div class="mover-div">
+                            <i class="iconfont">&#xe650;</i>
+                            <i class="iconfont">&#xe650;</i>
+                            <i class="iconfont">&#xe650;</i>
+                            <i class="iconfont">&#xe650;</i>
+                            <i class="iconfont">&#xe650;</i>
+                            <i class="iconfont">&#xe650;</i>
+                            <i class="iconfont">&#xe650;</i>
+                          </div>
+                          <div class="specName-div">
+                            {{sp.specName}}
+                            <i class="iconfont my-close" @click="delAttr(ind)">&#xe8dc;</i>
+                          </div>
+                          <div class="specValues-div">
+                            <div class="specValue-item" v-for="(item,index) in sp.specStringValues" :key="index">
+                              <div class="round"></div>
+                              <span>{{item.specValue}}</span>
+                              <i class="iconfont my-close-font" @click="delAttrValues(ind,index)">&#xe630;</i>
+                            </div>
+                            <el-input v-model.trim="sp.tent" placeholder="请输入规格值"
+                              @keyup.native.enter="addAttrValues(ind)" class="my-add-value-input">
+                              <el-button slot="append" @click="addAttrValues(ind)">添加</el-button>
+                            </el-input>
+                          </div>
+                        </div>
+                      </el-form-item>
+                    </transition-group>
+                  </draggable>
+                </div>
+                <!-- 规格名称 + 规格值 -->
+                <el-form class="marginBottom add-specs" :model="tentAttrRuleForm" :rules="tentAttrRules"
+                  ref="tentAttrRuleForm" label-width="130px" v-show="showDialogSpecsItem">
+                  <el-form-item label="规格名称:" prop="tentSpecName">
+                    <el-input v-model.trim="tentAttrRuleForm.tentSpecName" placeholder="请填写规格名称"></el-input>
+                  </el-form-item>
+                  <el-form-item label="规格值:" prop="specValues">
+                    <el-input v-model.trim="tentAttrRuleForm.specValues" placeholder="请填写规格值"
+                      @keyup.native.enter="tentSpecSure('tentAttrRuleForm','2')"></el-input>
+                  </el-form-item>
+                  <el-button type="primary" class="sure-specs-btn" @click="tentSpecSure('tentAttrRuleForm','2')">确定
+                  </el-button>
+                  <el-button @click="closeAttr">取消</el-button>
+                </el-form>
+                <el-button type="primary" icon="el-icon-plus" @click="addNewAttr" v-show="!showDialogSpecsItem">添加新规格
                 </el-button>
-                <el-button @click="showDialogSpecsItem = false">取消</el-button>
-              </el-form>
+              </div>
             </el-form-item>
-            <!-- 添加新规格 -->
-            <el-form-item label="" class="" v-show="!showDialogSpecsItem">
-              <el-button type="primary" icon="el-icon-plus" @click="addNewSpec">添加新规格</el-button>
+
+            <el-form-item label="" class="">
               <el-button type="success" class="add-spaces-btn" @click="immediatelyCreate">立即生成</el-button>
             </el-form-item>
+
             <el-form-item label="批量设置：" v-show="showSetting" class="batch-item">
               <el-form ref="batchForm" :model="batchForm">
                 <el-table :data="batchData" style="width: 1075px;" border :header-cell-style="{'text-align':'center'}"
@@ -201,7 +246,8 @@
                   <el-table-column label="价格（元）">
                     <template slot-scope="scope">
                       <el-form-item>
-                        <el-input v-model="batchForm.price" oninput="value=value.replace(/[^0-9.]/g,'')"></el-input>
+                        <el-input v-model="batchForm.price" oninput="value=value.replace(/[^0-9.]/g,'')"
+                          :disabled="!isEditPriceFlag"></el-input>
                       </el-form-item>
                     </template>
                   </el-table-column>
@@ -230,20 +276,13 @@
                 </el-table>
               </el-form>
             </el-form-item>
-            <!-- entityImage:"",
-                entityName:"",
-                entityPrice:'',
-                entityStock:'',
-                goodsId:'',
-                goodsSkuItemList:[],
- -->
 
             <el-form-item label="商品规格：" v-show="showSetting" class="batch-item">
               <el-form ref="batchForm" :model="batchForm">
                 <el-table :data="batchListData" style="width: 1076px" border
                   :header-cell-style="{'text-align':'center'}"
                   :cell-style="{'text-align':'center',backgroundColor: '#fff'}">
-                  <el-table-column width="190" :label="item.specName" v-for="(item,index) in tentSpecList" :key="index">
+                  <el-table-column width="190" :label="item.specName" v-for="(item,index) in specAttrList" :key="index">
                     <template slot-scope="scope">
                       {{scope.row.goodsSkuItemList[index].specValue}}
                     </template>
@@ -257,7 +296,8 @@
                   <el-table-column label="价格（元）" width="190">
                     <template slot-scope="scope">
                       <el-form-item>
-                        <el-input v-model="scope.row.entityPrice" oninput="value=value.replace(/[^0-9.]/g,'')">
+                        <el-input v-model="scope.row.entityPrice" oninput="value=value.replace(/[^0-9.]/g,'')"
+                          :disabled="!isEditPriceFlag">
                         </el-input>
                       </el-form-item>
                     </template>
@@ -331,7 +371,6 @@
     </specs-mould-dialog>
   </div>
 
-  <!-- </div> -->
 </template>
 
 <script>
@@ -382,12 +421,15 @@
         specsDialogVisible: false, //添加规格模板 -- 弹框
         showDialogSpecsItem: false,
         chosedSpec: {
+          typeId: 1,
           specName: '',
           specId: '',
           specStringValues: [],
           tent: ''
         },
-        tentSpecList: [],
+        tentSpecList: [], //存放规格类型
+        tentAttrList: [], //存放属性类型
+        specAttrList: [], //存放规格+属性
         tentSpecsRuleForm: {
           tentSpecName: '', //规格名称
           specValues: '' //规格值
@@ -418,23 +460,46 @@
             }
           ]
         },
+        tentAttrRuleForm: {
+          tentSpecName: '', //规格名称
+          specValues: '' //规格值
+        },
+        tentAttrRules: {
+          tentSpecName: [{
+              required: true,
+              message: '请输入规格名称',
+              trigger: 'blur'
+            },
+            {
+              min: 0,
+              max: 25,
+              message: '长度在 0 到 25 个字符',
+              trigger: 'blur'
+            }
+          ],
+          specValues: [{
+              required: true,
+              message: '请输入规格值',
+              trigger: 'blur'
+            },
+            {
+              min: 0,
+              max: 25,
+              message: '长度在 0 到 25 个字符',
+              trigger: 'blur'
+            }
+          ]
+        },
         //批量设置
         showSetting: false,
-        batchData: [{
-          // imgUrl: {},
-          // price: 0,
-          // pnCode: '',
-          // qty: '',
-        }],
+        batchData: [{}],
         batchForm: {
           imgUrl: '',
-          price: '',
+          price: 0,
           pnCode: '',
           qty: '',
         },
-        batchListData: [],
-
-
+        batchListData: [], //商品规格
 
         activeName: 'first',
         isSubmit: true,
@@ -463,8 +528,6 @@
           cateId: '',
           cateName: '',
           saleType: 1, //选择的销售方式
-          degree: '', //选择的新旧程度
-          price: '', //价格
           goodsPn: '', //商品编码
           qty: '', //库存
           qualityTime: '', //保质期
@@ -481,81 +544,6 @@
         brandsOptions: [],
         //是否允许输入价格
         isEditPriceFlag: true,
-        //交易方式
-        fareOptions: [{
-          value: 1,
-          label: '当面交易'
-        }, {
-          value: 2,
-          label: '物流发货'
-        }],
-        // 销售类型
-        xsOptions: [{
-            value: 1,
-            label: '在线销售'
-          },
-          {
-            value: 2,
-            label: '咨询议价'
-          }
-        ],
-        //新旧程度
-        newOrOrdDegreeOptions: [{
-            value: 1,
-            label: '一成新'
-          },
-          {
-            value: 2,
-            label: '两成新'
-          },
-          {
-            value: 3,
-            label: '三成新'
-          },
-          {
-            value: 4,
-            label: '四成新'
-          },
-
-          {
-            value: 5,
-            label: '五成新'
-          },
-          {
-            value: 6,
-            label: '六成新'
-          },
-          {
-            value: 7,
-            label: '七成新'
-          },
-          {
-            value: 8,
-            label: '八成新'
-          },
-          {
-            value: 9,
-            label: '九成新'
-          },
-          {
-            value: 10,
-            label: '十成新'
-          }
-        ],
-        //保质期类型【日、月、年】
-        shelfLifeOptions: [{
-            value: 'day',
-            label: '日'
-          },
-          {
-            value: 'month',
-            label: '月'
-          },
-          {
-            value: 'year',
-            label: '年'
-          }
-        ],
         ruleForm: {
           imgUrl: '',
           trialImgs: [],
@@ -582,22 +570,34 @@
           this.specs.options = response.data.data.list
         })
       },
+      // 选择规格
       changeSpec(val) {
         var obj = {}
         obj = this.specs.options.find(function(i) {
           return i.id === val
         });
+        this.chosedSpec.typeId = obj.typeId
         this.chosedSpec.specId = obj.id
         this.chosedSpec.specName = obj.specName
-
-        //在change中获取到整条对象数据
-        console.log(obj);
       },
       //选择规格模板后确定
       sureChosedSpec() {
-        if (this.tentSpecList.length >= 5) {
-          this.$message.warning("最多只能添加五种规格!")
-          return
+        if (this.chosedSpec.typeId == 2) {
+          if (this.tentAttrList.length >= 5) {
+            this.$message.warning("最多只能添加五种属性规格!")
+            return
+          }
+          var flag = true
+          //判断添加属性类型的时候：是否已经添加过相同规格
+          this.tentAttrList.forEach(item => {
+            if (this.chosedSpec.specId == item.specId) {
+              flag = false
+            }
+          })
+          if (!flag) {
+            this.$message.warning("不允许添加相同属性类型!")
+            return
+          }
         }
         if (this.chosedSpec.specId) {
           specValueList({
@@ -605,7 +605,12 @@
           }).then(response => {
             if (response.data.code == 10000) {
               this.chosedSpec.specStringValues = response.data.data
-              this.tentSpecList.push(this.cloneObj(this.chosedSpec))
+              if (this.chosedSpec.typeId == 1) {
+                this.tentSpecList = []
+                this.tentSpecList.push(this.utils.cloneObj(this.chosedSpec))
+              } else if (this.chosedSpec.typeId == 2) {
+                this.tentAttrList.push(this.utils.cloneObj(this.chosedSpec))
+              }
             } else {
               this.$message.error("获取规格值列表失败：" + response.data.message)
             }
@@ -615,19 +620,22 @@
       // 立即生成
       immediatelyCreate() {
         if (this.tentSpecList.length <= 0) {
+          this.$message.error("请先填写规格类型 ！")
           return
         }
+        this.specAttrList = []
+        this.specAttrList = this.tentSpecList.concat(this.tentAttrList)
         this.showSetting = true
         //开始生成商品规格table数据
         this.batchListData = []
-        for (var i = 0; i < this.tentSpecList.length; i++) {
-          var tentItem = this.tentSpecList[i].specStringValues
+        for (var i = 0; i < this.specAttrList.length; i++) {
+          var tentItem = this.specAttrList[i].specStringValues
           if (i == 0) {
             for (var x = 0; x < tentItem.length; x++) {
               var params = {
                 entityImage: "",
                 entityName: "",
-                entityPrice: '',
+                entityPrice: 0,
                 entityStock: '',
                 goodsId: '',
                 goodsSkuItemList: [],
@@ -635,7 +643,7 @@
               }
               var item = {
                 specId: '',
-                specName: this.tentSpecList[i].specName,
+                specName: this.specAttrList[i].specName,
                 specTypeId: '',
                 specValue: tentItem[x].specValue,
                 specValueId: ''
@@ -650,7 +658,7 @@
                 var params = this.utils.cloneObj(this.batchListData[j])
                 var item = {
                   specId: '',
-                  specName: this.tentSpecList[i].specName,
+                  specName: this.specAttrList[i].specName,
                   specTypeId: '',
                   specValue: tentItem[k].specValue,
                   specValueId: ''
@@ -662,7 +670,6 @@
             this.batchListData = this.utils.cloneObj(emptyArry)
           }
         }
-        console.log("生成的商品规格数据：", this.batchListData)
       },
       // 批量添加
       batchSet() {
@@ -670,7 +677,7 @@
           item.entityImage = this.batchForm.imgUrl
           item.entityPrice = this.batchForm.price
           item.entityPn = this.batchForm.pnCode
-          item.entityStocky = this.batchForm.qty
+          item.entityStock = this.batchForm.qty
         })
       },
       //商品规格 - 删除
@@ -680,10 +687,6 @@
       getParams() {
         // 销售类型
         if (this.roles.includes('personal')) {
-          this.xsOptions = [{
-            value: 2,
-            label: '咨询议价'
-          }]
           this.goodInfo.saleType = 2
           this.isEditPrice()
         }
@@ -694,6 +697,11 @@
         var chosedDataString = this.$route.query.chosedData //商品类别
         if (chosedDataString != undefined) {
           this.goodInfo.chosedData = JSON.parse(chosedDataString)
+          if (this.goodInfo.chosedData[0].typeId == '1') { //商品类型：1-器械 2-配件
+            this.goodInfo.type = 'equipment'
+          } else {
+            this.goodInfo.type = 'material'
+          }
           this.goodInfo.chooseClassify = this.goodInfo.chosedData[0].label
           if (this.goodInfo.chosedData[1].label != '') {
             this.goodInfo.chooseClassify += " > " + this.goodInfo.chosedData[1].label
@@ -744,7 +752,6 @@
         this.cartDialogVisible = false
       },
       sureCartDialog() {
-        // var category = JSON.parse(this.temporaryCartData)
         this.goodInfo.chosedData = JSON.parse(this.temporaryCartData)
         this.goodInfo.chooseClassify = this.goodInfo.chosedData[0].label
         if (this.goodInfo.chosedData[1].label != '') {
@@ -754,7 +761,6 @@
           }
         }
         this.closeCartDialog()
-
       },
       //当选择“咨询议价”时，商品价格禁止输入
       isEditPrice() {
@@ -780,149 +786,124 @@
         this.goodInfo.content = content
       },
       async submit() {
-        this.isSubmit = false
-        var flag = true
-        var params = {
-          chosedData: this.goodInfo.chosedData,
-          chooseClassify: this.goodInfo.chooseClassify
-        }
-        this.goodInfo.category = JSON.stringify(params)
-        var i = this.goodInfo.chosedData.length - 1
-        for (i; i >= 0; i--) {
-          if (this.goodInfo.chosedData[i].value != '') {
-            this.goodInfo.cateName = this.goodInfo.chosedData[i].label
-            this.goodInfo.cateId = Number(this.goodInfo.chosedData[i].value)
-            i = -1
+        try {
+          this.isSubmit = false
+          var flag = true
+          var params = {
+            chosedData: this.goodInfo.chosedData,
+            chooseClassify: this.goodInfo.chooseClassify
           }
-        }
-        this.goodInfo.ifShow = Number(this.goodIfShow)
-        this.goodInfo.recommended = Number(this.goodRecommended)
-        this.goodInfo.price = Number(this.goodInfo.price)
-        this.goodInfo.qualityTime = Number(this.goodInfo.qualityTime)
-        this.goodInfo.saleType = Number(this.goodInfo.saleType)
-        this.goodInfo.qty = Number(this.goodInfo.qty)
+          this.goodInfo.category = JSON.stringify(params)
+          var i = this.goodInfo.chosedData.length - 1
+          for (i; i >= 0; i--) {
+            if (this.goodInfo.chosedData[i].value != '') {
+              this.goodInfo.cateName = this.goodInfo.chosedData[i].label
+              this.goodInfo.cateId = Number(this.goodInfo.chosedData[i].value)
+              i = -1
+            }
+          }
+          this.goodInfo.ifShow = Number(this.goodIfShow)
+          this.goodInfo.recommended = Number(this.goodRecommended)
+          //商品实体列表
+          this.goodInfo.goodsEntities = this.batchListData
+          // this.goodInfo.price = Number(this.goodInfo.price)
+          // this.goodInfo.qualityTime = Number(this.goodInfo.qualityTime)
+          // this.goodInfo.saleType = Number(this.goodInfo.saleType)
+          // this.goodInfo.qty = Number(this.goodInfo.qty)
 
-        //相关图片
-        if (this.ruleForm.trialImgs.length > 0) {
-          this.goodInfo.imageList = []
-          for (var item of this.ruleForm.trialImgs) {
-            if (flag) {
-              if (item.file != '') {
-                let param = new FormData(); //创建form对象
-                param.append('file', item.file); //通过append向form对象添加数据
-                await uploadImage(param).then(response => {
-                  if (response.data.code != 10000) {
-                    this.isSubmit = true
-                    this.$message.error(response.data.message)
-                    flag = false
-                  } else {
-                    this.goodInfo.imageList.push(response.data.data)
-                  }
-                })
-              } else {
-                this.goodInfo.imageList.push(item.imgUrl)
+          //相关图片
+          if (this.ruleForm.trialImgs.length > 0) {
+            this.goodInfo.imageList = []
+            for (var item of this.ruleForm.trialImgs) {
+              if (flag) {
+                if (item.file != '') {
+                  let param = new FormData(); //创建form对象
+                  param.append('file', item.file); //通过append向form对象添加数据
+                  await uploadImage(param).then(response => {
+                    if (response.data.code != 10000) {
+                      this.isSubmit = true
+                      this.$message.error(response.data.message)
+                      flag = false
+                    } else {
+                      this.goodInfo.imageList.push(response.data.data)
+                    }
+                  })
+                } else {
+                  this.goodInfo.imageList.push(item.imgUrl)
+                }
               }
             }
           }
-        }
-        //长图
-        if (this.ruleForm.longTrialImgs.length > 0 && flag) {
-          this.goodInfo.longImages = []
-          for (var item of this.ruleForm.longTrialImgs) {
-            if (flag) {
-              if (item.file != '') {
-                let param = new FormData(); //创建form对象
-                param.append('file', item.file); //通过append向form对象添加数据
-                await uploadImage(param).then(response => {
-                  if (response.data.code != 10000) {
-                    this.$message.error(response.data.message)
-                    this.isSubmit = true
-                    flag = false
-                  } else {
-                    this.goodInfo.longImages.push(response.data.data)
-                  }
-                })
-              } else {
-                this.goodInfo.longImages.push(item.imgUrl)
+          //长图
+          if (this.ruleForm.longTrialImgs.length > 0 && flag) {
+            this.goodInfo.longImages = []
+            for (var item of this.ruleForm.longTrialImgs) {
+              if (flag) {
+                if (item.file != '') {
+                  let param = new FormData(); //创建form对象
+                  param.append('file', item.file); //通过append向form对象添加数据
+                  await uploadImage(param).then(response => {
+                    if (response.data.code != 10000) {
+                      this.$message.error(response.data.message)
+                      this.isSubmit = true
+                      flag = false
+                    } else {
+                      this.goodInfo.longImages.push(response.data.data)
+                    }
+                  })
+                } else {
+                  this.goodInfo.longImages.push(item.imgUrl)
+                }
               }
             }
           }
-        }
-        //再次获取富文本信息
-        this.$refs.edit.putContent()
-        if (flag) {
-          this.goodInfo.defaultImage = this.goodInfo.imageList[0]
-          if (this.goodInfo.goodsId != undefined) { //编辑商品
-            goodsUpdate(JSON.stringify(this.goodInfo)).then(response => {
-              var res = response.data.data
-              if (response.data.code != '10000') { //失败
-                this.$message.error(response.data.message)
-                this.isSubmit = true
-              } else { //成功
-                this.$message({
-                  type: 'success',
-                  message: '更新成功!'
-                });
-                this.$store.dispatch('tagsView/delView', this.$route).then(({
-                  visitedViews
-                }) => {
-                  this.$router.replace("/goodsIndex")
-                })
-              }
-            })
-          } else { //新建商品
-            goodCreate(JSON.stringify(this.goodInfo)).then(response => {
-              var res = response.data.data
-              if (response.data.code != '10000') { //失败
-                this.isSubmit = true
-                this.$message.error(response.data.message)
-              } else { //成功
-                this.$message({
-                  type: 'success',
-                  message: '发布成功!'
-                });
-                this.$store.dispatch('tagsView/delView', this.$route).then(({
-                  visitedViews
-                }) => {
-                  this.$router.replace("/goodsIndex")
-                })
-              }
-            })
+          //再次获取富文本信息
+          this.$refs.edit.putContent()
+          console.log("提交的商品信息：", this.goodInfo)
+          if (flag) {
+            this.goodInfo.defaultImage = this.goodInfo.imageList[0]
+            if (this.goodInfo.goodsId != undefined) { //编辑商品
+              goodsUpdate(JSON.stringify(this.goodInfo)).then(response => {
+                var res = response.data.data
+                if (response.data.code != '10000') { //失败
+                  this.$message.error(response.data.message)
+                  this.isSubmit = true
+                } else { //成功
+                  this.$message({
+                    type: 'success',
+                    message: '更新成功!'
+                  });
+                  this.$store.dispatch('tagsView/delView', this.$route).then(({
+                    visitedViews
+                  }) => {
+                    this.$router.replace("/goodsIndex")
+                  })
+                }
+              })
+            } else { //新建商品
+              goodCreate(JSON.stringify(this.goodInfo)).then(response => {
+                var res = response.data.data
+                if (response.data.code != '10000') { //失败
+                  this.isSubmit = true
+                  this.$message.error(response.data.message)
+                } else { //成功
+                  this.$message({
+                    type: 'success',
+                    message: '发布成功!'
+                  });
+                  this.$store.dispatch('tagsView/delView', this.$route).then(({
+                    visitedViews
+                  }) => {
+                    this.$router.replace("/goodsIndex")
+                  })
+                }
+              })
+            }
           }
+        } catch (e) {} finally {
+          this.isSubmit = true
         }
-      },
-      deletTag(index) {
-        this.goodInfo.tagList.splice(index, 1)
-        if (this.goodInfo.tagList.length < 5) {
-          this.inputVisible = true
-        } else {
-          this.inputVisible = false
-        }
-      },
-      addTag() {
-        if (this.goodInfo.tagList == null) {
-          this.goodInfo.tagList = []
-        }
-        if (this.goodInfo.tagList.length < 5) {
-          this.goodTag = this.trim(this.goodTag)
-          if (this.goodTag != '') {
-            this.goodInfo.tagList.push(this.goodTag.substring(0, 4))
-          }
-        }
-        if (this.goodInfo.tagList.length < 5) {
-          this.inputVisible = true
-        } else {
-          this.inputVisible = false
-        }
-        this.goodTag = ''
-      },
-      handleClose(key) {
-        this.goodInfo.tagList.splice(this.goodInfo.tagList.indexOf(key), 1);
-        if (this.goodInfo.tagList.length < 5) {
-          this.inputVisible = true
-        } else {
-          this.inputVisible = false
-        }
+
       },
       trim(str) {
         return str.replace(/(^\s*)|(\s*$)/g, "");
@@ -938,10 +919,8 @@
       },
       //上传图片组件回调函数
       getImgObj(obj, key) {
-        console.log("获取的图片信息:", obj)
         if (key == '-1') {
           this.batchForm.imgUrl = obj
-          this.batchForm.price = 6
         }
       },
       openSpecs() {
@@ -951,31 +930,46 @@
       closeSpecs() {
         this.specsDialogVisible = false
       },
-      addNewSpec() {
-        if (this.tentSpecList.length >= 5) {
-          this.$message.warning("最多只能添加五种规格!")
-          return
-        }
-        this.tentSpecsRuleForm = {
-          tentSpecName: '', //规格名称
-          specValues: '' //规格值
-        }
-        this.showDialogSpecsItem = true
-      },
-      tentSpecSure(formName) {
+      //添加规格、属性
+      tentSpecSure(formName, typeId) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            var param = {
-              specName: this.tentSpecsRuleForm.tentSpecName,
-              specStringValues: [],
-              tent: ''
+            if (typeId == 1) {
+              var param = {
+                specName: this.tentSpecsRuleForm.tentSpecName,
+                specStringValues: [],
+                tent: ''
+              }
+              var specParam = {
+                specValue: this.tentSpecsRuleForm.specValues
+              }
+              param.specStringValues.push(specParam)
+              this.tentSpecList.push(param)
+            } else if (typeId == 2) {
+              //判断将要添加的属性类型名称是否和已添加的属性类型里面有重复的
+              var flag = true
+              this.tentAttrList.forEach(item => {
+                if (item.specName == this.tentAttrRuleForm.tentSpecName) {
+                  flag = false
+                }
+              })
+              if (!flag) {
+                this.$message.warning("不允许添加相同属性类型!")
+                return
+              }
+              var param = {
+                specName: this.tentAttrRuleForm.tentSpecName,
+                specStringValues: [],
+                tent: ''
+              }
+              var specParam = {
+                specValue: this.tentAttrRuleForm.specValues
+              }
+              param.specStringValues.push(specParam)
+              this.tentAttrList.push(param)
+              this.showDialogSpecsItem = false
             }
-            var specParam = {
-              specValue: this.tentSpecsRuleForm.specValues
-            }
-            param.specStringValues.push(specParam)
-            this.tentSpecList.push(param)
-            this.showDialogSpecsItem = false
+
           } else {
             return false;
           }
@@ -985,6 +979,11 @@
         this.tentSpecsRuleForm.tentSpecName = ''
         this.tentSpecsRuleForm.specValues = ''
       },
+      clearTentAttrData() {
+        this.tentAttrRuleForm.tentSpecName = ''
+        this.tentAttrRuleForm.specValues = ''
+      },
+      //规格
       delSpec(key) {
         this.tentSpecList.splice(key, 1)
         this.clearTentData()
@@ -1000,6 +999,34 @@
           this.tentSpecList[ind].tent = ''
         }
       },
+      //属性
+      addNewAttr() {
+        if (this.tentAttrList.length >= 5) {
+          this.$message.warning("最多只能添加五种规格!")
+          return
+        }
+        this.clearTentAttrData()
+        this.showDialogSpecsItem = true
+      },
+      delAttr(key) {
+        this.tentAttrList.splice(key, 1)
+        this.clearTentAttrData()
+      },
+      delAttrValues(ind, key) {
+        this.tentAttrList[ind].specStringValues.splice(key, 1)
+      },
+      addAttrValues(ind) {
+        if (this.tentAttrList[ind].tent) {
+          this.tentAttrList[ind].specStringValues.push({
+            specValue: this.tentAttrList[ind].tent
+          })
+          this.tentAttrList[ind].tent = ''
+        }
+      },
+      closeAttr() {
+        this.showDialogSpecsItem = false
+        this.clearTentAttrData()
+      }
     }
   }
 </script>
@@ -1221,14 +1248,36 @@
     }
   }
 
-  .whole-spec-item {
+  .my-spec-option {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+
+    .tag {
+      margin-left: 2px;
+      width: 16px;
+      height: 15px;
+      color: #69C0FF;
+      border: 1px solid #69C0FF;
+      background-color: #fff;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 2px;
+    }
+  }
+
+  .whole-spec-item,
+  .whole-attr-item {
     border-radius: 8px;
     border: 1px dashed #EBEEF5;
     padding: 35px 0px;
     padding-left: 30px;
     position: relative;
 
-    .spec-item-title {
+    .spec-item-title,
+    .attr-item-title {
       z-index: 1;
       position: absolute;
       top: -8px;
@@ -1247,19 +1296,10 @@
         color: #BBBBBB;
       }
     }
-    .marginBottom{
-      margin-bottom: 25px;
-    }
   }
 
-  //添加规格模板
-  .add-spaces-btn {
-    margin-left: 20px;
-  }
-
-  .tent-spec-box {
-
-    margin-bottom: 5px;
+  .tent-spec-box,
+  .tent-attr-box {
 
     /deep/.el-input {
       width: 200px;
@@ -1289,7 +1329,6 @@
         line-height: 5px;
         left: 0px;
         top: 20px;
-
       }
 
       .specName-div {
@@ -1325,7 +1364,6 @@
 
         .specValue-item {
           margin-right: 10px;
-          margin-bottom: 15px;
           box-sizing: border-box;
           padding: 0px 10px 0px 15px;
           height: 34px;
@@ -1361,11 +1399,6 @@
           .my-close-font:hover {
             color: #1890FF;
           }
-
-        }
-
-        .my-add-value-input {
-          margin-bottom: 15px;
         }
 
         /deep/ .el-input-group__append {
@@ -1375,7 +1408,12 @@
         }
       }
     }
+  }
 
+  .tent-attr-box {
+    /deep/ .el-form-item {
+      margin-bottom: 20px;
+    }
   }
 
   .add-specs {

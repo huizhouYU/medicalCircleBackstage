@@ -72,12 +72,8 @@
     goodsCategoryList
   } from '@/api/goods'
   const city = require("../../../src/json/citys.json")
-  // const b = require("../../../src/json/classifyData.json")
   export default {
     name: 'AddGoods',
-    // components: {
-    //   Pagination
-    // },
     filters: {
       statusFilter(status) {
         const statusMap = {
@@ -106,13 +102,16 @@
         chooseClassify: "", //选中的类目 拼接
         chosedData: [{
           value: '',
-          label: ''
+          label: '',
+          typeId: ''
         }, {
           value: '',
-          label: ''
+          label: '',
+          typeId: ''
         }, {
           value: '',
-          label: ''
+          label: '',
+          typeId: ''
         }], //选中的类目
         isShowFlag2: false, //二级菜单是否显示
         isShowFlag3: false, //三级菜单是否显示
@@ -128,20 +127,11 @@
     created() {
       this.getList()
     },
-    mounted() {
-      // this.loadData()
-
-    },
     methods: {
       getList() {
-        // this.listLoading = true
         goodsCategoryList().then(response => {
           this.linkageData = response.data.data
           this.loadData()
-          // this.list = response.data.data
-
-          // this.total = response.data.total
-          // this.listLoading = false
         })
       },
       remoteMethod(query) {
@@ -159,7 +149,6 @@
       },
 
       async loadData() {
-        // this.linkageData = b.linkageData
         if (this.$route.query.chosedData !== undefined) {
           this.chosedData = JSON.parse(this.$route.query.chosedData)
           this.setData()
@@ -184,35 +173,22 @@
                 for (var k = 0; k < child3.length; k++) {
                   item.cateId.push(child3[k].cateId)
                   item.cateName.push(child3[k].cateName)
-                  this.list.push( this.utils.cloneObj(item))
+                  this.list.push(this.utils.cloneObj(item))
                   item.cateId.pop()
                   item.cateName.pop()
                 }
               } else {
-                this.list.push( this.utils.cloneObj(item))
+                this.list.push(this.utils.cloneObj(item))
               }
               item.cateId.pop()
               item.cateName.pop()
             }
           } else {
-            this.list.push( this.utils.cloneObj(item))
+            this.list.push(this.utils.cloneObj(item))
           }
           item.cateId.pop()
           item.cateName.pop()
         }
-        // await axios.get("../../../static/testData/classifyData.json").then(res => {
-        //   if (res.status == 200) {
-        //     this.linkageData = res.data.linkageData
-        //   } else {
-        //     this.$message.error("数据请求失败，请稍后再试！")
-        //   }
-        //   if (this.$route.query.chosedData !== undefined) {
-
-        //     this.chosedData = JSON.parse(this.$route.query.chosedData)
-        //     this.setData()
-        //     this.position1()
-        //   }
-        // })
       },
       back() {
         this.$router.back()
@@ -227,13 +203,6 @@
             this.isNextFlag = true
             this.chooseClassify += " > " + this.chosedData[2].label
           }
-          // //没有三级类目，允许跳转
-          // if (this.item3ChildData == null || this.item3ChildData.length < 1) {
-          //   this.isNextFlag = true
-          // }else{
-          //   //有三级类目，不允许跳转
-          //    this.isNextFlag = false
-          // }
         } else {
           this.isNextFlag = false
         }
@@ -340,11 +309,14 @@
         // 将一级分类选中的数据赋值
         this.chosedData[0].value = id
         this.chosedData[0].label = this.linkageData[val].cateName
+        this.chosedData[0].typeId = this.linkageData[val].typeId
         //清空二级和三级选中的数据
         this.chosedData[1].value = ''
         this.chosedData[1].label = ''
+        this.chosedData[1].typeId = ''
         this.chosedData[2].value = ''
         this.chosedData[2].label = ''
+        this.chosedData[2].typeId = ''
         //调用setData方法，将选中的类目拼接成字符串
         this.setData()
         //根据一级分类动态赋值二级分类
@@ -366,9 +338,11 @@
         // 将二级分类选中的数据赋值
         this.chosedData[1].value = id
         this.chosedData[1].label = this.item2ChildData[val].cateName
+        this.chosedData[1].typeId = this.item2ChildData[val].typeId
         //清空三级选中的数据
         this.chosedData[2].value = ''
         this.chosedData[2].label = ''
+        this.chosedData[2].typeId = ''
         this.item3ChildData = this.item2ChildData[val].children
         //调用setData方法，将选中的类目拼接成字符串
         this.setData()
@@ -381,7 +355,7 @@
           //没有三级类目，允许跳转
           this.isNextFlag = true
         }
-         this.getData()
+        this.getData()
       },
       //选择三级分类
       chooseItem3(val, id) {
@@ -390,9 +364,10 @@
         // 将三级分类选中的数据赋值
         this.chosedData[2].value = id
         this.chosedData[2].label = this.item3ChildData[val].cateName
+        this.chosedData[2].typeId = this.item3ChildData[val].typeId
         //调用setData方法，将选中的类目拼接成字符串
         this.setData()
-         this.getData()
+        this.getData()
       },
       //下一步
       nextStep() {
@@ -413,10 +388,8 @@
         }
 
       },
-      handleChange(value) {
-      },
-      hiddenDropdown() {
-      }
+      handleChange(value) {},
+      hiddenDropdown() {}
     }
   }
 </script>

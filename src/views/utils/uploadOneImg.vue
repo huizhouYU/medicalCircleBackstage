@@ -8,13 +8,13 @@
       </div>
     </label>
     <div class="img-wrapper" v-show="!isShowUpload">
-      <el-image :src="imgObj.imgUrl">
+      <el-image :src="imgObj">
       </el-image>
       <!-- 鼠标经过图片放大icon和删除icon -->
       <div class="operate-wrap" :title="'拖曳图片可排序'">
         <div class="operate-bg"></div> <!-- 遮罩 -->
-        <i class="el-icon-delete del-icon" @click="deleImg(imgObj.URL)"></i> <!-- 删除图片 -->
-        <i class="el-icon-zoom-in preview-icon" @click="handlePictureCardPreview(imgObj.imgUrl)"></i>
+        <i class="el-icon-delete del-icon" @click="deleImg(imgObj)"></i> <!-- 删除图片 -->
+        <i class="el-icon-zoom-in preview-icon" @click="handlePictureCardPreview(imgObj)"></i>
         <!-- 点击显示原图 -->
       </div>
       <!-- 原图显示弹框 -->
@@ -26,6 +26,9 @@
 </template>
 
 <script>
+  import {
+    uploadImage
+  } from '@/api/public'
   export default {
     name: "uploadOneImg",
     props: ['imgList'],
@@ -58,20 +61,20 @@
           // 3.监听 fr 的 onload 事件
           fr.onload = (e) => {
             let _this = this;
-            // 通过 e.target.result 获取到读取的结果，值是 BASE64 格式的字符串
-            // 法1
-            // this.$refs.imgRef.src = e.target.result
-            // 法2
-
-            _this.imgObj = {
-              file: files[0],
-              imgUrl: e.target.result
-            }
-            if (_this.imgObj) {
-              _this.isShowUpload = false;
-            }
-            _this.$emit('imgObj', _this.imgObj)
-            return files[0]
+            //上传图片
+            let param = new FormData(); //创建form对象
+            param.append('file', files[0]); //通过append向form对象添加数据
+            uploadImage(param).then(response => {
+              if (response.data.code != 10000) {
+                _this.$message.error(response.data.message)
+              } else {
+               _this.imgObj = response.data.data
+               if (_this.imgObj) {
+                 _this.isShowUpload = false;
+               }
+                _this.$emit('imgObj', _this.imgObj)
+              }
+            })
           }
         }
       },
@@ -83,7 +86,7 @@
       },
     },
     watch: {
-      //监听   商品图片  
+      //监听   商品图片
       imgList(newVal) {
         this.imgObj = newVal
         if (this.imgObj) {
