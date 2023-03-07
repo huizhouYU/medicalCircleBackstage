@@ -327,7 +327,7 @@
         }
         //没选择二级分类，不展示三级分类
         this.isShowFlag3 = false
-        this.getData()
+        // this.getData()
       },
       //选择二级分类
       chooseItem2(val, id) {
@@ -354,8 +354,8 @@
         } else {
           //没有三级类目，允许跳转
           this.isNextFlag = true
+          this.getData()
         }
-        this.getData()
       },
       //选择三级分类
       chooseItem3(val, id) {
