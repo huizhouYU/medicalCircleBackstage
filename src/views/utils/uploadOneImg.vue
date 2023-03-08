@@ -41,6 +41,14 @@
         dialogImageUrl: ''
       };
     },
+    mounted() {
+      this.imgObj = this.imgList
+      if (this.imgObj) {
+        this.isShowUpload = false
+      } else {
+        this.isShowUpload = true;
+      }
+    },
     methods: {
       handlePictureCardPreview(file) {
         this.dialogImageUrl = file;
