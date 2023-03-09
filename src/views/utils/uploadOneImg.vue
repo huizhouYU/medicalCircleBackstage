@@ -7,7 +7,7 @@
           style="display: none; " class="hiddenInput" multiple="multiple">
       </div>
     </label>
-    <div class="img-wrapper" v-show="!isShowUpload">
+    <div class="img-wrapper" v-show="!isShowUpload" v-loading="loading">
       <el-image :src="imgObj">
       </el-image>
       <!-- 鼠标经过图片放大icon和删除icon -->
@@ -38,7 +38,8 @@
         isShowUpload: true, //是否展示上传图片
         imgObj: '',
         dialogVisible: false,
-        dialogImageUrl: ''
+        dialogImageUrl: '',
+        loading: false
       };
     },
     mounted() {
@@ -55,36 +56,66 @@
         this.dialogVisible = true;
       },
       previewFile(e) {
-        // 1.获取用户选择的文件对象
-        const files = e.target.files
-        if (files.length === 0) {
-          // 2.1用户没有选择图片(使用默认图片)
-        } else {
-          // 2.2用户选择了图片(使用选择的图片)
-          // ◆将 File 对象 转成 BASE64 字符串
-          // 1.创建 FileReader 对象
-          const fr = new FileReader()
-          // 2.调用 readAsDataURL 函数，读取文件内容
-          fr.readAsDataURL(files[0])
-          // 3.监听 fr 的 onload 事件
-          fr.onload = (e) => {
-            let _this = this;
-            //上传图片
-            let param = new FormData(); //创建form对象
-            param.append('file', files[0]); //通过append向form对象添加数据
-            uploadImage(param).then(response => {
-              if (response.data.code != 10000) {
-                _this.$message.error(response.data.message)
-              } else {
-               _this.imgObj = response.data.data
-               if (_this.imgObj) {
-                 _this.isShowUpload = false;
-               }
-                _this.$emit('imgObj', _this.imgObj)
-              }
-            })
+        try {
+          this.isShowUpload = false
+          this.loading = true
+          // this.$loading({ // 声明一个loading对象
+          //   lock: true, // 是否锁屏
+          //   text: '正在加载...', // 加载动画的文字
+          //   spinner: 'el-icon-loading', // 引入的loading图标
+          //   background: 'rgba(0, 0, 0, 0.3)', // 背景颜色
+          //   target: '.sub-main', // 需要遮罩的区域
+          //   body: true,
+          //   customClass: 'mask' // 遮罩层新增类名
+          // })
+          // 1.获取用户选择的文件对象
+          const files = e.target.files
+          if (files.length === 0) {
+            // 2.1用户没有选择图片(使用默认图片)
+          } else {
+            // 2.2用户选择了图片(使用选择的图片)
+            // ◆将 File 对象 转成 BASE64 字符串
+            // 1.创建 FileReader 对象
+            const fr = new FileReader()
+            // 2.调用 readAsDataURL 函数，读取文件内容
+            fr.readAsDataURL(files[0])
+            // 3.监听 fr 的 onload 事件
+            fr.onload = (e) => {
+              let _this = this;
+              //上传图片
+              let param = new FormData(); //创建form对象
+              param.append('file', files[0]); //通过append向form对象添加数据
+              uploadImage(param).then(response => {
+                if (response.data.code != 10000) {
+                  _this.$message.error(response.data.message)
+                } else {
+                  _this.imgObj = response.data.data
+
+                  _this.$emit('imgObj', _this.imgObj)
+                }
+              })
+            }
           }
+        } catch (e) {
+          //TODO handle the exception
+        } finally {
+          if (this.imgObj) {
+            this.isShowUpload = false;
+          } else {
+            this.isShowUpload = true;
+          }
+          this.loading = false
+          // const loading = this.$loading({ // 声明一个loading对象
+          //   lock: true, // 是否锁屏
+          //   text: '正在加载...', // 加载动画的文字
+          //   spinner: 'el-icon-loading', // 引入的loading图标
+          //   background: 'rgba(0, 0, 0, 0.3)', // 背景颜色
+          //   target: '.sub-main', // 需要遮罩的区域
+          //   body: true,
+          //   customClass: 'mask' // 遮罩层新增类名
+          // })
         }
+
       },
       //删除图片
       deleImg(data, index) {
