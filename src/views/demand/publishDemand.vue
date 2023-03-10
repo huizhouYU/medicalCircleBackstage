@@ -61,7 +61,7 @@
         <el-form-item label="相关图片：" class="product-images">
           <div label="图片可拖曳排序：" prop="trialImgs" class="content-images">
             <div class="row">
-              <DragUpload :limit="limit" @allList="trialImgs" :imgList="imgList" :limitWidth="800" :limitHeight="800" />
+              <DragUpload :limit="limit" @allList="trialImgs" :imgList="demandInfo.imageList" />
               <div class="el-upload__tip gray-tip">请：图片上传不超过5张，图片支持jpg/png格式，尺寸建议为800*800</div>
             </div>
           </div>
@@ -93,7 +93,7 @@
         <el-form-item label="个人图片：" class="product-images">
           <div label="图片可拖曳排序：" prop="trialImgs" class="content-images">
             <div class="row">
-               <DragUpload :limit="limit" @allList="trialImgs" :imgList="imgList" />
+               <DragUpload :limit="limit" @allList="trialImgs" :imgList="demandInfo.imageList" />
               <div class="el-upload__tip gray-tip">请：图片上传不超过5张，图片支持jpg/png格式，尺寸建议为800*800</div>
             </div>
           </div>
@@ -217,7 +217,6 @@
       // },
       //获取详情 内容
       getDescription(val) {
-        console.log("获取富文本：",val)
         this.demandInfo.description = val
       },
       //发布
@@ -268,25 +267,25 @@
         if (this.demandInfo.brandId == '') {
           this.demandInfo.brandId = 0
         }
-        this.demandInfo.imageList = []
-        for (var item of this.ruleForm.trialImgs) {
-          if (flag) {
-            if (item.file != '') {
-              let param = new FormData(); //创建form对象
-              param.append('file', item.file); //通过append向form对象添加数据
-              await uploadImage(param).then(response => {
-                if (response.data.code != 10000) {
-                  this.$message.error(response.data.message)
-                  flag = false
-                } else {
-                  this.demandInfo.imageList.push(response.data.data)
-                }
-              })
-            } else {
-              this.demandInfo.imageList.push(item.imgUrl)
-            }
-          }
-        }
+        // this.demandInfo.imageList = []
+        // for (var item of this.ruleForm.trialImgs) {
+        //   if (flag) {
+        //     if (item.file != '') {
+        //       let param = new FormData(); //创建form对象
+        //       param.append('file', item.file); //通过append向form对象添加数据
+        //       await uploadImage(param).then(response => {
+        //         if (response.data.code != 10000) {
+        //           this.$message.error(response.data.message)
+        //           flag = false
+        //         } else {
+        //           this.demandInfo.imageList.push(response.data.data)
+        //         }
+        //       })
+        //     } else {
+        //       this.demandInfo.imageList.push(item.imgUrl)
+        //     }
+        //   }
+        // }
         if (flag) {
           // 编辑
           if (this.isUpdate) {
@@ -396,7 +395,11 @@
       },
       // 图片可拖曳排序
       trialImgs(allList) {
-        this.ruleForm.trialImgs = allList
+        // this.ruleForm.trialImgs = allList
+        this.demandInfo.imageList =[]
+        allList.forEach(res=>{
+          this.demandInfo.imageList.push(res.imgUrl)
+        })
       }
 
     }

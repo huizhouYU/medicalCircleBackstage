@@ -44,6 +44,10 @@
             <el-form-item label="产品名称：" class="item-name">
               <el-input v-model="goodInfo.goodsName" placeholder="请输入商品名称" maxlength="40" show-word-limit></el-input>
             </el-form-item>
+            <!-- 产品型号 -->
+            <el-form-item label="产品型号：" class="item-name">
+              <el-input v-model="goodInfo.goodsModel" placeholder="请输入产品型号" maxlength="40" show-word-limit></el-input>
+            </el-form-item>
             <!-- 所属品牌 -->
             <el-form-item label="所属品牌：" class="item-brand">
               <el-select v-model="goodInfo.brandId" class="select-brand" v-show="!goodInfo.brandInputType">
@@ -60,7 +64,7 @@
             <el-form-item label="产品主图：" class="">
               <div label="图片可拖曳排序：" prop="trialImgs" class="">
                 <div class="">
-                  <DragUpload @allList="trialImgs" :limit="limit" :imgList="imgList">
+                  <DragUpload @allList="trialImgs" :limit="limit" :imgList="goodInfo.imageList">
                   </DragUpload>
                   <div class="gray-tip">注：主图按照图片上传顺序展示，图片支持jpg/png格式，尺寸建议为800*800(1：1)，拖拽图片可调整排序</div>
                 </div>
@@ -336,11 +340,21 @@
           <el-tab-pane label="商品详情" name="third">
             <!-- 产品长图 -->
             <el-form-item label="产品长图：" class="">
-              <div label="图片可拖曳排序：" prop="longTrialImgs" class="">
+              <div label="图片可拖曳排序：" prop="" class="">
                 <div class="">
-                  <DragUpload @allList="longTrialImgs" :limit="longLimit" :imgList="longImages">
+                  <DragUpload @allList="longTrialImgs" :limit="longLimit" :imgList="goodInfo.longImages">
                   </DragUpload>
                   <div class="gray-tip">请：图片支持jpg/png格式，尺寸建议为750*1000，拖拽图片可调整排序</div>
+                </div>
+              </div>
+            </el-form-item>
+            <!-- 产品注册证 -->
+            <el-form-item label="注册证：" class="">
+              <div label="图片可拖曳排序：" prop="" class="">
+                <div class="">
+                  <DragUpload @allList="registerCardImgs" :limit="1" :imgList="registerCard">
+                  </DragUpload>
+                  <div class="gray-tip">请：图片支持jpg/png格式</div>
                 </div>
               </div>
             </el-form-item>
@@ -516,10 +530,12 @@
         longImages: '',
         goodIfShow: false,
         goodRecommended: false,
+        registerCard: '',
         //商品信息
         goodInfo: {
           type: 'material', //商品类型 material-配件 equipment-设备器械
           goodsName: '', //商品名称
+          goodsModel: '', //产品型号
           brandInputType: false, //是否自定义品牌,false-选择 true-自定义
           brandId: '', //所属品牌ID 如果自定义就不传
           brandName: '', //品牌名称 如果自定义就传
@@ -531,6 +547,7 @@
           saleType: 1, //选择的销售方式
           defaultImage: '', //主图
           longImages: [], //长图
+          registerCard: '', //注册证
           imageList: [],
           content: '', //产品详情
           tagList: [], //商品标签
@@ -636,11 +653,11 @@
                 goodsSkuItemList: []
               }
               var item = {
-                specId:  tentItem[x].specId?tentItem[x].specId:'',
+                specId: tentItem[x].specId ? tentItem[x].specId : '',
                 specName: this.specAttrList[i].specName,
                 specTypeId: 1,
                 specValue: tentItem[x].specValue,
-                specValueId: tentItem[x].id?tentItem[x].id:''
+                specValueId: tentItem[x].id ? tentItem[x].id : ''
               }
               params.goodsSkuItemList.push(this.utils.cloneObj(item))
               this.batchListData.push(this.utils.cloneObj(params))
@@ -651,11 +668,11 @@
               for (var k = 0; k < tentItem.length; k++) {
                 var params = this.utils.cloneObj(this.batchListData[j])
                 var item = {
-                  specId: tentItem[k].specId?tentItem[k].specId:'',
+                  specId: tentItem[k].specId ? tentItem[k].specId : '',
                   specName: this.specAttrList[i].specName,
                   specTypeId: 2,
                   specValue: tentItem[k].specValue,
-                  specValueId: tentItem[k].id?tentItem[k].id:''
+                  specValueId: tentItem[k].id ? tentItem[k].id : ''
                 }
                 params.goodsSkuItemList.push(this.utils.cloneObj(item))
                 emptyArry.push(this.utils.cloneObj(params))
@@ -722,9 +739,9 @@
               this.goodInfo.chosedData = ''
               this.goodInfo.chooseClassify = ''
             }
-            //相关图片
-            this.imgList = this.goodInfo.imageList
-            this.longImages = this.goodInfo.longImages
+            // //相关图片
+            // this.imgList = this.goodInfo.imageList
+            // this.longImages = this.goodInfo.longImages
             //是否上架
             this.goodIfShow = this.goodInfo.ifShow == 1 ? true : false
             //是否推荐
@@ -738,7 +755,7 @@
             this.batchListData = this.goodInfo.goodsEntities
             this.specAttrList = JSON.parse(this.goodInfo.goodsSpecs)
             if (this.specAttrList != undefined && this.specAttrList != null && this.specAttrList.length > 0) {
-              this.tentSpecList = this.specAttrList.slice(0,1)
+              this.tentSpecList = this.specAttrList.slice(0, 1)
               this.tentAttrList = this.specAttrList.slice(1)
             }
             this.showSetting = true
@@ -784,11 +801,26 @@
       },
       // 图片可拖曳排序
       trialImgs(allList) {
-        this.ruleForm.trialImgs = allList
+        // this.ruleForm.trialImgs = allList
+        this.goodInfo.imageList = []
+        allList.forEach(res => {
+          this.goodInfo.imageList.push(res.imgUrl)
+        })
       },
       //产品长图
       longTrialImgs(allList) {
-        this.ruleForm.longTrialImgs = allList
+        // this.ruleForm.longTrialImgs = allList
+        this.goodInfo.longImages = []
+        allList.forEach(res => {
+          this.goodInfo.longImages.push(res.imgUrl)
+        })
+      },
+      //产品注册证
+      registerCardImgs(imgFile) {
+        this.registerCard = []
+        if (imgFile != null && imgFile.length > 0) {
+          this.registerCard.push(imgFile[0].imgUrl)
+        }
       },
       getContentData(content) {
         this.goodInfo.content = content
@@ -820,50 +852,54 @@
             this.goodInfo.tagList = []
             this.goodInfo.tagList.push(this.goodTag)
           }
+          //注册证
+          if (this.registerCard != '' && this.registerCard.length > 0) {
+            this.goodInfo.registerCard = this.registerCard[0]
+          }
           //相关图片
-          if (this.ruleForm.trialImgs.length > 0) {
-            this.goodInfo.imageList = []
-            for (var item of this.ruleForm.trialImgs) {
-              if (flag) {
-                if (item.file != '') {
-                  let param = new FormData(); //创建form对象
-                  param.append('file', item.file); //通过append向form对象添加数据
-                  await uploadImage(param).then(response => {
-                    if (response.data.code != 10000) {
-                      this.$message.error(response.data.message)
-                      flag = false
-                    } else {
-                      this.goodInfo.imageList.push(response.data.data)
-                    }
-                  })
-                } else {
-                  this.goodInfo.imageList.push(item.imgUrl)
-                }
-              }
-            }
-          }
+          // if (this.ruleForm.trialImgs.length > 0) {
+          //   this.goodInfo.imageList = []
+          //   for (var item of this.ruleForm.trialImgs) {
+          //     if (flag) {
+          //       if (item.file != '') {
+          //         let param = new FormData(); //创建form对象
+          //         param.append('file', item.file); //通过append向form对象添加数据
+          //         await uploadImage(param).then(response => {
+          //           if (response.data.code != 10000) {
+          //             this.$message.error(response.data.message)
+          //             flag = false
+          //           } else {
+          //             this.goodInfo.imageList.push(response.data.data)
+          //           }
+          //         })
+          //       } else {
+          //         this.goodInfo.imageList.push(item.imgUrl)
+          //       }
+          //     }
+          //   }
+          // }
           //长图
-          if (this.ruleForm.longTrialImgs.length > 0 && flag) {
-            this.goodInfo.longImages = []
-            for (var item of this.ruleForm.longTrialImgs) {
-              if (flag) {
-                if (item.file != '') {
-                  let param = new FormData(); //创建form对象
-                  param.append('file', item.file); //通过append向form对象添加数据
-                  await uploadImage(param).then(response => {
-                    if (response.data.code != 10000) {
-                      this.$message.error(response.data.message)
-                      flag = false
-                    } else {
-                      this.goodInfo.longImages.push(response.data.data)
-                    }
-                  })
-                } else {
-                  this.goodInfo.longImages.push(item.imgUrl)
-                }
-              }
-            }
-          }
+          // if (this.ruleForm.longTrialImgs.length > 0 && flag) {
+          //   this.goodInfo.longImages = []
+          //   for (var item of this.ruleForm.longTrialImgs) {
+          //     if (flag) {
+          //       if (item.file != '') {
+          //         let param = new FormData(); //创建form对象
+          //         param.append('file', item.file); //通过append向form对象添加数据
+          //         await uploadImage(param).then(response => {
+          //           if (response.data.code != 10000) {
+          //             this.$message.error(response.data.message)
+          //             flag = false
+          //           } else {
+          //             this.goodInfo.longImages.push(response.data.data)
+          //           }
+          //         })
+          //       } else {
+          //         this.goodInfo.longImages.push(item.imgUrl)
+          //       }
+          //     }
+          //   }
+          // }
           //再次获取富文本信息
           this.$refs.edit.putContent()
           console.log("提交的商品信息：", this.goodInfo)
@@ -1282,6 +1318,7 @@
       border-bottom-left-radius: 0px;
     }
   }
+
   .my-spec-option {
     display: flex;
     align-items: center;

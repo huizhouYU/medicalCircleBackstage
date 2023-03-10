@@ -1,7 +1,7 @@
 <template>
   <div class="images-content">
     <label>
-      <div class="upload-img" v-show="isShowUpload">
+      <div class="upload-img" v-show="isShowUpload" v-loading="loading">
         <img src="../../../public/imgs/icon_add-pic.png" alt="">
         <span>添加图片</span>
         <input type="file" id="inputFile" accept="image/png, image/jpeg, image/gif, image/jpg" @change="previewFile"
@@ -31,6 +31,9 @@
 
 <script>
   import draggable from "vuedraggable";
+  import {
+    uploadImage
+  } from '@/api/public'
   export default {
     name: "DragUpload",
     // props: ['imgList', 'limit', 'limitWidth', 'limitHeight'],
@@ -45,7 +48,8 @@
         // imgUrl: '',
         drag: false,
         dialogVisible: false,
-        dialogImageUrl: ''
+        dialogImageUrl: '',
+        loading: false
       };
     },
     methods: {
@@ -55,68 +59,68 @@
         this.dialogVisible = true;
       },
       previewFile(e) {
-        // 1.获取用户选择的文件对象
-        const files = e.target.files
-        if (files.length === 0) {
-          // 2.1用户没有选择图片(使用默认图片)
-        } else {
-          // 2.2用户选择了图片(使用选择的图片)
-          // ◆将 File 对象 转成 BASE64 字符串
-          // 1.创建 FileReader 对象
-          const fr = new FileReader()
-          // 2.调用 readAsDataURL 函数，读取文件内容
-          fr.readAsDataURL(files[0])
-          // 3.监听 fr 的 onload 事件
-          fr.onload = (e) => {
-            let _this = this;
-            // 通过 e.target.result 获取到读取的结果，值是 BASE64 格式的字符串
-            // 法1
-            // this.$refs.imgRef.src = e.target.result
-            // 法2
-            var temp = {
-              file: files[0],
-              imgUrl: e.target.result,
-              orderNumber: _this.allListChild.length
-            };
-            _this.allListChild.push(temp) // 启动拖拽功能
-            if (_this.allListChild.length >= _this.limit) {
-              _this.isShowUpload = false;
+        try {
+          this.loading = true
+          // 1.获取用户选择的文件对象
+          const files = e.target.files
+          if (files.length === 0) {
+            // 2.1用户没有选择图片(使用默认图片)
+          } else {
+            // 2.2用户选择了图片(使用选择的图片)
+            // ◆将 File 对象 转成 BASE64 字符串
+            // 1.创建 FileReader 对象
+            const fr = new FileReader()
+            // 2.调用 readAsDataURL 函数，读取文件内容
+            fr.readAsDataURL(files[0])
+            // 3.监听 fr 的 onload 事件
+            fr.onload = (e) => {
+              let _this = this;
+              // 通过 e.target.result 获取到读取的结果，值是 BASE64 格式的字符串
+              // 法1
+              // this.$refs.imgRef.src = e.target.result
+              // 法2
+              //上传图片
+              let param = new FormData(); //创建form对象
+              param.append('file', files[0]); //通过append向form对象添加数据
+              uploadImage(param).then(response => {
+                if (response.data.code != 10000) {
+                  this.$message.error(response.data.message)
+                } else {
+                  var temp = {
+                    imgUrl: response.data.data,
+                    orderNumber: this.allListChild.length
+                  };
+                  this.allListChild.push(temp)
+                  if (this.allListChild.length >= this.limit) {
+                    this.isShowUpload = false;
+                  }
+                  this.$emit('allList', this.allListChild)
+                }
+              })
             }
-            _this.$emit('allList', _this.allListChild)
-            return files[0]
-            // const isLt3M = files[0].size / 1024 / 1024 < 3;
-            // if (isLt3M) {
-            //   let imgWidth = "";
-            //   let imgHight = "";
-            //   new Promise(function(resolve, reject) {
-            //     let _URL = window.URL || window.webkitURL;
-            //     let img = new Image();
-            //     img.src = _URL.createObjectURL(files[0]);
-            //     img.onload = function() {
-            //       imgWidth = img.width;
-            //       imgHight = img.height;
-            //       let valid = img.width <= _this.limitWidth && img.height <= _this.limitHeight;
-            //       valid ? resolve() : reject();
-            //     }
-            //   }).then(() => {
-
-            //   }, () => {
-            //     _this.$message.warning({
-            //       message: '上传文件的图片大小不合符标准,宽最大不超过' + this.limitWidth + 'px，高最大不超过' + this.limitHeight +
-            //         'px。当前上传图片的宽高分别为：' + imgWidth + 'px和' + imgHight + 'px',
-            //       btn: false
-            //     })
-            //     return Promise.reject();
-            //   });
-            // } else {
-            //   _this.$message.warning({
-            //     message: '上传文件的图片大小不能超过3M!',
-            //     btn: false
-            //   })
-            // }
-
           }
+        } catch (e) {
+          //TODO handle the exception
+        } finally {
+          this.loading = false
         }
+
+
+
+        // var temp = {
+        //   file: files[0],
+        //   imgUrl: e.target.result,
+        //   orderNumber: _this.allListChild.length
+        // };
+        // _this.allListChild.push(temp) // 启动拖拽功能
+        // if (_this.allListChild.length >= _this.limit) {
+        //   _this.isShowUpload = false;
+        // }
+        // _this.$emit('allList', _this.allListChild)
+        // return files[0]
+
+
+
       },
       //删除图片
       deleImg(data, index) {
@@ -151,9 +155,9 @@
       //监听 需求  商品图片  或者  个人图片
       imgList(newVal) {
         if (newVal != null) {
+          this.allListChild = []
           for (var item of newVal) {
             var temp = {
-              file: '',
               imgUrl: item,
               orderNumber: this.allListChild.length
             };
