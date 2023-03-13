@@ -751,6 +751,9 @@
               .length > 0) {
               this.goodTag = this.goodInfo.tagList[0]
             }
+            //商品注册证
+            this.registerCard = []
+            this.registerCard.push(this.goodInfo.registerCard)
             //商品实体列表
             this.batchListData = this.goodInfo.goodsEntities
             this.specAttrList = JSON.parse(this.goodInfo.goodsSpecs)
