@@ -980,6 +980,7 @@
           if (valid) {
             if (typeId == 1) {
               var param = {
+                typeId:1,
                 specName: this.tentSpecsRuleForm.tentSpecName,
                 specStringValues: [],
                 tent: ''
@@ -1002,6 +1003,7 @@
                 return
               }
               var param = {
+                typeId:2,
                 specName: this.tentAttrRuleForm.tentSpecName,
                 specStringValues: [],
                 tent: ''
