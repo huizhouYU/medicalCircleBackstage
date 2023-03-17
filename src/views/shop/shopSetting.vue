@@ -252,43 +252,47 @@
         this.shopInfo.domain = ''
         if (flag && this.ruleForm.trialQrImgs.length > 0) {
           var item = this.ruleForm.trialQrImgs[0]
-          if (item.file != '') {
-            let param = new FormData(); //创建form对象
-            param.append('file', item.file); //通过append向form对象添加数据
-            await uploadImage(param).then(response => {
-              if (response.data.code != 10000) {
-                this.$message.error(response.data.message)
-                flag = false
-                this.isSubmit = true
-              } else {
-                this.shopInfo.domain = response.data.data
-              }
-            })
-          } else {
-            this.shopInfo.domain = item.imgUrl
-          }
+          this.shopInfo.domain = item.imgUrl
+          // if (item.file != '') {
+          //   let param = new FormData(); //创建form对象
+          //   param.append('file', item.file); //通过append向form对象添加数据
+          //   await uploadImage(param).then(response => {
+          //     if (response.data.code != 10000) {
+          //       this.$message.error(response.data.message)
+          //       flag = false
+          //       this.isSubmit = true
+          //     } else {
+          //       this.shopInfo.domain = response.data.data
+          //     }
+          //   })
+          // } else {
+          //   this.shopInfo.domain = item.imgUrl
+          // }
         }
         //相关证书
         this.shopInfo.certificationList = []
         for (var item of this.ruleForm.trialImgs) {
-          if (flag) {
-            if (item.file != '') {
-              let param = new FormData(); //创建form对象
-              param.append('file', item.file); //通过append向form对象添加数据
-              await uploadImage(param).then(response => {
-                if (response.data.code != 10000) {
-                  this.$message.error(response.data.message)
-                  flag = false
-                  this.isSubmit = true
-                } else {
-                  this.shopInfo.certificationList.push(response.data.data)
-                }
-              })
-            } else {
-              this.shopInfo.certificationList.push(item.imgUrl)
-            }
-          }
+          this.shopInfo.certificationList.push(item.imgUrl)
         }
+        // for (var item of this.ruleForm.trialImgs) {
+        //   if (flag) {
+        //     if (item.file != '') {
+        //       let param = new FormData(); //创建form对象
+        //       param.append('file', item.file); //通过append向form对象添加数据
+        //       await uploadImage(param).then(response => {
+        //         if (response.data.code != 10000) {
+        //           this.$message.error(response.data.message)
+        //           flag = false
+        //           this.isSubmit = true
+        //         } else {
+        //           this.shopInfo.certificationList.push(response.data.data)
+        //         }
+        //       })
+        //     } else {
+        //       this.shopInfo.certificationList.push(item.imgUrl)
+        //     }
+        //   }
+        // }
         if (flag) {
           await storeUpdate(JSON.stringify(this.shopInfo)).then(response => {
             if (response.data.code == 10000) {

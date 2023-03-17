@@ -38,8 +38,7 @@ import nestedRouter from './modules/nested'
  * a base page that does not have permission requirements
  * all roles can be accessed
  */
-export const constantRoutes = [
-  {
+export const constantRoutes = [{
     path: '/redirect',
     component: Layout,
     hidden: true,
@@ -96,8 +95,7 @@ export const constantRoutes = [
  * asyncRoutes
  * the routes that need to be dynamically loaded based on user roles
  */
-export const asyncRoutes = [
-  {
+export const asyncRoutes = [{
     path: '/',
     // path: '/goods',
     component: Layout,
@@ -105,11 +103,10 @@ export const asyncRoutes = [
     name: 'Goods',
     meta: {
       title: '商品管理',
-      roles: [ 'company','personal'], // you can set roles in root nav
+      roles: ['company', 'personal'], // you can set roles in root nav
       icon: 'commodity'
     },
-    children: [
-      {
+    children: [{
         path: 'addGoods',
         component: () => import('@/views/goods/addGoods'),
         name: 'AddGoods',
@@ -118,7 +115,7 @@ export const asyncRoutes = [
           title: '添加商品',
           // icon: 'edit'
         }
-      },{
+      }, {
         path: 'goodsIndex',
         component: () => import('@/views/goods/goodsIndex'),
         name: 'GoodsIndex',
@@ -128,12 +125,20 @@ export const asyncRoutes = [
           affix: true
         }
       },
-{
+      {
         path: 'goodsSpec',
         component: () => import('@/views/goods/goodsSpec'),
         name: 'GoodsSpec',
         meta: {
           title: '商品规格'
+        }
+      },
+      {
+        path: 'goodsRelate',
+        component: () => import('@/views/goods/goodsRelate'),
+        name: 'GoodsRelate',
+        meta: {
+          title: '商品关联'
         }
       },
       {
@@ -166,7 +171,7 @@ export const asyncRoutes = [
     meta: {
       title: '订单管理',
       icon: 'transaction-order',
-      roles: [ 'company','personal'], // you can set roles in root nav
+      roles: ['company', 'personal'], // you can set roles in root nav
     },
     children: [{
         path: 'orderManage',
@@ -215,11 +220,10 @@ export const asyncRoutes = [
     name: 'Demand',
     meta: {
       title: '需求管理',
-      icon:'more-four',
-      roles: [ 'company','personal'] // you can set roles in root nav
+      icon: 'more-four',
+      roles: ['company', 'personal'] // you can set roles in root nav
     },
-    children: [
-      {
+    children: [{
         path: 'publishDemand',
         component: () => import('@/views/demand/publishDemand'),
         name: 'PublishDemand',
@@ -228,7 +232,7 @@ export const asyncRoutes = [
           // icon: 'edit'
         },
         // hidden: true
-      },{
+      }, {
         path: 'demandManage',
         component: () => import('@/views/demand/demandManage'),
         name: 'DemandManage',
@@ -241,65 +245,63 @@ export const asyncRoutes = [
     ]
   },
   {
-      path: '/member',
-      component: Layout,
-      redirect: '/invitation',
-      name: 'Member',
-      meta: {
-        title: '会员中心',
-        icon:'vip-one',
-        roles: [ 'personal'] // you can set roles in root nav
-      },
-      children: [
-        {
-          path: '/invitation',
-          component: () => import('@/views/member/invitation'),
-          name: 'Invitation',
-          redirect: '/invitationList',
-          meta: {
-            title: '邀请信息',
-          },
-          children:[
-            {
-                path: '/invitationList',
-                component: () => import('@/views/member/invitationList'),
-                name: 'InvitationList',
-                // hidden: true,
-                meta: {
-                  title: '邀请信息',
-                  showZj: false
-                },
+    path: '/member',
+    component: Layout,
+    redirect: '/invitation',
+    name: 'Member',
+    meta: {
+      title: '会员中心',
+      icon: 'vip-one',
+      roles: ['personal'] // you can set roles in root nav
+    },
+    children: [{
+        path: '/invitation',
+        component: () => import('@/views/member/invitation'),
+        name: 'Invitation',
+        redirect: '/invitationList',
+        meta: {
+          title: '邀请信息',
+        },
+        children: [{
+            path: '/invitationList',
+            component: () => import('@/views/member/invitationList'),
+            name: 'InvitationList',
+            // hidden: true,
+            meta: {
+              title: '邀请信息',
+              showZj: false
             },
-            {
-                path: '/contractList',
-                component: () => import('@/views/member/contractList'),
-                name: 'Invitation/ContractList',
-                hidden: true,
-                meta: {
-                  title: '合同详情',
-                  showZj: true,
-                  activeMenu: '/invitationList'
-                },
-            }
-          ]
-        },
-        {
-          path: 'contractList',
-          component: () => import('@/views/member/contractList'),
-          name: 'ContractList',
-          meta: {
-            title: '合同详情',
+          },
+          {
+            path: '/contractList',
+            component: () => import('@/views/member/contractList'),
+            name: 'Invitation/ContractList',
+            hidden: true,
+            meta: {
+              title: '合同详情',
+              showZj: true,
+              activeMenu: '/invitationList'
+            },
           }
-        },
-        {
-          path: 'drawingRecord',
-          component: () => import('@/views/member/drawingRecord'),
-          name: 'DrawingRecord',
-          meta: {
-            title: '提现记录',
-          }
+        ]
+      },
+      {
+        path: 'contractList',
+        component: () => import('@/views/member/contractList'),
+        name: 'ContractList',
+        meta: {
+          title: '合同详情',
         }
-      ]
+      },
+      {
+        path: 'drawingRecord',
+        component: () => import('@/views/member/drawingRecord'),
+        name: 'DrawingRecord',
+        meta: {
+          title: '提现记录',
+        }
+      }
+    ]
   },
   {
     path: '/shop',
@@ -308,8 +310,8 @@ export const asyncRoutes = [
     name: 'Shop',
     meta: {
       title: '店铺设置',
-      roles: [ 'company','personal'], // you can set roles in root nav
-      icon:'setting-two'
+      roles: ['company', 'personal'], // you can set roles in root nav
+      icon: 'setting-two'
     },
     children: [{
         path: 'shopSetting',
@@ -324,7 +326,7 @@ export const asyncRoutes = [
         path: 'shopCarousel',
         component: () => import('@/views/shop/shopCarousel'),
         name: 'ShopCarousel',
-        hidden:true,
+        hidden: true,
         meta: {
           title: '店铺轮播',
           // icon: 'edit'
