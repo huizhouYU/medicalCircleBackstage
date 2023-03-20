@@ -66,10 +66,17 @@ export function goodsRenew(data) {
     data
   })
 }
-
+//分类列表(树形)
 export function goodsCategoryList() {
   return request({
     url: 'goodsCategory/list',
+    method: 'get',
+  })
+}
+// 根据Pid查找下级分类
+export function cartListByPid() {
+  return request({
+    url: 'goodsCategory/listByPid',
     method: 'get',
   })
 }
@@ -115,29 +122,3 @@ export function specDelete(data) {
     data
   })
 }
-
-
-
-// export function fetchPv(pv) {
-//   return request({
-//     url: '/vue-element-admin/article/pv',
-//     method: 'get',
-//     params: { pv }
-//   })
-// }
-
-// export function createArticle(data) {
-//   return request({
-//     url: '/vue-element-admin/article/create',
-//     method: 'post',
-//     data
-//   })
-// }
-
-// export function updateArticle(data) {
-//   return request({
-//     url: '/vue-element-admin/article/update',
-//     method: 'post',
-//     data
-//   })
-// }

@@ -135,11 +135,20 @@ export const asyncRoutes = [{
       },
       {
         path: 'goodsRelate',
-        component: () => import('@/views/goods/goodsRelate'),
+        component: () => import('@/views/goods/relate/goodsRelate'),
         name: 'GoodsRelate',
         meta: {
           title: '商品关联'
         }
+      },
+      {
+        path: 'manageSeries',
+        component: () => import('@/views/goods/relate/manageSeries'),
+        name: 'ManageSeries',
+        meta: {
+          title: '管理系列',
+        },
+        hidden: true
       },
       {
         path: 'publishGood',
