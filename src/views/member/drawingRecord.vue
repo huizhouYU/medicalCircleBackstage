@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-table ref="multipleTable" :data="tableData" tooltip-effect="dark" style="width: 100%;min-height:200px"
-       :height="tableHeight" class="el-table-box" :header-cell-style="{'text-align':'center'}">
+       class="el-table-box" :header-cell-style="{'text-align':'center'}">
       <!--   <el-table-column  width="55">
       </el-table-column> -->
       <el-table-column align="center" prop="createdAt" label="申请提款时间"></el-table-column>
@@ -28,7 +28,7 @@
     <div class="bottoms-box">
       <div class="left"></div>
       <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange"
-        :page-sizes="[1,5,10, 15, 20, 25]" :pager-count="5" :page-size="pageSize" :background="false"
+        :page-sizes="[5,10, 20, 40, 60]" :pager-count="5" :page-size="pageSize" :background="false"
         layout="total, sizes, prev, pager, next, jumper" :total="totalCount">
       </el-pagination>
     </div>
@@ -58,7 +58,6 @@
     data() {
       return {
         tableData: [],
-        tableHeight: 0,
         pagerCount: 4, //设置页码显示最多的数量
         totalCount: 0,
         pageNum: 1, //当前页
@@ -67,10 +66,6 @@
     },
     created() {},
     mounted() {
-      // 初始化给table高度赋值
-      this.getHeight();
-      // 屏幕resize监听方法
-      this.screenMonitor();
       this.initData()
     },
     methods: {
@@ -90,28 +85,6 @@
           }
 
         })
-      },
-
-
-      screenMonitor() {
-        let resize = debounce(() => {
-          this.getHeight();
-        }, 100);
-        // 屏幕resize监听事件：一旦屏幕宽高发生变化，就会执行resize
-        window.addEventListener("resize", resize, true);
-        // 将屏幕监听事件移除
-        // 这步是必须的。离开页面时不移除，再返回，或者进入到别的有相同元素的页面会报错
-        // 或者将这里的方法直接写在beforeDestroy函数中也可，不过我感觉这样写更明了些
-        this.$once("hook:beforeDestroy", () => {
-          window.removeEventListener("resize", resize, true);
-        });
-      },
-      getHeight() {
-        // 为什么设置了一个定时器我忘却了。。。。大概因为在获取元素时还没有元素吧哈哈哈哈我真的讲不明白但是得有这个定时器
-        setTimeout(() => {
-          // this.tableHeight = getDynamicHeight(this.$refs.searchContainer).height;
-          this.tableHeight = getDynamicHeight(100).height;
-        }, 400);
       },
       handleSizeChange(val) {
         console.log("handleSizeChange:", val)

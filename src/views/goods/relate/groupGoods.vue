@@ -5,7 +5,8 @@
       <div class="group-name-box">
         <span class="name" v-show="!editGroupNameFlag">{{groupName}}</span>
         <i class="el-icon-edit my-edit-name-icon" @click="editGroupName" v-show="!editGroupNameFlag"></i>
-        <el-input type="text" v-model="groupName" v-show="editGroupNameFlag" @keyup.native.enter="saveGroupName"></el-input>
+        <el-input type="text" v-model="groupName" v-show="editGroupNameFlag" @keyup.native.enter="saveGroupName">
+        </el-input>
       </div>
       <div class="group-goods-img-box">
         <img src="../../../assets/404_images/404.png" alt="" class="goods-img" v-for="(item,index) in groupGoods"
@@ -26,7 +27,30 @@
           <!-- <el-input v-model="form.moudle"></el-input> -->
         </el-form-item>
         <el-form-item label="选择分组：" class="my-long-input-item">
-          <el-select v-model="value" placeholder="请选择">
+          <!-- <el-select v-model="value" placeholder="请选择">
+            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+            </el-option>
+          </el-select> -->
+          <!-- filterable allow-create default-first-option -->
+          <el-select v-model.trim="value" clearable filterable @blur="selectGroup" placeholder="请选择分组">
+            <!-- <el-option
+                v-for="item in options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option> -->
+            <!--           <template v-if="options.length === 0 " slot="empty">
+              <div class="add-new-option-div">
+                <img src="../../../assets/images/icon_add.png" alt="">
+                <span class="title">点击创建分组1</span>
+              </div>
+            </template> -->
+            <!-- <div class="add-new-option-div"> -->
+            <div style="display: flex;justify-content: flex-start;align-items: center;font-size: 12px;
+              color: #333;line-height: 12px;padding: 0px 12px; cursor: pointer;height: 34px;" @click="addNewGroup">
+              <img src="../../../assets/images/icon_add.png" alt="" style="width: 24px;height: 24px;">
+              <span class="title">点击创建分组</span>
+            </div>
             <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
@@ -51,22 +75,35 @@
           goodsName: '心电监护仪',
           moudle: 'PC-3000'
         },
-        options: [{
-          value: '选项1',
-          label: '黄金糕'
-        }, {
-          value: '选项2',
-          label: '双皮奶'
-        }],
+        options: [
+          //   {
+          //   label: "输入新分组名称，用回车添加",
+          //   value: 1
+          // },
+          {
+            value: '选项1',
+            label: '黄金糕'
+          }, {
+            value: '选项2',
+            label: '双皮奶'
+          }
+        ],
         value: ''
       }
     },
     methods: {
+      selectGroup(val) {
+        console.log(val)
+
+      },
       editGroupName() {
         this.editGroupNameFlag = true
       },
-      saveGroupName(){
+      saveGroupName() {
         this.editGroupNameFlag = false
+      },
+      addNewGroup() {
+        this.$message.success("添加新的分组【" + this.value + "】")
       }
     }
   }
@@ -105,10 +142,12 @@
           font-size: 14px;
           cursor: pointer;
         }
-        /deep/ .el-input--medium .el-input__inner{
+
+        /deep/ .el-input--medium .el-input__inner {
           height: 34px;
         }
-        /deep/ .el-input__inner{
+
+        /deep/ .el-input__inner {
           width: 300px;
         }
       }
@@ -155,6 +194,30 @@
             width: 366px;
           }
         }
+
+        // /deep/.el-select-dropdown__list {
+
+        //   .add-new-option-div {
+        //     cursor: pointer;
+        //     display: flex;
+        //     justify-content: flex-start;
+        //     align-items: center;
+        //     padding: 0px 12px;
+        //     height: 34px;
+
+        //     .title {
+        //       font-size: 12px;
+        //       font-weight: 400;
+        //       color: #333333;
+        //       line-height: 12px;
+        //     }
+
+        //     .my-add-img {
+        //       width: 24px;
+        //       height: 24px;
+        //     }
+        //   }
+        // }
       }
 
       .delete-group-div {
