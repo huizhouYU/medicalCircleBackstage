@@ -122,3 +122,52 @@ export function specDelete(data) {
     data
   })
 }
+// 商品关联
+//分组列表
+export function goodsGroupList(query) {
+  return request({
+    url: 'goodsGroup/list',
+    method: 'get',
+    params: query
+  })
+}
+//创建分组
+export function goodsGroupCreate(data) {
+  return request({
+    url: 'goodsGroup/create',
+    method: 'post',
+    data
+  })
+}
+//更新分组
+export function goodsGroupUpdate(data) {
+  return request({
+    url: 'goodsGroup/update',
+    method: 'post',
+    data
+  })
+}
+//删除分组
+export function goodsGroupDelete(data) {
+  return request({
+    url: 'goodsGroup/delete',
+    method: 'post',
+    data
+  })
+}
+//查询分组下的商品
+export function goodsByGroup(query) {
+  return request({
+    url: 'goodsGroup/goodsByGroup',
+    method: 'get',
+    params: query
+  })
+}
+//分组绑定商品
+export function goodsBandGroup(data) {
+  return request({
+    url: 'goodsGroup/bandGoods',
+    method: 'post',
+    data
+  })
+}

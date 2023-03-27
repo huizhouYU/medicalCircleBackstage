@@ -138,7 +138,7 @@ export const asyncRoutes = [{
         component: () => import('@/views/goods/relate/manageSeries'),
         name: 'ManageSeries',
         meta: {
-          title: '管理系列',
+          title: '分组管理',
         },
         hidden: true
       },

@@ -4,59 +4,45 @@
       <div class="top-search">
         <div class="search-item">
           <span class="search-item-title">类目选择：</span>
-          <el-cascader v-model="value" :options="options" :props="TagProps" placeholder="请选择类目" @change="handleChange">
+          <el-cascader v-model="value" :options="options" :props="TagProps" placeholder="请选择类目" @change="handleChange"
+            clearable>
           </el-cascader>
         </div>
         <div class="search-item my-search-input-item">
-          <span class="search-item-title">系列名称：</span>
-          <el-input v-model="input" placeholder="输入系列名称关键字"></el-input>
+          <!-- <span class="search-item-title">系列名称：</span>
+          <el-input v-model="input" placeholder="输入系列名称关键字"></el-input> -->
+          <el-input placeholder="请输入内容" v-model="keyWord" class="input-with-select">
+            <el-select v-model="selectType" slot="prepend" placeholder="请选择">
+              <el-option label="商品名称" value="1"></el-option>
+              <el-option label="分组名称" value="2"></el-option>
+            </el-select>
+          </el-input>
         </div>
-        <el-button type="primary" class="my-search-btn">查询</el-button>
+        <el-button type="primary" class="my-search-btn" @click="toSearchData">查询</el-button>
       </div>
-      <el-button type="primary" @click="addNewSet">创建新系列</el-button>
+      <el-button type="primary" @click="addNewSet">创建分组</el-button>
     </div>
     <div class="my-table-box">
-      <el-table ref="multipleTable" :data="tableData" tooltip-effect="dark" style="width:100%" class="el-table-box"
-        :header-cell-style="{height:'55px',color: '#333333','font-size': '12px','font-weight': 'bold'}"
-        :cell-style="{color: '#333333','font-size': '12px'}">
-        <el-table-column prop="name" label="系列名称" min-width="200"></el-table-column>
-        <el-table-column prop="cart" label="类目" min-width="200"></el-table-column>
-        <el-table-column prop="brand" label="品牌名称" min-width="200"></el-table-column>
-        <el-table-column fixed="right" label="操作" min-width="120">
-          <template slot-scope="scope">
-            <el-button @click.native.prevent="editSeriesGroup(scope.$index, scope.row)" type="text" size="small"
-              class="my-opt-btn">
-              管理系列商品
-            </el-button>
-            <el-button @click.native.prevent="editSeries(scope.$index, scope.row)" type="text" size="small"
-              class="my-opt-btn">
-              编辑
-            </el-button>
-            <el-button @click.native.prevent="deleteSeries(scope.$index, scope.row)" type="text" size="small"
-              class="my-opt-btn">
-              删除
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
+      <group-list :tableData="tableData" @editGroup="editGroup"></group-list>
       <div class="my-table-bottoms">
         <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange"
           :page-sizes="[1,5,10, 15, 20, 25]" ::page-size="currentSize.pageSize" :background="false"
           layout="total, sizes, prev, pager, next, jumper" :total="currentSize.total">
         </el-pagination>
-        <!-- pager-count="currentSize.pageNo" -->
       </div>
     </div>
     <el-dialog :title="seriesDialogTitle" :visible.sync="dialogVisible" width="950" class="my-new-set-dialog">
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="85px" class="demo-ruleForm">
-        <el-form-item label="系列名称：" prop="name" class="input-long-item">
-          <el-input v-model="ruleForm.name" maxlength="20" show-word-limit></el-input>
+        <el-form-item label="分组名称：" prop="groupName" class="input-long-item">
+          <el-input v-model="ruleForm.groupName" maxlength="20" show-word-limit></el-input>
         </el-form-item>
-        <el-form-item label="类目：" prop="cate" class="input-long-item">
-          <el-cascader v-model="ruleForm.cate" :options="options" :props="TagProps" :disabled="editFlag"></el-cascader>
+        <el-form-item label="类目：" prop="categoryIdList" class="input-long-item">
+          <el-cascader v-model="ruleForm.categoryIdList" :options="options" :props="TagProps" :disabled="editFlag"
+            ref="cascader" @change="changeCate"></el-cascader>
+          <!-- @change="changeCate" -->
         </el-form-item>
-        <el-form-item label="品牌：" prop="brand" class="input-short-item">
-          <el-select v-model="ruleForm.brand" placeholder="请选择品牌" :disabled="editFlag">
+        <el-form-item label="品牌：" prop="brandId" class="input-short-item">
+          <el-select v-model="ruleForm.brandId" placeholder="请选择品牌" :disabled="editFlag">
             <el-option v-for="item in brandsOptions" :key="item.brandId" :label="item.brandName||'-'"
               :value="item.brandId">
             </el-option>
@@ -65,7 +51,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="sureAddSet">确 定</el-button>
+        <el-button type="primary" @click="sureAddSet" v-loading="submitLoading">确 定</el-button>
       </span>
     </el-dialog>
 
@@ -75,49 +61,30 @@
 <script>
   import {
     cartListByPid,
-    goodsCategoryList
+    goodsCategoryList,
+    goodsGroupList,
+    goodsGroupCreate
   } from '@/api/goods'
   import {
     brandList
   } from '@/api/demand'
+  import groupList from '../../goods/relate/groupList.vue'
   export default {
     data() {
       return {
+        selectType: "2",
         editFlag: true,
-        seriesDialogTitle: '创建新系列',
-        input: '',
+        submitLoading: false,
+        seriesDialogTitle: '创建新分组',
+        keyWord: '',
         value: [],
         dialogVisible: false,
-        tableData: [{
-            name: '心电监护系列',
-            cart: '临床检验/血液分析设备/血细胞分析仪',
-            brand: '永康'
-          },
-          {
-            name: '心电监护系列',
-            cart: '临床检验/血液分析设备/血细胞分析仪',
-            brand: '永康'
-          },
-          {
-            name: '心电监护系列',
-            cart: '临床检验/血液分析设备/血细胞分析仪',
-            brand: '永康'
-          },
-          {
-            name: '心电监护系列',
-            cart: '临床检验/血液分析设备/血细胞分析仪',
-            brand: '永康'
-          },
-          {
-            name: '心电监护系列',
-            cart: '临床检验/血液分析设备/血细胞分析仪',
-            brand: '永康'
-          }
-        ],
+        tableData: [],
         currentSize: {
-          pageSize: 15,
+          categoryId: null,
           pageNo: 1,
-          total: 50
+          pageSize: 20,
+          total: 0
         },
         TagProps: {
           value: 'cateId',
@@ -127,14 +94,15 @@
         options: [],
         brandsOptions: [],
         ruleForm: {
-          name: '',
-          cate: '',
-          brand: ''
+          groupName: '',
+          categoryIdList: [],
+          categoryName: '',
+          brandId: null
         },
         rules: {
-          name: [{
+          groupName: [{
               required: true,
-              message: '请输入系列名称',
+              message: '请输入分组名称',
               trigger: 'blur'
             },
             {
@@ -144,12 +112,12 @@
               trigger: 'blur'
             }
           ],
-          cate: [{
+          categoryIdList: [{
             required: true,
             message: '请选择类目',
             trigger: 'change'
           }],
-          brand: [{
+          brandId: [{
             required: true,
             message: '请选择品牌',
             trigger: 'change'
@@ -157,19 +125,18 @@
         }
       };
     },
+    components: {
+      groupList
+    },
     mounted() {
-      //获取类目（只获取第一级类目）
-      this.getFristCartData()
+      //获取类目
+      this.getCartData()
       this.getBrandData()
+      this.getGoodsGroupList()
 
     },
     methods: {
-      getFristCartData() {
-        // cartListByPid({
-        //   pid: 0
-        // }).then(res => {
-        //   console.log("获取的第一级分类：", res)
-        // })
+      getCartData() {
         goodsCategoryList().then(response => {
           this.options = this.getTreeData(response.data.data)
         })
@@ -178,6 +145,29 @@
         brandList().then(response => {
           this.brandsOptions = response.data.data
         })
+      },
+      getGoodsGroupList() {
+        goodsGroupList(this.currentSize).then(res => {
+          this.currentSize.total = res.data.data.totalCount
+          this.tableData = res.data.data.list
+        })
+      },
+      toSearchData() {
+        if (this.value && this.value.length > 0) {
+          this.currentSize.categoryId = this.value
+        } else {
+          this.currentSize.categoryId = null
+        }
+        this.currentSize.groupName = null
+        this.currentSize.goodsName = null
+        if (this.keyWord) {
+          if (this.selectType == 1) {
+            this.currentSize.goodsName = this.keyWord
+          } else {
+            this.currentSize.groupName = this.keyWord
+          }
+        }
+        this.getGoodsGroupList()
       },
       getTreeData(data) {
         for (var i = 0; i < data.length; i++) {
@@ -191,10 +181,10 @@
         }
         return data;
       },
-
-      handleChange(value) {
-        console.log(value);
+      changeCate(value) {
+        this.ruleForm.categoryName = this.$refs["cascader"].getCheckedNodes()[0].pathLabels.join('/')
       },
+      handleChange(value) {},
       handleSizeChange() {
 
       },
@@ -203,51 +193,63 @@
       },
 
       addNewSet() {
-        this.seriesDialogTitle = "创建新系列"
+        this.seriesDialogTitle = "创建新分组"
         this.editFlag = false
         this.dialogVisible = true
       },
       sureAddSet() {
-        this.$refs['ruleForm'].validate((valid) => {
-          if (valid) {
-            this.dialogVisible = false
-            this.$router.push({
-              path: 'manageSeries'
-            })
-          } else {
-            console.log('error submit!!');
-            return false;
-          }
-        });
+        try {
+          this.submitLoading = true
+          this.$refs['ruleForm'].validate((valid) => {
+            if (valid) {
+              console.log("ruleForm：", this.ruleForm)
+              if (this.editFlag) {
+                //编辑分组
+                goodsGroupUpdate(this.ruleForm).then(res => {
+                  console.log("创建分组：", res)
+                  this.submitLoading = false
+                })
+              } else {
+                //创建新的分组
+                goodsGroupCreate(this.ruleForm).then(res => {
+                  if (res.data.code == 10000) {
+                    this.$message.success("分组创建成功！")
+                    this.dialogVisible = false
+                    this.$router.push({
+                      path: 'manageSeries',
+                      // params:{
+                      //   group:''
+                      // }
+                    })
+                  } else {
+                    this.$message.reeor(res.data.message)
+                  }
+                  this.submitLoading = false
+                })
+              }
+              // this.dialogVisible = false
+              // this.$router.push({
+              //   path: 'manageSeries'
+              // })
+            } else {
+              console.log('error submit!!');
+              this.submitLoading = false
+              return false;
+            }
+          });
+        } catch (e) {
+          this.submitLoading = false
+        }
+
 
       },
-      editSeries() {
-        this.seriesDialogTitle = "系列编辑"
+      editGroup(item) {
+        this.seriesDialogTitle = "编辑分组"
+        this.ruleForm = item
         this.editFlag = true
         this.dialogVisible = true
       },
-      editSeriesGroup(index, row) {
-        this.$router.push({
-          path: 'manageSeries'
-        })
-      },
-      deleteSeries(index, row) {
-        this.$confirm('确定删除这个系列吗？', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          this.$message({
-            type: 'success',
-            message: '删除成功'
-          });
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          });
-        });
-      }
+
     }
   }
 </script>
@@ -293,18 +295,32 @@
         }
 
         .my-search-input-item {
+          /deep/.el-input-group__prepend .el-input--medium .el-input__inner {
+            width: 112px;
+            height: 34px;
+            background-color: #fff;
+          }
+
+          /deep/ .el-input-group__prepend {
+            overflow: hidden;
+          }
+
+          /deep/.el-input-group__prepend .el-input .el-input--suffix .el-input__inner {
+            background-color: #fff;
+          }
+
           /deep/ .el-input--medium .el-input__inner {
-            width: 210px;
+            width: 298px;
           }
         }
 
         .search-item+.search-item {
-          margin-left: 86px;
+          margin-left: 25px;
         }
       }
 
       .my-search-btn {
-        margin-left: 68px;
+        margin-left: 40px;
       }
 
       /deep/ .el-button--medium {
@@ -320,9 +336,9 @@
       box-shadow: 0px 2px 10px 1px rgba(0, 0, 0, 0.06);
       border-radius: 6px;
 
-      .my-opt-btn {
-        color: #1890FF;
-      }
+      // .my-opt-btn {
+      //   color: #1890FF;
+      // }
 
       .my-table-bottoms {
         padding: 20px 50px 25px 15px;
@@ -388,6 +404,15 @@
 
       /deep/ .el-button+.el-button {
         margin-left: 14px;
+      }
+
+      /deep/.el-loading-spinner {
+        margin-top: -16px;
+      }
+
+      /deep/ .el-loading-spinner .circular {
+        width: 32px !important;
+        height: 32px !important;
       }
     }
 
