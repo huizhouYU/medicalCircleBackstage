@@ -6,7 +6,7 @@
       </el-input>
     </div>
     <el-table ref="multipleTable" :data="tableData" tooltip-effect="dark" style="width:100%" class="goods-table-box"
-      height="260" @selection-change="handleSelectionChange"
+      :height="tableHeight" @selection-change="handleSelectionChange"
       :header-cell-style="{height:'53px',color: '#333333','font-size': '12px','font-weight': 'bold','background-color':'#FAFAFA'}"
       :cell-style="{color: '#333333','font-size': '12px'}">
       <el-table-column type="selection" width="50"></el-table-column>
@@ -51,7 +51,7 @@
     goodsBandGroup
   } from '@/api/goods'
   export default {
-    props: ['groupId'],
+    props: ['groupId','tableHeight'],
     data() {
       return {
         searchKey: '',

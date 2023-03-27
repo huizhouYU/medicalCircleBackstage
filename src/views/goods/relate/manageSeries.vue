@@ -81,7 +81,8 @@
         <!-- pager-count="currentSize.pageNo" -->
       </div>
     </div>
-    <el-dialog :title="dialogTitle" :visible.sync="editGroupDialog" width="950" class="my-edit-group-dialog">
+    <el-dialog :title="dialogTitle" :visible.sync="editGroupDialog" width="950"
+      class="my-public-dialog my-edit-group-dialog">
       <group-goods></group-goods>
       <span slot="footer" class="dialog-footer">
         <el-button @click="editGroupDialog = false">取 消</el-button>
@@ -89,8 +90,10 @@
       </span>
     </el-dialog>
     <div v-if="addGoodsDialog">
-      <el-dialog title="添加商品" :visible.sync="addGoodsDialog" width="976" class="my-edit-group-dialog">
-        <add-group-goods :groupId="currentSize.groupId" v-show="currentSize.groupId"></add-group-goods>
+      <el-dialog title="添加商品" :visible.sync="addGoodsDialog" width="976"
+        class="my-public-dialog my-good-to-group-dialog">
+        <add-group-goods :groupId="currentSize.groupId" :tableHeight="tableHeightDialog" v-show="currentSize.groupId">
+        </add-group-goods>
         <span slot="footer" class="dialog-footer">
           <el-button @click="addGoodsDialog = false">取 消</el-button>
         </span>
@@ -125,6 +128,7 @@
           total: 0
         },
         tableData: [],
+        tableHeightDialog: '342'
       }
     },
     mounted() {
@@ -397,12 +401,7 @@
       }
     }
 
-    .my-edit-group-dialog {
-      /deep/ .el-dialog {
-        width: 950px;
-        height: 492px;
-      }
-
+    .my-public-dialog {
       /deep/.el-dialog__header {
         height: 50px;
         background: #FAFAFA;
@@ -414,11 +413,6 @@
         border-bottom: 1px solid #EBEEF5;
       }
 
-      /deep/ .el-dialog__body {
-        height: 442px;
-        padding: 0px;
-      }
-
       /deep/ .el-button--medium {
         padding: 10px 15px;
         font-size: 12px;
@@ -427,6 +421,32 @@
       /deep/ .el-button+.el-button {
         margin-left: 14px;
       }
+    }
+
+    .my-good-to-group-dialog {
+      /deep/ .el-dialog {
+        width: 950px;
+        height: 597px;
+      }
+
+      /deep/ .el-dialog__body {
+        height: 547px;
+        padding: 0px;
+      }
+    }
+
+    .my-edit-group-dialog {
+      /deep/ .el-dialog {
+        width: 950px;
+        height: 492px;
+      }
+
+      /deep/ .el-dialog__body {
+        height: 442px;
+        padding: 0px;
+      }
+
+
     }
   }
 </style>
