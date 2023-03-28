@@ -155,6 +155,14 @@ export function goodsGroupDelete(data) {
     data
   })
 }
+//查询分组详情
+export function goodsGroupDetail(query) {
+  return request({
+    url: 'goodsGroup/detail',
+    method: 'get',
+    params: query
+  })
+}
 //查询分组下的商品
 export function goodsByGroup(query) {
   return request({
@@ -171,3 +179,12 @@ export function goodsBandGroup(data) {
     data
   })
 }
+//删除分组下的商品
+export function groupRemoveGoods(data) {
+  return request({
+    url: 'goodsGroup/removeGoods',
+    method: 'post',
+    data
+  })
+}
+

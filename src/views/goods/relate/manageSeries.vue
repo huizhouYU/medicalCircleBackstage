@@ -4,82 +4,64 @@
       <div class="top-group-info">
         <div class="series-info-item">
           <span class="key">分组名称：</span>
-          <span class="value font-bold">心电监护仪系列</span>
+          <span class="value font-bold">{{groupInfo.groupName||'-'}}</span>
         </div>
         <div class="series-info-item">
           <span class="key">类目：</span>
-          <span class="value">监护诊察 > 监护附件 > 监护设备配件</span>
+          <span class="value">{{groupInfo.categoryName||'-'}}</span>
         </div>
         <div class="series-info-item">
           <span class="key">品牌：</span>
-          <span class="value">康泰</span>
+          <span class="value">{{groupInfo.brandName||'-'}}</span>
         </div>
       </div>
       <el-button type="primary" @click="addGroupGoods">添加商品</el-button>
     </div>
     <div class="goods-groups-box">
-      <div class="groups-top">
-        <div class="tip-box">
-          <i class="el-icon-warning-outline my-tip-icon"></i>
-          <span class="tip-title">
-            每个分组最多添加8个商品
-          </span>
-        </div>
-        <div class="top-search-box">
-          <el-input placeholder="请输入商品名称" v-model="searchKey">
-            <el-button slot="append" icon="el-icon-search"></el-button>
-          </el-input>
+      <div class="tip-box">
+        <i class="el-icon-warning-outline my-tip-icon"></i>
+        <span class="tip-title">
+          每个分组最多添加8个商品
+        </span>
+      </div>
+      <div class="my-el-table-content">
+        <el-table ref="multipleTable" :data="tableData" tooltip-effect="dark" style="width:100%" class="goods-table-box"
+          :header-cell-style="{height:'53px',color: '#333333','font-size': '12px','font-weight': 'bold'}"
+          @selection-change="handleSelectionChange" :cell-style="{color: '#333333','font-size': '12px'}">
+          <el-table-column type="selection" width="50"></el-table-column>
+          <el-table-column label="商品名称" min-width="420">
+            <template slot-scope="scope">
+              <div class="goods-name-info-row">
+                <!-- <el-checkbox v-model="scope.row.checked"></el-checkbox> -->
+                <img :src="scope.row.defaultImage" alt="" class="goods-img">
+                <div class="goods-name-box">
+                  <span>{{scope.row.goodsName}}</span>
+                </div>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="goodsModel" label="商品型号" min-width="200"></el-table-column>
+          <el-table-column fixed="right" label="操作" min-width="100">
+            <template slot-scope="scope">
+              <el-button @click.native.prevent="deleteRow(scope.$index, scope.row)" type="text" size="small"
+                class="my-opt-btn">
+                从分组中移除
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+        <div class="my-goods-table-bottoms">
+          <div class="batch-opt-box">
+            <el-checkbox v-model="checkedAll" @change="allSelectTerminal">全选</el-checkbox>
+            <el-button type="danger" class="my-batch-opt-btn" @click="batchDeleteGroup">从分组中移除</el-button>
+          </div>
+          <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange"
+            :page-sizes="[1,5,10, 15, 20, 25]" ::page-size="currentSize.pageSize" :background="false"
+            layout="total, sizes, prev, pager, next, jumper" :total="currentSize.total">
+          </el-pagination>
         </div>
       </div>
-      <el-table ref="multipleTable" :data="tableData" tooltip-effect="dark" style="width:100%" class="goods-table-box"
-        :header-cell-style="{height:'53px',color: '#333333','font-size': '12px','font-weight': 'bold'}"
-        :cell-style="{color: '#333333','font-size': '12px'}">
-        <el-table-column label="商品名称" min-width="220">
-          <template slot-scope="scope">
-            <div class="goods-name-info-row">
-              <el-checkbox v-model="scope.row.checked"></el-checkbox>
-              <img src="../../../assets/images/shop_logo.png" alt="" class="goods-img">
-              <div class="goods-name-box">
-                <span>{{scope.row.name}}</span>
-              </div>
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column prop="cart" label="商品型号" min-width="180"></el-table-column>
-        <!-- <el-table-column label="状态" min-width="180">
-          <template slot-scope="scope">
-            <template v-if="scope.row.ifShow">上架</template>
-            <template v-else>下架</template>
-          </template>
-        </el-table-column> -->
-        <el-table-column fixed="right" label="操作" min-width="160">
-          <template slot-scope="scope">
-            <div class="my-table-opt-box">
-              <div class="opt-btns">
-                <!--    <el-button @click.native.prevent="editGroup(scope.$index, scope.row)" type="text" size="small"
-                  class="my-opt-btn">
-                  修改分组
-                </el-button> -->
-                <el-button @click.native.prevent="deleteRow(scope.$index, scope.row)" type="text" size="small"
-                  class="my-opt-btn">
-                  从分组中移除
-                </el-button>
-              </div>
-            </div>
-          </template>
-        </el-table-column>
-      </el-table>
-      <div class="my-goods-table-bottoms">
-        <div class="batch-opt-box">
-          <el-checkbox v-model="checkedAll">全选</el-checkbox>
-          <el-button type="primary" class="my-batch-opt-btn">从分组中移除</el-button>
-        </div>
-        <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange"
-          :page-sizes="[1,5,10, 15, 20, 25]" ::page-size="currentSize.pageSize" :background="false"
-          layout="total, sizes, prev, pager, next, jumper" :total="currentSize.total">
-        </el-pagination>
-        <!-- pager-count="currentSize.pageNo" -->
-      </div>
+
     </div>
     <el-dialog :title="dialogTitle" :visible.sync="editGroupDialog" width="950"
       class="my-public-dialog my-edit-group-dialog">
@@ -104,7 +86,9 @@
 
 <script>
   import {
-    goodsByGroup
+    goodsByGroup,
+    goodsGroupDetail,
+    groupRemoveGoods
   } from '@/api/goods'
   import groupGoods from '../../../views/goods/relate/groupGoods.vue'
   import addGroupGoods from '../../../views/goods/relate/addGroupGoods.vue'
@@ -119,7 +103,6 @@
         addGoodsDialog: false,
         editGroupDialog: false,
         dialogTitle: '修改分组',
-        searchKey: '',
         checkedAll: false,
         currentSize: {
           groupId: null,
@@ -128,38 +111,132 @@
           total: 0
         },
         tableData: [],
-        tableHeightDialog: '342'
+        tableHeightDialog: '342',
+        multipleSelection: []
       }
     },
     mounted() {
-      console.log(this.$route)
-      this.currentSize.groupId = this.$route.query.groupId
+      this.currentSize.groupId = parseInt(this.$route.query.groupId)
       //获取分组信息
-      // this.getGroupInfo()
+      this.getGroupInfo()
       //获取该分组下面的商品
       this.getGroupGoods()
     },
     methods: {
       getGroupInfo() {
-
+        var param = {
+          id: this.currentSize.groupId
+        }
+        goodsGroupDetail(param).then(res => {
+          if (res.data.code == 10000) {
+            this.groupInfo = res.data.data
+          } else {
+            this.$message.error("获取分组详情失败：", res.data.message)
+          }
+        })
       },
       getGroupGoods() {
         goodsByGroup(this.currentSize).then(res => {
-          console.log("获取分组下的商品：", res)
-          this.tableData = res.data.data.list
+          if (res.data.code == 10000) {
+            this.tableData = res.data.data.list
+            this.currentSize.total = res.data.data.totalCount
+          } else {
+            this.$message.error(res.data.message)
+          }
         })
       },
       addGroupGoods() {
         this.addGoodsDialog = true
       },
-      handleSizeChange() {
-
+      handleSizeChange(val) {
+        this.currentSize.pageSize = val
+        this.getGroupGoods()
       },
-      handleCurrentChange() {
-
+      handleCurrentChange(val) {
+        this.currentSize.pageNo = val
+        this.getGroupGoods()
       },
       editGroup(index, row) {
         this.editGroupDialog = true
+      },
+      handleSelectionChange(val) {
+        this.multipleSelection = val;
+      },
+      allSelectTerminal(e) {
+        if (e === true) {
+          this.$refs.multipleTable.toggleAllSelection()
+        } else {
+          this.$refs.multipleTable.clearSelection()
+        }
+      },
+      //批量移除商品
+      batchDeleteGroup() {
+        var params = {
+          goodsIdList: [],
+          groupId: this.currentSize.groupId,
+        }
+        for (var index in this.multipleSelection) {
+          params.goodsIdList.push(this.multipleSelection[index].goodsId)
+        }
+        if (this.multipleSelection.length > 0) {
+          this.$confirm('是否确定要批量移除这些商品?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            groupRemoveGoods(params).then(res => {
+              if (res.data.code == 10000) {
+                this.$message.success("移除成功!")
+                this.getGroupGoods()
+              } else {
+                this.$message.error(res.data.message)
+              }
+            })
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消移除'
+            });
+          });
+        } else {
+          this.$message({
+            type: 'info',
+            message: '您还没有选择数据，请先选择您要移除的商品？'
+          });
+        }
+
+      },
+      //移除商品
+      deleteRow(index, row) {
+        this.$confirm('确定要从这个分组中移除吗？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          var params = {
+            groupId: this.currentSize.groupId,
+            goodsId: row.goodsId
+          }
+          groupRemoveGoods(params).then(res => {
+            console.log("移除商品：", res)
+            if (res.data.code == 10000) {
+              this.$message({
+                type: 'success',
+                message: '移除成功'
+              });
+              this.getGroupGoods()
+            } else {
+              this.$message.error(res.data.message)
+            }
+          })
+
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消移除'
+          });
+        });
+
       },
       sureEdit() {
         this.editGroupDialog = false
@@ -225,149 +302,113 @@
 
     .goods-groups-box {
       width: 100%;
-      padding: 20px 20px 20px 15px;
+      padding: 20px 0px;
       background: #FFFFFF;
       box-shadow: 0px 2px 10px 1px rgba(0, 0, 0, 0.06);
       box-sizing: border-box;
       border-radius: 6px;
 
-      .groups-top {
+      .tip-box {
         padding: 0px 15px;
         width: 100%;
-        height: 62px;
+        height: 32px;
         background: #F8F8F8;
         border-radius: 6px;
         box-sizing: border-box;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
         margin-bottom: 10px;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
 
-        .tip-box {
-          display: flex;
-          justify-content: flex-start;
-          align-items: center;
-
-          .my-tip-icon {
-            margin-right: 8px;
-            color: #FABB3D;
-            font-size: 16px;
-            line-height: 16px;
-          }
-
-          .tip-title {
-            font-size: 12px;
-            font-weight: 400;
-            color: #BBBBBB;
-            line-height: 12px;
-          }
+        .my-tip-icon {
+          margin-right: 8px;
+          color: #FABB3D;
+          font-size: 16px;
+          line-height: 16px;
         }
 
-        .top-search-box {
-          /deep/ .el-input-group {
-            width: 430px;
-            height: 34px;
-            border-radius: 6px;
-            font-size: 12px;
-            color: #999999;
-            box-sizing: border-box;
-          }
-
-          /deep/ .el-input--medium .el-input__inner {
-            height: 34px;
-            line-height: 34px;
-          }
-
-          /deep/ .el-input__inner {
-            border-radius: 6px;
-            border-bottom-right-radius: 0px;
-            border-top-right-radius: 0px;
-          }
-
-          /deep/ .el-input-group__append {
-            border-radius: 6px;
-            border-bottom-left-radius: 0px;
-            border-top-left-radius: 0px;
-            width: 60px;
-            background-color: #1890FF;
-            border: 1px solid #1890FF;
-            color: #fff;
-            font-size: 20px;
-          }
-
-          /deep/ .el-input-group__append:hover {
-            background-color: #46a6ff;
-            border-color: #46a6ff;
-          }
-        }
-      }
-
-      .goods-table-box {
-        .goods-name-info-row {
-          width: 100%;
+        .tip-title {
           font-size: 12px;
-          font-family: Microsoft YaHei-Regular, Microsoft YaHei;
           font-weight: 400;
-          color: #333333;
-          display: flex;
-          align-items: center;
-          justify-content: flex-start;
-
-          /deep/ .el-checkbox__inner {
-            border-radius: 50%;
-          }
-
-          .goods-img {
-            margin-left: 8px;
-            width: 40px;
-            height: 40px;
-            background: #FFFFFF;
-            border-radius: 4px 4px 4px 4px;
-            box-sizing: border-box;
-          }
-
-          .goods-name-box {
-            line-height: 12px;
-            height: 40px;
-            padding: 4px 8px 4px 16px;
-            flex: 1;
-
-            span {
-              text-overflow: -o-ellipsis-lastline;
-              overflow: hidden;
-              text-overflow: ellipsis;
-              display: -webkit-box;
-              -webkit-line-clamp: 2;
-              -webkit-box-orient: vertical;
-
-            }
-          }
-        }
-
-        .my-table-opt-box {
-          width: 100%;
-          height: 40px;
-          display: flex;
-          flex-direction: column;
-          justify-content: flex-end;
-          align-items: flex-start;
-          box-sizing: border-box;
-
-          .groups-info {
-            font-size: 12px;
-            font-weight: 400;
-            color: #BBBBBB;
-          }
-
-          .opt-btns {
-            line-height: 12px;
-
-            /deep/.el-button {
-              padding: 0px;
-            }
-          }
+          color: #BBBBBB;
+          line-height: 12px;
         }
       }
+
+      .my-el-table-content {
+        padding: 0px 20px;
+        box-sizing: border-box;
+        width: 100%;
+
+        .goods-table-box {
+          .goods-name-info-row {
+            width: 100%;
+            font-size: 12px;
+            font-family: Microsoft YaHei-Regular, Microsoft YaHei;
+            font-weight: 400;
+            color: #333333;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+
+            /deep/ .el-checkbox__inner {
+              border-radius: 50%;
+            }
+
+            .goods-img {
+              margin-left: 8px;
+              width: 40px;
+              height: 40px;
+              background: #FFFFFF;
+              border-radius: 4px 4px 4px 4px;
+              box-sizing: border-box;
+            }
+
+            .goods-name-box {
+              line-height: 12px;
+              height: 40px;
+              padding: 4px 8px 4px 16px;
+              flex: 1;
+
+              span {
+                text-overflow: -o-ellipsis-lastline;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+
+              }
+            }
+          }
+
+          // .my-table-opt-box {
+          //   width: 100%;
+          //   height: 40px;
+          //   display: flex;
+          //   flex-direction: column;
+          //   justify-content: flex-end;
+          //   align-items: flex-start;
+          //   box-sizing: border-box;
+
+          //   .groups-info {
+          //     font-size: 12px;
+          //     font-weight: 400;
+          //     color: #BBBBBB;
+          //   }
+
+          //   // .opt-btns {
+          //   //   line-height: 12px;
+
+          //   //   /deep/.el-button {
+          //   //     padding: 0px;
+          //   //   }
+          //   // }
+          // }
+        }
+      }
+
+
 
       .my-goods-table-bottoms {
         margin-top: 45px;
@@ -391,11 +432,22 @@
 
           .my-batch-opt-btn {
             margin-left: 20px;
+
           }
 
           /deep/ .el-button {
             padding: 4px 12px;
             font-size: 12px;
+          }
+
+          /deep/.el-button--danger {
+            background-color: #FF7575;
+            border-color: #FF7575;
+          }
+
+          /deep/.el-button--danger:hover {
+            background-color: #ff4949;
+            border-color: #ff4949;
           }
         }
       }

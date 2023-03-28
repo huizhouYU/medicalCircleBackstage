@@ -27,6 +27,9 @@
 </template>
 
 <script>
+  import {
+    goodsGroupDelete
+  } from '@/api/goods'
   export default {
     props: ['tableData'],
     data() {
@@ -47,15 +50,27 @@
         })
       },
       deleteGroup(index, row) {
-        this.$confirm('确定删除这个系列吗？', '提示', {
+        this.$confirm('确定删除这个分组吗？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.$message({
-            type: 'success',
-            message: '删除成功'
-          });
+          var params = {
+            id:row.id
+          }
+          goodsGroupDelete(params).then(res=>{
+            console.log("删除分组：",res)
+            if(res.data.code == 10000){
+              this.$message({
+                type: 'success',
+                message: '删除成功'
+              });
+              this.$emit("updateData")
+            }else{
+              this.$message.error(res.data.message)
+            }
+          })
+
         }).catch(() => {
           this.$message({
             type: 'info',

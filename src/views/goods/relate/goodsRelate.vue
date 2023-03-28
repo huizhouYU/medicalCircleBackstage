@@ -23,7 +23,7 @@
       <el-button type="primary" @click="addNewSet">创建分组</el-button>
     </div>
     <div class="my-table-box">
-      <group-list :tableData="tableData" @editGroup="editGroup"></group-list>
+      <group-list :tableData="tableData" @editGroup="editGroup" @updateData="getGoodsGroupList"></group-list>
       <div class="my-table-bottoms">
         <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange"
           :page-sizes="[1,5,10, 15, 20, 25]" ::page-size="currentSize.pageSize" :background="false"
@@ -63,7 +63,8 @@
     cartListByPid,
     goodsCategoryList,
     goodsGroupList,
-    goodsGroupCreate
+    goodsGroupCreate,
+    goodsGroupUpdate
   } from '@/api/goods'
   import {
     brandList
@@ -72,6 +73,7 @@
   export default {
     data() {
       return {
+        addNewGroupId: null,
         selectType: "2",
         editFlag: true,
         submitLoading: false,
@@ -81,7 +83,7 @@
         dialogVisible: false,
         tableData: [],
         currentSize: {
-          categoryId: null,
+          categoryIdList: null,
           pageNo: 1,
           pageSize: 20,
           total: 0
@@ -148,15 +150,20 @@
       },
       getGoodsGroupList() {
         goodsGroupList(this.currentSize).then(res => {
-          this.currentSize.total = res.data.data.totalCount
-          this.tableData = res.data.data.list
+          console.log("re:",res)
+          if (res.data.code == 10000) {
+            this.currentSize.total = res.data.data.totalCount
+            this.tableData = res.data.data.list
+          } else {
+            this.$message.error("获取分组下的商品失败：", res.data.message)
+          }
         })
       },
       toSearchData() {
         if (this.value && this.value.length > 0) {
-          this.currentSize.categoryId = this.value
+          this.currentSize.categoryIdList = this.value.toString(",")
         } else {
-          this.currentSize.categoryId = null
+          this.currentSize.categoryIdList = null
         }
         this.currentSize.groupName = null
         this.currentSize.goodsName = null
@@ -202,11 +209,15 @@
           this.submitLoading = true
           this.$refs['ruleForm'].validate((valid) => {
             if (valid) {
-              console.log("ruleForm：", this.ruleForm)
               if (this.editFlag) {
                 //编辑分组
                 goodsGroupUpdate(this.ruleForm).then(res => {
-                  console.log("创建分组：", res)
+                  if (res.data.code == 10000) {
+                    this.$message.success("修改成功！")
+                    this.dialogVisible = false
+                  } else {
+                    this.$message.error(res.data.message)
+                  }
                   this.submitLoading = false
                 })
               } else {
@@ -214,23 +225,20 @@
                 goodsGroupCreate(this.ruleForm).then(res => {
                   if (res.data.code == 10000) {
                     this.$message.success("分组创建成功！")
+                    this.addNewGroupId = res.data.data
                     this.dialogVisible = false
                     this.$router.push({
                       path: 'manageSeries',
-                      // params:{
-                      //   group:''
-                      // }
+                      query: {
+                        groupId: this.addNewGroupId
+                      }
                     })
                   } else {
-                    this.$message.reeor(res.data.message)
+                    this.$message.error(res.data.message)
                   }
                   this.submitLoading = false
                 })
               }
-              // this.dialogVisible = false
-              // this.$router.push({
-              //   path: 'manageSeries'
-              // })
             } else {
               console.log('error submit!!');
               this.submitLoading = false
@@ -238,6 +246,7 @@
             }
           });
         } catch (e) {
+          console.log("编辑或者创建分组失败：", e)
           this.submitLoading = false
         }
 

@@ -51,13 +51,13 @@
     goodsBandGroup
   } from '@/api/goods'
   export default {
-    props: ['groupId','tableHeight'],
+    props: ['groupId', 'tableHeight'],
     data() {
       return {
         searchKey: '',
         checkedAll: false,
         currentSize: {
-          groupId: null,
+          goodsGroupId: null,
           pageSize: 20,
           pageNo: 1,
           total: 0
@@ -66,15 +66,18 @@
         multipleSelection: []
       }
     },
-
     mounted() {
-      console.log("groupId:", this.groupId)
-      this.currentSize.groupId = this.groupId
+      this.currentSize.goodsGroupId = this.groupId
       this.getGoodsData()
     },
     methods: {
       getGoodsData() {
-        goodsList(this.currentSize).then(res => {
+        var param = {
+          pageSize: 20,
+          pageNo: 1
+        }
+        goodsList(param).then(res => {
+        // goodsList(this.currentSize).then(res => {
           this.tableData = res.data.data.list
           this.currentSize.total = res.data.data.totalCount
         })
@@ -100,9 +103,11 @@
         }
       },
       batchAdd() {
+        // console.log("hh:", this.currentSize)
         var params = {
           goodsIdList: [],
-          groupId: this.currentSize.groupId,
+          // groupId: this.currentSize.groupId,
+          groupId: this.groupId,
         }
         for (var index in this.multipleSelection) {
           params.goodsIdList.push(this.multipleSelection[index].goodsId)
@@ -115,7 +120,7 @@
           }).then(() => {
             goodsBandGroup(params).then(res => {
               if (res.data.code == 10000) {
-                this.$message.sucess("添加成功")
+                this.$message.success("添加成功!")
                 this.getGoodsData()
               } else {
                 this.$message.error(res.data.message)
@@ -137,13 +142,15 @@
       addRow(index, row) {
         // console.log("addRow:", row)
         const param = {
-          groupId: this.currentSize.groupId,
+          // groupId: this.currentSize.groupId,
+          groupId: this.groupId,
           goodsIdList: []
         }
+        console.log("提那就：", param)
         param.goodsIdList.push(row.goodsId)
         goodsBandGroup(param).then(res => {
           if (res.data.code == 10000) {
-            this.$message.sucess("添加成功")
+            this.$message.success("添加成功")
             this.getGoodsData()
           } else {
             this.$message.error(res.data.message)

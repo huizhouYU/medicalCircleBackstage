@@ -71,7 +71,7 @@
         total: null,
         listLoading: true,
         listQuery: {
-          ifShow: '', //商品状态：上架 下架
+          ifShow: null, //商品状态：上架 下架
           isDeleted: 0, //是否回收站 0-普通列表 1-回收站列表
           keyType: null, //搜索类型 1-商品编码 2-商品名称
           keyword: "", //搜索关键字
