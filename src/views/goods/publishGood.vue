@@ -364,7 +364,7 @@
             </el-form-item>
             <div class="submit">
               <el-button class="public-el-submit-btn" @click="activeName = 'second'">上一步</el-button>
-              <el-button type="primary" class="public-el-submit-btn" @click="submit" :disabled="!isSubmit">提交
+              <el-button type="primary" class="public-el-submit-btn" @click="submit" v-loading="isSubmit">提交
               </el-button>
             </div>
           </el-tab-pane>
@@ -517,7 +517,7 @@
         batchListData: [], //商品规格
 
         activeName: 'first',
-        isSubmit: true,
+        isSubmit: false,
         temporaryCartData: '',
         cartDialogVisible: false,
         showSearch: false,
@@ -830,8 +830,7 @@
       },
       async submit() {
         try {
-          this.isSubmit = false
-          var flag = true
+          this.isSubmit = true
           var params = {
             chosedData: this.goodInfo.chosedData,
             chooseClassify: this.goodInfo.chooseClassify
@@ -859,95 +858,50 @@
           if (this.registerCard != '' && this.registerCard.length > 0) {
             this.goodInfo.registerCard = this.registerCard[0]
           }
-          //相关图片
-          // if (this.ruleForm.trialImgs.length > 0) {
-          //   this.goodInfo.imageList = []
-          //   for (var item of this.ruleForm.trialImgs) {
-          //     if (flag) {
-          //       if (item.file != '') {
-          //         let param = new FormData(); //创建form对象
-          //         param.append('file', item.file); //通过append向form对象添加数据
-          //         await uploadImage(param).then(response => {
-          //           if (response.data.code != 10000) {
-          //             this.$message.error(response.data.message)
-          //             flag = false
-          //           } else {
-          //             this.goodInfo.imageList.push(response.data.data)
-          //           }
-          //         })
-          //       } else {
-          //         this.goodInfo.imageList.push(item.imgUrl)
-          //       }
-          //     }
-          //   }
-          // }
-          //长图
-          // if (this.ruleForm.longTrialImgs.length > 0 && flag) {
-          //   this.goodInfo.longImages = []
-          //   for (var item of this.ruleForm.longTrialImgs) {
-          //     if (flag) {
-          //       if (item.file != '') {
-          //         let param = new FormData(); //创建form对象
-          //         param.append('file', item.file); //通过append向form对象添加数据
-          //         await uploadImage(param).then(response => {
-          //           if (response.data.code != 10000) {
-          //             this.$message.error(response.data.message)
-          //             flag = false
-          //           } else {
-          //             this.goodInfo.longImages.push(response.data.data)
-          //           }
-          //         })
-          //       } else {
-          //         this.goodInfo.longImages.push(item.imgUrl)
-          //       }
-          //     }
-          //   }
-          // }
           //再次获取富文本信息
           this.$refs.edit.putContent()
-          console.log("提交的商品信息：", this.goodInfo)
-          if (flag) {
-            this.goodInfo.defaultImage = this.goodInfo.imageList[0]
-            if (this.goodInfo.goodsId != undefined) { //编辑商品
-              goodsUpdate(JSON.stringify(this.goodInfo)).then(response => {
-                var res = response.data.data
-                if (response.data.code != '10000') { //失败
-                  this.$message.error(response.data.message)
-                } else { //成功
-                  this.$message({
-                    type: 'success',
-                    message: '更新成功!'
-                  });
-                  this.$store.dispatch('tagsView/delView', this.$route).then(({
-                    visitedViews
-                  }) => {
-                    this.$router.replace("/goodsIndex")
-                  })
-                }
-              })
-            } else { //新建商品
-              goodCreate(JSON.stringify(this.goodInfo)).then(response => {
-                var res = response.data.data
-                if (response.data.code != '10000') { //失败
-                  this.$message.error(response.data.message)
-                } else { //成功
-                  this.$message({
-                    type: 'success',
-                    message: '发布成功!'
-                  });
-                  this.$store.dispatch('tagsView/delView', this.$route).then(({
-                    visitedViews
-                  }) => {
-                    this.$router.replace("/goodsIndex")
-                  })
-                }
-              })
-            }
+          this.goodInfo.defaultImage = this.goodInfo.imageList[0]
+          if (this.goodInfo.goodsId != undefined) { //编辑商品
+            goodsUpdate(JSON.stringify(this.goodInfo)).then(response => {
+              var res = response.data.data
+              if (response.data.code != '10000') { //失败
+                this.$message.error(response.data.message)
+              } else { //成功
+                this.$message({
+                  type: 'success',
+                  message: '更新成功!'
+                });
+                this.$store.dispatch('tagsView/delView', this.$route).then(({
+                  visitedViews
+                }) => {
+                  this.$router.replace("/goodsIndex")
+                })
+              }
+              this.isSubmit = false
+            })
+          } else { //新建商品
+            goodCreate(JSON.stringify(this.goodInfo)).then(response => {
+              var res = response.data.data
+              if (response.data.code != '10000') { //失败
+                this.$message.error(response.data.message)
+              } else { //成功
+                this.$message({
+                  type: 'success',
+                  message: '发布成功!'
+                });
+                this.$store.dispatch('tagsView/delView', this.$route).then(({
+                  visitedViews
+                }) => {
+                  this.$router.replace("/goodsIndex")
+                })
+              }
+              this.isSubmit = false
+            })
           }
-        } catch (e) {} finally {
-          this.isSubmit = true
+        } catch (e) {
+          this.$message.error("商品信息提交失败：",e)
+          this.isSubmit = false
         }
-
       },
       trim(str) {
         return str.replace(/(^\s*)|(\s*$)/g, "");
@@ -980,7 +934,7 @@
           if (valid) {
             if (typeId == 1) {
               var param = {
-                typeId:1,
+                typeId: 1,
                 specName: this.tentSpecsRuleForm.tentSpecName,
                 specStringValues: [],
                 tent: ''
@@ -1003,7 +957,7 @@
                 return
               }
               var param = {
-                typeId:2,
+                typeId: 2,
                 specName: this.tentAttrRuleForm.tentSpecName,
                 specStringValues: [],
                 tent: ''

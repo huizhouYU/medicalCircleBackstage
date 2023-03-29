@@ -131,7 +131,7 @@ export const asyncRoutes = [{
         name: 'GoodsRelate',
         meta: {
           title: '商品关联'
-        }
+        },
       },
       {
         path: 'manageSeries',

@@ -37,17 +37,20 @@
     },
     methods: {
       editGroup(index, row) {
-        console.log(row)
         this.$emit("editGroup", row)
       },
       editGroupGoods(index, row) {
-        console.log("管理分组内的商品：",row)
-        this.$router.push({
-          path: 'manageSeries',
-          query:{
-            groupId:row.id
-          }
+        this.$store.dispatch('tagsView/delView', this.$route).then(({
+          visitedViews
+        }) => {
+          this.$router.replace({
+            path: 'manageSeries',
+            query: {
+              groupId: row.id
+            }
+          })
         })
+
       },
       deleteGroup(index, row) {
         this.$confirm('确定删除这个分组吗？', '提示', {
@@ -56,17 +59,16 @@
           type: 'warning'
         }).then(() => {
           var params = {
-            id:row.id
+            id: row.id
           }
-          goodsGroupDelete(params).then(res=>{
-            console.log("删除分组：",res)
-            if(res.data.code == 10000){
+          goodsGroupDelete(params).then(res => {
+            if (res.data.code == 10000) {
               this.$message({
                 type: 'success',
                 message: '删除成功'
               });
               this.$emit("updateData")
-            }else{
+            } else {
               this.$message.error(res.data.message)
             }
           })

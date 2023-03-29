@@ -54,7 +54,6 @@
         <el-button type="primary" @click="sureAddSet" v-loading="submitLoading">确 定</el-button>
       </span>
     </el-dialog>
-
   </div>
 </template>
 
@@ -83,7 +82,7 @@
         dialogVisible: false,
         tableData: [],
         currentSize: {
-          categoryIdList: null,
+          categoryIds: null,
           pageNo: 1,
           pageSize: 20,
           total: 0
@@ -150,7 +149,6 @@
       },
       getGoodsGroupList() {
         goodsGroupList(this.currentSize).then(res => {
-          console.log("re:",res)
           if (res.data.code == 10000) {
             this.currentSize.total = res.data.data.totalCount
             this.tableData = res.data.data.list
@@ -161,9 +159,9 @@
       },
       toSearchData() {
         if (this.value && this.value.length > 0) {
-          this.currentSize.categoryIdList = this.value.toString(",")
+          this.currentSize.categoryIds = this.value
         } else {
-          this.currentSize.categoryIdList = null
+          this.currentSize.categoryIds = null
         }
         this.currentSize.groupName = null
         this.currentSize.goodsName = null
@@ -192,11 +190,13 @@
         this.ruleForm.categoryName = this.$refs["cascader"].getCheckedNodes()[0].pathLabels.join('/')
       },
       handleChange(value) {},
-      handleSizeChange() {
-
+      handleSizeChange(val) {
+        this.currentSize.pageSize = val
+        this.toSearchData()
       },
-      handleCurrentChange() {
-
+      handleCurrentChange(val) {
+        this.currentSize.pageNo = val
+        this.toSearchData()
       },
 
       addNewSet() {
@@ -307,7 +307,7 @@
           /deep/.el-input-group__prepend .el-input--medium .el-input__inner {
             width: 112px;
             height: 34px;
-            background-color: #fff;
+            background-color: #F8f8f9;
           }
 
           /deep/ .el-input-group__prepend {

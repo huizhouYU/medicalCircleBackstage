@@ -215,10 +215,10 @@
         }).then(() => {
           var params = {
             groupId: this.currentSize.groupId,
-            goodsId: row.goodsId
+            goodsIdList:[]
           }
+          params.goodsIdList.push(row.goodsId)
           groupRemoveGoods(params).then(res => {
-            console.log("移除商品：", res)
             if (res.data.code == 10000) {
               this.$message({
                 type: 'success',
@@ -381,34 +381,8 @@
               }
             }
           }
-
-          // .my-table-opt-box {
-          //   width: 100%;
-          //   height: 40px;
-          //   display: flex;
-          //   flex-direction: column;
-          //   justify-content: flex-end;
-          //   align-items: flex-start;
-          //   box-sizing: border-box;
-
-          //   .groups-info {
-          //     font-size: 12px;
-          //     font-weight: 400;
-          //     color: #BBBBBB;
-          //   }
-
-          //   // .opt-btns {
-          //   //   line-height: 12px;
-
-          //   //   /deep/.el-button {
-          //   //     padding: 0px;
-          //   //   }
-          //   // }
-          // }
         }
       }
-
-
 
       .my-goods-table-bottoms {
         margin-top: 45px;
@@ -425,14 +399,8 @@
             color: #555555;
             font-size: 12px;
           }
-
-          /deep/ .el-checkbox__inner {
-            border-radius: 50%;
-          }
-
           .my-batch-opt-btn {
             margin-left: 20px;
-
           }
 
           /deep/ .el-button {

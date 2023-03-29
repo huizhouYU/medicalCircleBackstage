@@ -1,13 +1,13 @@
 <template>
   <div class="images-content">
     <label>
-      <div class="upload-img" v-show="isShowUpload">
+      <div class="upload-img" v-show="isShowUpload" v-loading="loading">
         <i class="iconfont">&#xe622;</i>
         <input type="file" id="inputFile" accept="image/png, image/jpeg, image/gif, image/jpg" @change="previewFile"
           style="display: none; " class="hiddenInput" multiple="multiple">
       </div>
     </label>
-    <div class="img-wrapper" v-show="!isShowUpload" v-loading="loading">
+    <div class="img-wrapper" v-show="!isShowUpload">
       <el-image :src="imgObj">
       </el-image>
       <!-- 鼠标经过图片放大icon和删除icon -->
@@ -57,17 +57,7 @@
       },
       previewFile(e) {
         try {
-          this.isShowUpload = false
           this.loading = true
-          // this.$loading({ // 声明一个loading对象
-          //   lock: true, // 是否锁屏
-          //   text: '正在加载...', // 加载动画的文字
-          //   spinner: 'el-icon-loading', // 引入的loading图标
-          //   background: 'rgba(0, 0, 0, 0.3)', // 背景颜色
-          //   target: '.sub-main', // 需要遮罩的区域
-          //   body: true,
-          //   customClass: 'mask' // 遮罩层新增类名
-          // })
           // 1.获取用户选择的文件对象
           const files = e.target.files
           if (files.length === 0) {
@@ -93,29 +83,20 @@
 
                   _this.$emit('imgObj', _this.imgObj)
                 }
+                _this.loading = false
               })
             }
           }
         } catch (e) {
-          //TODO handle the exception
+          this.message.error("图片上次失败：",e)
+          this.loading = false
         } finally {
           if (this.imgObj) {
             this.isShowUpload = false;
           } else {
             this.isShowUpload = true;
           }
-          this.loading = false
-          // const loading = this.$loading({ // 声明一个loading对象
-          //   lock: true, // 是否锁屏
-          //   text: '正在加载...', // 加载动画的文字
-          //   spinner: 'el-icon-loading', // 引入的loading图标
-          //   background: 'rgba(0, 0, 0, 0.3)', // 背景颜色
-          //   target: '.sub-main', // 需要遮罩的区域
-          //   body: true,
-          //   customClass: 'mask' // 遮罩层新增类名
-          // })
         }
-
       },
       //删除图片
       deleImg(data, index) {

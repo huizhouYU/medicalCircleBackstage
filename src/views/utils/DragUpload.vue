@@ -2,10 +2,16 @@
   <div class="images-content">
     <label>
       <div class="upload-img" v-show="isShowUpload" v-loading="loading">
+        <!-- <template v-if="!loading">
+          <span>正在添加~</span>
+        </template>
+        <template v-else> -->
         <img src="../../../public/imgs/icon_add-pic.png" alt="">
         <span>添加图片</span>
         <input type="file" id="inputFile" accept="image/png, image/jpeg, image/gif, image/jpg" @change="previewFile"
           style="display: none; " class="hiddenInput" multiple="multiple">
+
+        <!-- </template> -->
       </div>
     </label>
     <draggable tag="ul" v-model="allListChild" v-bind="dragOptions" @update="datadragEnd" @start="drag = true"
@@ -84,6 +90,7 @@
               param.append('file', files[0]); //通过append向form对象添加数据
               uploadImage(param).then(response => {
                 if (response.data.code != 10000) {
+                  this.loading = false
                   this.$message.error(response.data.message)
                 } else {
                   var temp = {
@@ -96,31 +103,14 @@
                   }
                   this.$emit('allList', this.allListChild)
                 }
+                this.loading = false
               })
             }
           }
         } catch (e) {
-          //TODO handle the exception
-        } finally {
+          this.$message.error("图片上传失败：", e)
           this.loading = false
         }
-
-
-
-        // var temp = {
-        //   file: files[0],
-        //   imgUrl: e.target.result,
-        //   orderNumber: _this.allListChild.length
-        // };
-        // _this.allListChild.push(temp) // 启动拖拽功能
-        // if (_this.allListChild.length >= _this.limit) {
-        //   _this.isShowUpload = false;
-        // }
-        // _this.$emit('allList', _this.allListChild)
-        // return files[0]
-
-
-
       },
       //删除图片
       deleImg(data, index) {

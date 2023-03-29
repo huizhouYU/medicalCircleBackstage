@@ -1,8 +1,8 @@
 <template>
   <div class="add-goods-to-groups-box">
     <div class="top-search-good-box">
-      <el-input placeholder="请输入商品名称" v-model="searchKey">
-        <el-button slot="append" icon="el-icon-search"></el-button>
+      <el-input placeholder="请输入商品名称" v-model.trim="searchKey">
+        <el-button slot="append" icon="el-icon-search" @click="searchGoodsData"></el-button>
       </el-input>
     </div>
     <el-table ref="multipleTable" :data="tableData" tooltip-effect="dark" style="width:100%" class="goods-table-box"
@@ -40,7 +40,6 @@
         :page-sizes="[1,5,10, 15, 20, 25]" ::page-size="currentSize.pageSize" :background="false"
         layout="total, sizes, prev, pager, next, jumper" :total="currentSize.total">
       </el-pagination>
-      <!-- pager-count="currentSize.pageNo" -->
     </div>
   </div>
 </template>
@@ -68,29 +67,33 @@
     },
     mounted() {
       this.currentSize.goodsGroupId = this.groupId
-      this.getGoodsData()
+      this.getGoodsData(this.currentSize)
     },
     methods: {
-      getGoodsData() {
-        var param = {
-          pageSize: 20,
-          pageNo: 1
-        }
+      getGoodsData(param) {
         goodsList(param).then(res => {
-        // goodsList(this.currentSize).then(res => {
           this.tableData = res.data.data.list
           this.currentSize.total = res.data.data.totalCount
         })
       },
+      searchGoodsData() {
+        if (this.searchKey) {
+          var param = this.utils.cloneObj(this.currentSize)
+          param.keyType = 1
+          param.keyword = this.searchKey
+          this.getGoodsData(param)
+        } else {
+          this.getGoodsData(this.currentSize)
+        }
+      },
       handleSizeChange(val) {
         this.currentSize.pageSize = val
         this.currentSize.pageNo = 1
-        this.getGoodsData()
-
+        this.getGoodsData(this.currentSize)
       },
       handleCurrentChange(val) {
         this.currentSize.pageNo = val
-        this.getGoodsData()
+        this.getGoodsData(this.currentSize)
       },
       handleSelectionChange(val) {
         this.multipleSelection = val;
@@ -103,10 +106,8 @@
         }
       },
       batchAdd() {
-        // console.log("hh:", this.currentSize)
         var params = {
           goodsIdList: [],
-          // groupId: this.currentSize.groupId,
           groupId: this.groupId,
         }
         for (var index in this.multipleSelection) {
@@ -121,7 +122,7 @@
             goodsBandGroup(params).then(res => {
               if (res.data.code == 10000) {
                 this.$message.success("添加成功!")
-                this.getGoodsData()
+                this.getGoodsData(this.currentSize)
               } else {
                 this.$message.error(res.data.message)
               }
@@ -140,18 +141,15 @@
         }
       },
       addRow(index, row) {
-        // console.log("addRow:", row)
         const param = {
-          // groupId: this.currentSize.groupId,
           groupId: this.groupId,
           goodsIdList: []
         }
-        console.log("提那就：", param)
         param.goodsIdList.push(row.goodsId)
         goodsBandGroup(param).then(res => {
           if (res.data.code == 10000) {
             this.$message.success("添加成功")
-            this.getGoodsData()
+            this.getGoodsData(this.currentSize)
           } else {
             this.$message.error(res.data.message)
           }

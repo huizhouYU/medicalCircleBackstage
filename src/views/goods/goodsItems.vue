@@ -1,10 +1,9 @@
 <template>
   <div class="app-container">
     <el-table ref="multipleTable" :data="tableData" tooltip-effect="dark" style="width: 100%;min-height:200px"
-       @selection-change="handleSelectionChange" class="el-table-box">
+      @selection-change="handleSelectionChange" class="el-table-box">
       <el-table-column type="selection" width="55">
       </el-table-column>
-      <el-table-column prop="goodsPn" label="产品编码" min-width="120"></el-table-column>
       <el-table-column label="商品图" min-width="100">
         <template slot-scope="scope">
           <img :src="scope.row.defaultImage" alt="图片加载失败" class="item-img">
@@ -15,6 +14,7 @@
           <span class="goods-name-span" :title="scope.row.goodsName">{{scope.row.goodsName}} </span>
         </template>
       </el-table-column>
+      <el-table-column prop="goodsModel" label="商品型号" min-width="120"></el-table-column>
       <el-table-column prop="cateName" label="商品分类" min-width="200"></el-table-column>
       <el-table-column prop="brand" label="品牌" min-width="120"></el-table-column>
       <el-table-column label="价格" min-width="100">
@@ -102,8 +102,7 @@
         }
       }
     },
-    mounted() {
-    },
+    mounted() {},
     methods: {
       handleSizeChange(val) {
         this.currentSize.pageSize = val

@@ -1,4 +1,7 @@
 <template>
+  <!-- 第一版 系列>分组>商品:绑定商品的一个弹框
+   展示了分组内有哪些商品，并且可以选择不同分组绑定，未找到的分组，也可以在分组下拉框中添加新的分组
+   暂时未启用 -->
   <div class="group-goods-box">
     <div class="group-goods-left-box">
       <!-- 分组名称 -->
@@ -94,7 +97,6 @@
     methods: {
       selectGroup(val) {
         console.log(val)
-
       },
       editGroupName() {
         this.editGroupNameFlag = true

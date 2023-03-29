@@ -124,11 +124,11 @@ export function specDelete(data) {
 }
 // 商品关联
 //分组列表
-export function goodsGroupList(query) {
+export function goodsGroupList(data) {
   return request({
     url: 'goodsGroup/list',
-    method: 'get',
-    params: query
+    method: 'post',
+    data
   })
 }
 //创建分组

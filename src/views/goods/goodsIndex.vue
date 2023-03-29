@@ -62,10 +62,10 @@
         //搜索关键字类型
         inputKeyOptions: [{
           value: 1,
-          label: '产品编码'
+          label: '商品型号'
         }, {
           value: 2,
-          label: '产品名称'
+          label: '商品名称'
         }],
         list: null,
         total: null,
