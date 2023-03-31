@@ -124,7 +124,7 @@
             <el-form-item label="" class="">
               <div class="whole-spec-item">
                 <span class="spec-item-title">
-                  规格类型<span class="remark">（最多添加1种属性类型）</span>
+                  规格类型<span class="remark">（最多添加1种规格类型）</span>
                 </span>
                 <!-- 规格名称 + 规格值 -->
                 <el-form class="marginBottom add-specs" :model="tentSpecsRuleForm" :rules="tentSpecsRules"
@@ -206,7 +206,7 @@
                               <span>{{item.specValue}}</span>
                               <i class="iconfont my-close-font" @click="delAttrValues(ind,index)">&#xe630;</i>
                             </div>
-                            <el-input v-model.trim="sp.tent" placeholder="请输入规格值"
+                            <el-input v-model.trim="sp.tent" placeholder="请输入属性值"
                               @keyup.native.enter="addAttrValues(ind)" class="my-add-value-input">
                               <el-button slot="append" @click="addAttrValues(ind)">添加</el-button>
                             </el-input>
@@ -216,21 +216,21 @@
                     </transition-group>
                   </draggable>
                 </div>
-                <!-- 规格名称 + 规格值 -->
+                <!-- 属性名称 + 属性值 -->
                 <el-form class="marginBottom add-specs" :model="tentAttrRuleForm" :rules="tentAttrRules"
                   ref="tentAttrRuleForm" label-width="130px" v-show="showDialogSpecsItem">
-                  <el-form-item label="规格名称:" prop="tentSpecName">
-                    <el-input v-model.trim="tentAttrRuleForm.tentSpecName" placeholder="请填写规格名称"></el-input>
+                  <el-form-item label="属性名称:" prop="tentSpecName">
+                    <el-input v-model.trim="tentAttrRuleForm.tentSpecName" placeholder="请填写属性名称"></el-input>
                   </el-form-item>
-                  <el-form-item label="规格值:" prop="specValues">
-                    <el-input v-model.trim="tentAttrRuleForm.specValues" placeholder="请填写规格值"
+                  <el-form-item label="属性值:" prop="specValues">
+                    <el-input v-model.trim="tentAttrRuleForm.specValues" placeholder="请填写属性值"
                       @keyup.native.enter="tentSpecSure('tentAttrRuleForm','2')"></el-input>
                   </el-form-item>
                   <el-button type="primary" class="sure-specs-btn" @click="tentSpecSure('tentAttrRuleForm','2')">确定
                   </el-button>
                   <el-button @click="closeAttr">取消</el-button>
                 </el-form>
-                <el-button type="primary" icon="el-icon-plus" @click="addNewAttr" v-show="!showDialogSpecsItem">添加新规格
+                <el-button type="primary" icon="el-icon-plus" @click="addNewAttr" v-show="!showDialogSpecsItem">添加新属性
                 </el-button>
               </div>
             </el-form-item>
@@ -899,7 +899,7 @@
             })
           }
         } catch (e) {
-          this.$message.error("商品信息提交失败：",e)
+          this.$message.error("商品信息提交失败：", e)
           this.isSubmit = false
         }
       },
@@ -934,12 +934,14 @@
           if (valid) {
             if (typeId == 1) {
               var param = {
+                specId: new Date().valueOf().toString(),
                 typeId: 1,
                 specName: this.tentSpecsRuleForm.tentSpecName,
                 specStringValues: [],
                 tent: ''
               }
               var specParam = {
+                specId:param.specId,
                 specValue: this.tentSpecsRuleForm.specValues
               }
               param.specStringValues.push(specParam)
@@ -957,12 +959,14 @@
                 return
               }
               var param = {
+                specId: new Date().valueOf().toString(),
                 typeId: 2,
                 specName: this.tentAttrRuleForm.tentSpecName,
                 specStringValues: [],
                 tent: ''
               }
               var specParam = {
+                specId:param.specId,
                 specValue: this.tentAttrRuleForm.specValues
               }
               param.specStringValues.push(specParam)
@@ -994,6 +998,7 @@
       addValues(ind) {
         if (this.tentSpecList[ind].tent) {
           this.tentSpecList[ind].specStringValues.push({
+            specId:this.tentSpecList[ind].specId,
             specValue: this.tentSpecList[ind].tent
           })
           this.tentSpecList[ind].tent = ''
@@ -1018,6 +1023,7 @@
       addAttrValues(ind) {
         if (this.tentAttrList[ind].tent) {
           this.tentAttrList[ind].specStringValues.push({
+            specId:this.tentAttrList[ind].specId,
             specValue: this.tentAttrList[ind].tent
           })
           this.tentAttrList[ind].tent = ''

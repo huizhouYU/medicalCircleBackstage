@@ -71,6 +71,10 @@
     },
     methods: {
       getGoodsData(param) {
+        // param={
+        //   pageSize:20,
+        //   pageNo:1
+        // }
         goodsList(param).then(res => {
           this.tableData = res.data.data.list
           this.currentSize.total = res.data.data.totalCount
