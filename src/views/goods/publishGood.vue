@@ -100,237 +100,268 @@
           </el-tab-pane>
           <!-- TAB:商品规格 -->
           <el-tab-pane label="规格库存" name="second">
-            <!-- 选择规格 -->
-            <el-form-item label="选择规格：" class="choose-spec-item">
-              <el-select v-model="specs.value" filterable placeholder="请选择" @change="changeSpec">
-                <el-option v-for="item in specs.options" :key="item.id" :label="item.specName" :value="item.id">
-                  <div class="my-spec-option">
-                    {{item.specName}}
-                    <span class="tag">
-                      <template v-if="item.typeId==1">
-                        规
-                      </template>
-                      <template v-else-if="item.typeId==2">
-                        属
-                      </template>
-                    </span>
+            <!-- <el-form-item label="开启规格：">
+              <el-switch v-model="openSpec" active-color="#13ce66">
+              </el-switch>
+            </el-form-item> -->
+            <div class="my-item">
+              <div class="my-item-key">开启规格：</div>
+              <el-switch v-model="goodInfo.openSpec" active-color="#1890FF">
+              </el-switch>
+            </div>
+            <div v-show="!goodInfo.openSpec" class="single-price-div">
+              <!-- 产品名称 -->
+              <el-form-item label="价格(元)：" class="">
+                <el-input v-model="singleForm.price" placeholder="请输入商品价格" oninput="value=value.replace(/[^0-9.]/g,'')"
+                  :disabled="!isEditPriceFlag"></el-input>
+              </el-form-item>
+              <!-- 产品名称 -->
+              <el-form-item label="商品库存：" class="">
+                <el-input v-model="singleForm.stock" placeholder="请输入商品库存" oninput="value=value.replace(/[^\d]/g,'')">
+                </el-input>
+              </el-form-item>
+              <!-- 产品名称 -->
+              <el-form-item label="商品编码：" class="single-stk">
+                <el-input v-model="singleForm.goodsPn" placeholder="请输入商品编码" maxlength="30" show-word-limit></el-input>
+              </el-form-item>
+            </div>
+            <div v-show="goodInfo.openSpec">
+              <!-- 选择规格 -->
+              <el-form-item label="选择规格：" class="choose-spec-item">
+                <el-select v-model="specs.value" filterable placeholder="请选择" @change="changeSpec">
+                  <el-option v-for="item in specs.options" :key="item.id" :label="item.specName" :value="item.id">
+                    <div class="my-spec-option">
+                      {{item.specName}}
+                      <span class="tag">
+                        <template v-if="item.typeId==1">
+                          规
+                        </template>
+                        <template v-else-if="item.typeId==2">
+                          属
+                        </template>
+                      </span>
+                    </div>
+                  </el-option>
+                </el-select>
+                <el-button type="primary" @click="sureChosedSpec" v-no-more-click class="sure-btn">确定</el-button>
+                <el-button class="add-spaces-btn" @click="openSpecs">添加规格模板</el-button>
+              </el-form-item>
+              <!-- 规格类型 -->
+              <el-form-item label="" class="">
+                <div class="whole-spec-item">
+                  <span class="spec-item-title">
+                    规格类型<span class="remark">（最多添加1种规格类型）</span>
+                  </span>
+                  <!-- 规格名称 + 规格值 -->
+                  <el-form class="marginBottom add-specs" :model="tentSpecsRuleForm" :rules="tentSpecsRules"
+                    ref="tentSpecsRuleForm" label-width="130px" v-show="tentSpecList.length<=0">
+                    <el-form-item label="规格名称:" prop="tentSpecName">
+                      <el-input v-model.trim="tentSpecsRuleForm.tentSpecName" placeholder="请填写规格名称"></el-input>
+                    </el-form-item>
+                    <el-form-item label="规格值:" prop="specValues">
+                      <el-input v-model.trim="tentSpecsRuleForm.specValues" placeholder="请填写规格值"
+                        @keyup.native.enter="tentSpecSure('tentSpecsRuleForm','1')"></el-input>
+                    </el-form-item>
+                    <el-button type="primary" class="sure-specs-btn" @click="tentSpecSure('tentSpecsRuleForm','1')">确定
+                    </el-button>
+                    <el-button @click="">取消</el-button>
+                  </el-form>
+                  <div class="tent-spec-box" v-show="tentSpecList.length>0">
+                    <draggable :list="tentSpecList" @start="dragging = true" @end="dragging = false"
+                      handle=".mover-div">
+                      <transition-group>
+                        <el-form-item label="" prop="" v-for="(sp,ind) in tentSpecList" :key="ind">
+                          <div class="edit-spec-detail-box">
+                            <div class="mover-div">
+                              <i class="iconfont">&#xe650;</i>
+                              <i class="iconfont">&#xe650;</i>
+                              <i class="iconfont">&#xe650;</i>
+                              <i class="iconfont">&#xe650;</i>
+                              <i class="iconfont">&#xe650;</i>
+                              <i class="iconfont">&#xe650;</i>
+                              <i class="iconfont">&#xe650;</i>
+                            </div>
+                            <div class="specName-div">
+                              {{sp.specName}}
+                              <i class="iconfont my-close" @click="delSpec(ind)">&#xe8dc;</i>
+                            </div>
+                            <div class="specValues-div">
+                              <div class="specValue-item" v-for="(item,index) in sp.specStringValues" :key="index">
+                                <div class="round"></div>
+                                <span>{{item.specValue}}</span>
+                                <i class="iconfont my-close-font" @click="delValues(ind,index)">&#xe630;</i>
+                              </div>
+                              <el-input v-model.trim="sp.tent" placeholder="请输入规格值" @keyup.native.enter="addValues(ind)"
+                                class="my-add-value-input">
+                                <el-button slot="append" @click="addValues(ind)">添加</el-button>
+                              </el-input>
+                            </div>
+                          </div>
+                        </el-form-item>
+                      </transition-group>
+                    </draggable>
                   </div>
-                </el-option>
-              </el-select>
-              <el-button type="primary" @click="sureChosedSpec" v-no-more-click class="sure-btn">确定</el-button>
-              <el-button class="add-spaces-btn" @click="openSpecs">添加规格模板</el-button>
-            </el-form-item>
-            <!-- 规格类型 -->
-            <el-form-item label="" class="">
-              <div class="whole-spec-item">
-                <span class="spec-item-title">
-                  规格类型<span class="remark">（最多添加1种规格类型）</span>
-                </span>
-                <!-- 规格名称 + 规格值 -->
-                <el-form class="marginBottom add-specs" :model="tentSpecsRuleForm" :rules="tentSpecsRules"
-                  ref="tentSpecsRuleForm" label-width="130px" v-show="tentSpecList.length<=0">
-                  <el-form-item label="规格名称:" prop="tentSpecName">
-                    <el-input v-model.trim="tentSpecsRuleForm.tentSpecName" placeholder="请填写规格名称"></el-input>
-                  </el-form-item>
-                  <el-form-item label="规格值:" prop="specValues">
-                    <el-input v-model.trim="tentSpecsRuleForm.specValues" placeholder="请填写规格值"
-                      @keyup.native.enter="tentSpecSure('tentSpecsRuleForm','1')"></el-input>
-                  </el-form-item>
-                  <el-button type="primary" class="sure-specs-btn" @click="tentSpecSure('tentSpecsRuleForm','1')">确定
-                  </el-button>
-                  <el-button @click="">取消</el-button>
-                </el-form>
-                <div class="tent-spec-box" v-show="tentSpecList.length>0">
-                  <draggable :list="tentSpecList" @start="dragging = true" @end="dragging = false" handle=".mover-div">
-                    <transition-group>
-                      <el-form-item label="" prop="" v-for="(sp,ind) in tentSpecList" :key="ind">
-                        <div class="edit-spec-detail-box">
-                          <div class="mover-div">
-                            <i class="iconfont">&#xe650;</i>
-                            <i class="iconfont">&#xe650;</i>
-                            <i class="iconfont">&#xe650;</i>
-                            <i class="iconfont">&#xe650;</i>
-                            <i class="iconfont">&#xe650;</i>
-                            <i class="iconfont">&#xe650;</i>
-                            <i class="iconfont">&#xe650;</i>
-                          </div>
-                          <div class="specName-div">
-                            {{sp.specName}}
-                            <i class="iconfont my-close" @click="delSpec(ind)">&#xe8dc;</i>
-                          </div>
-                          <div class="specValues-div">
-                            <div class="specValue-item" v-for="(item,index) in sp.specStringValues" :key="index">
-                              <div class="round"></div>
-                              <span>{{item.specValue}}</span>
-                              <i class="iconfont my-close-font" @click="delValues(ind,index)">&#xe630;</i>
-                            </div>
-                            <el-input v-model.trim="sp.tent" placeholder="请输入规格值" @keyup.native.enter="addValues(ind)"
-                              class="my-add-value-input">
-                              <el-button slot="append" @click="addValues(ind)">添加</el-button>
-                            </el-input>
-                          </div>
-                        </div>
-                      </el-form-item>
-                    </transition-group>
-                  </draggable>
                 </div>
-              </div>
-            </el-form-item>
-            <!-- 属性类型 -->
-            <el-form-item label="" class="">
-              <div class="whole-attr-item">
-                <span class="attr-item-title">
-                  属性类型<span class="remark">（最多添加5种属性类型）</span>
-                </span>
-                <div class="tent-attr-box" v-show="tentAttrList.length>0">
-                  <draggable :list="tentAttrList" @start="dragging = true" @end="dragging = false" handle=".mover-div">
-                    <transition-group>
-                      <el-form-item label="" prop="" v-for="(sp,ind) in tentAttrList" :key="ind">
-                        <div class="edit-spec-detail-box">
-                          <div class="mover-div">
-                            <i class="iconfont">&#xe650;</i>
-                            <i class="iconfont">&#xe650;</i>
-                            <i class="iconfont">&#xe650;</i>
-                            <i class="iconfont">&#xe650;</i>
-                            <i class="iconfont">&#xe650;</i>
-                            <i class="iconfont">&#xe650;</i>
-                            <i class="iconfont">&#xe650;</i>
-                          </div>
-                          <div class="specName-div">
-                            {{sp.specName}}
-                            <i class="iconfont my-close" @click="delAttr(ind)">&#xe8dc;</i>
-                          </div>
-                          <div class="specValues-div">
-                            <div class="specValue-item" v-for="(item,index) in sp.specStringValues" :key="index">
-                              <div class="round"></div>
-                              <span>{{item.specValue}}</span>
-                              <i class="iconfont my-close-font" @click="delAttrValues(ind,index)">&#xe630;</i>
+              </el-form-item>
+              <!-- 属性类型 -->
+              <el-form-item label="" class="">
+                <div class="whole-attr-item">
+                  <span class="attr-item-title">
+                    属性类型<span class="remark">（最多添加5种属性类型）</span>
+                  </span>
+                  <div class="tent-attr-box" v-show="tentAttrList.length>0">
+                    <draggable :list="tentAttrList" @start="dragging = true" @end="dragging = false"
+                      handle=".mover-div">
+                      <transition-group>
+                        <el-form-item label="" prop="" v-for="(sp,ind) in tentAttrList" :key="ind">
+                          <div class="edit-spec-detail-box">
+                            <div class="mover-div">
+                              <i class="iconfont">&#xe650;</i>
+                              <i class="iconfont">&#xe650;</i>
+                              <i class="iconfont">&#xe650;</i>
+                              <i class="iconfont">&#xe650;</i>
+                              <i class="iconfont">&#xe650;</i>
+                              <i class="iconfont">&#xe650;</i>
+                              <i class="iconfont">&#xe650;</i>
                             </div>
-                            <el-input v-model.trim="sp.tent" placeholder="请输入属性值"
-                              @keyup.native.enter="addAttrValues(ind)" class="my-add-value-input">
-                              <el-button slot="append" @click="addAttrValues(ind)">添加</el-button>
-                            </el-input>
+                            <div class="specName-div">
+                              {{sp.specName}}
+                              <i class="iconfont my-close" @click="delAttr(ind)">&#xe8dc;</i>
+                            </div>
+                            <div class="specValues-div">
+                              <div class="specValue-item" v-for="(item,index) in sp.specStringValues" :key="index">
+                                <div class="round"></div>
+                                <span>{{item.specValue}}</span>
+                                <i class="iconfont my-close-font" @click="delAttrValues(ind,index)">&#xe630;</i>
+                              </div>
+                              <el-input v-model.trim="sp.tent" placeholder="请输入属性值"
+                                @keyup.native.enter="addAttrValues(ind)" class="my-add-value-input">
+                                <el-button slot="append" @click="addAttrValues(ind)">添加</el-button>
+                              </el-input>
+                            </div>
                           </div>
-                        </div>
-                      </el-form-item>
-                    </transition-group>
-                  </draggable>
-                </div>
-                <!-- 属性名称 + 属性值 -->
-                <el-form class="marginBottom add-specs" :model="tentAttrRuleForm" :rules="tentAttrRules"
-                  ref="tentAttrRuleForm" label-width="130px" v-show="showDialogSpecsItem">
-                  <el-form-item label="属性名称:" prop="tentSpecName">
-                    <el-input v-model.trim="tentAttrRuleForm.tentSpecName" placeholder="请填写属性名称"></el-input>
-                  </el-form-item>
-                  <el-form-item label="属性值:" prop="specValues">
-                    <el-input v-model.trim="tentAttrRuleForm.specValues" placeholder="请填写属性值"
-                      @keyup.native.enter="tentSpecSure('tentAttrRuleForm','2')"></el-input>
-                  </el-form-item>
-                  <el-button type="primary" class="sure-specs-btn" @click="tentSpecSure('tentAttrRuleForm','2')">确定
+                        </el-form-item>
+                      </transition-group>
+                    </draggable>
+                  </div>
+                  <!-- 属性名称 + 属性值 -->
+                  <el-form class="marginBottom add-specs" :model="tentAttrRuleForm" :rules="tentAttrRules"
+                    ref="tentAttrRuleForm" label-width="130px" v-show="showDialogSpecsItem">
+                    <el-form-item label="属性名称:" prop="tentSpecName">
+                      <el-input v-model.trim="tentAttrRuleForm.tentSpecName" placeholder="请填写属性名称"></el-input>
+                    </el-form-item>
+                    <el-form-item label="属性值:" prop="specValues">
+                      <el-input v-model.trim="tentAttrRuleForm.specValues" placeholder="请填写属性值"
+                        @keyup.native.enter="tentSpecSure('tentAttrRuleForm','2')"></el-input>
+                    </el-form-item>
+                    <el-button type="primary" class="sure-specs-btn" @click="tentSpecSure('tentAttrRuleForm','2')">确定
+                    </el-button>
+                    <el-button @click="closeAttr">取消</el-button>
+                  </el-form>
+                  <el-button type="primary" icon="el-icon-plus" @click="addNewAttr" v-show="!showDialogSpecsItem">添加新属性
                   </el-button>
-                  <el-button @click="closeAttr">取消</el-button>
+                </div>
+              </el-form-item>
+
+              <el-form-item label="" class="">
+                <el-button type="success" class="add-spaces-btn" @click="immediatelyCreate">立即生成</el-button>
+              </el-form-item>
+
+              <el-form-item label="批量设置：" v-show="showSetting" class="batch-item">
+                <el-form ref="batchForm" :model="batchForm">
+                  <el-table :data="batchData" style="width: 1075px;" border :header-cell-style="{'text-align':'center'}"
+                    :cell-style="{'text-align':'center',backgroundColor: '#fff'}">
+                    <el-table-column label="图片">
+                      <template slot-scope="scope">
+                        <upload-one-img :imgList="batchForm.imgUrl" @imgObj="getImgObj($event,'-1')"></upload-one-img>
+                      </template>
+                    </el-table-column>
+                    <el-table-column label="价格（元）">
+                      <template slot-scope="scope">
+                        <el-form-item>
+                          <el-input v-model="batchForm.price" oninput="value=value.replace(/[^0-9.]/g,'')"
+                            :disabled="!isEditPriceFlag"></el-input>
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
+                    <el-table-column label="编码">
+                      <template slot-scope="scope">
+                        <el-form-item>
+                          <el-input v-model="batchForm.pnCode"></el-input>
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
+                    <el-table-column label="库存">
+                      <template slot-scope="scope">
+                        <el-form-item>
+                          <el-input v-model="batchForm.qty" oninput="value=value.replace(/[^\d]/g,'')"></el-input>
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
+                    <el-table-column label="操作">
+                      <template slot-scope="scope">
+                        <div class="batch-opt-div">
+                          <span @click="batchSet">批量添加</span>
+                          <span @click="resetForm()">清空</span>
+                        </div>
+                      </template>
+                    </el-table-column>
+                  </el-table>
                 </el-form>
-                <el-button type="primary" icon="el-icon-plus" @click="addNewAttr" v-show="!showDialogSpecsItem">添加新属性
-                </el-button>
-              </div>
-            </el-form-item>
+              </el-form-item>
 
-            <el-form-item label="" class="">
-              <el-button type="success" class="add-spaces-btn" @click="immediatelyCreate">立即生成</el-button>
-            </el-form-item>
-
-            <el-form-item label="批量设置：" v-show="showSetting" class="batch-item">
-              <el-form ref="batchForm" :model="batchForm">
-                <el-table :data="batchData" style="width: 1075px;" border :header-cell-style="{'text-align':'center'}"
-                  :cell-style="{'text-align':'center',backgroundColor: '#fff'}">
-                  <el-table-column label="图片">
-                    <template slot-scope="scope">
-                      <upload-one-img :imgList="batchForm.imgUrl" @imgObj="getImgObj($event,'-1')"></upload-one-img>
-                    </template>
-                  </el-table-column>
-                  <el-table-column label="价格（元）">
-                    <template slot-scope="scope">
-                      <el-form-item>
-                        <el-input v-model="batchForm.price" oninput="value=value.replace(/[^0-9.]/g,'')"
-                          :disabled="!isEditPriceFlag"></el-input>
-                      </el-form-item>
-                    </template>
-                  </el-table-column>
-                  <el-table-column label="编码">
-                    <template slot-scope="scope">
-                      <el-form-item>
-                        <el-input v-model="batchForm.pnCode"></el-input>
-                      </el-form-item>
-                    </template>
-                  </el-table-column>
-                  <el-table-column label="库存">
-                    <template slot-scope="scope">
-                      <el-form-item>
-                        <el-input v-model="batchForm.qty" oninput="value=value.replace(/[^\d]/g,'')"></el-input>
-                      </el-form-item>
-                    </template>
-                  </el-table-column>
-                  <el-table-column label="操作">
-                    <template slot-scope="scope">
-                      <div class="batch-opt-div">
-                        <span @click="batchSet">批量添加</span>
-                        <span @click="resetForm()">清空</span>
-                      </div>
-                    </template>
-                  </el-table-column>
-                </el-table>
-              </el-form>
-            </el-form-item>
-
-            <el-form-item label="商品规格：" v-show="showSetting" class="batch-item">
-              <el-form ref="batchForm" :model="batchForm">
-                <el-table :data="batchListData" style="width: 1076px" border
-                  :header-cell-style="{'text-align':'center'}"
-                  :cell-style="{'text-align':'center',backgroundColor: '#fff'}">
-                  <el-table-column width="190" :label="item.specName" v-for="(item,index) in specAttrList" :key="index">
-                    <template slot-scope="scope">
-                      {{scope.row.goodsSkuItemList[index].specValue}}
-                    </template>
-                  </el-table-column>
-                  <el-table-column label="图片" width="120">
-                    <template slot-scope="scope">
-                      <upload-one-img :imgList="scope.row.entityImage" @imgObj="scope.row.entityImage = $event">
-                      </upload-one-img>
-                    </template>
-                  </el-table-column>
-                  <el-table-column label="价格（元）" width="190">
-                    <template slot-scope="scope">
-                      <el-form-item>
-                        <el-input v-model="scope.row.entityPrice" oninput="value=value.replace(/[^0-9.]/g,'')"
-                          :disabled="!isEditPriceFlag">
-                        </el-input>
-                      </el-form-item>
-                    </template>
-                  </el-table-column>
-                  <el-table-column label="编码" width="190">
-                    <template slot-scope="scope">
-                      <el-form-item>
-                        <el-input v-model="scope.row.entityPn"></el-input>
-                      </el-form-item>
-                    </template>
-                  </el-table-column>
-                  <el-table-column label="库存" width="190">
-                    <template slot-scope="scope">
-                      <el-form-item>
-                        <el-input v-model="scope.row.entityStock" oninput="value=value.replace(/[^\d]/g,'')"></el-input>
-                      </el-form-item>
-                    </template>
-                  </el-table-column>
-                  <el-table-column label="操作" width="215" fixed="right">
-                    <template slot-scope="scope">
-                      <div class="batch-opt-div">
-                        <span class="red-font" @click="deleteSpecItem(scope.$index)">删除</span>
-                      </div>
-                    </template>
-                  </el-table-column>
-                </el-table>
-              </el-form>
-            </el-form-item>
+              <el-form-item label="商品规格：" v-show="showSetting" class="batch-item">
+                <el-form ref="batchForm" :model="batchForm">
+                  <el-table :data="batchListData" style="width: 1076px" border
+                    :header-cell-style="{'text-align':'center'}"
+                    :cell-style="{'text-align':'center',backgroundColor: '#fff'}">
+                    <el-table-column width="190" :label="item.specName" v-for="(item,index) in specAttrList"
+                      :key="index">
+                      <template slot-scope="scope">
+                        {{scope.row.goodsSkuItemList[index].specValue}}
+                      </template>
+                    </el-table-column>
+                    <el-table-column label="图片" width="120">
+                      <template slot-scope="scope">
+                        <upload-one-img :imgList="scope.row.entityImage" @imgObj="scope.row.entityImage = $event">
+                        </upload-one-img>
+                      </template>
+                    </el-table-column>
+                    <el-table-column label="价格（元）" width="190">
+                      <template slot-scope="scope">
+                        <el-form-item>
+                          <el-input v-model="scope.row.entityPrice" oninput="value=value.replace(/[^0-9.]/g,'')"
+                            :disabled="!isEditPriceFlag">
+                          </el-input>
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
+                    <el-table-column label="编码" width="190">
+                      <template slot-scope="scope">
+                        <el-form-item>
+                          <el-input v-model="scope.row.entityPn"></el-input>
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
+                    <el-table-column label="库存" width="190">
+                      <template slot-scope="scope">
+                        <el-form-item>
+                          <el-input v-model="scope.row.entityStock" oninput="value=value.replace(/[^\d]/g,'')">
+                          </el-input>
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
+                    <el-table-column label="操作" width="215" fixed="right">
+                      <template slot-scope="scope">
+                        <div class="batch-opt-div">
+                          <span class="red-font" @click="deleteSpecItem(scope.$index)">删除</span>
+                        </div>
+                      </template>
+                    </el-table-column>
+                  </el-table>
+                </el-form>
+              </el-form-item>
+            </div>
             <div class="submit">
               <el-button class="public-el-submit-btn" @click="activeName = 'first'">上一步</el-button>
               <el-button type="primary" class="public-el-submit-btn" @click="activeName = 'third'">下一步</el-button>
@@ -429,6 +460,11 @@
     data() {
       return {
         dragging: false,
+        singleForm: {
+          price: null,
+          stock: null,
+          goodsPn: ""
+        },
         specs: {
           options: [],
           value: ''
@@ -553,6 +589,7 @@
           tagList: [], //商品标签
           ifShow: 0, //是否立即上架
           recommended: 1, //是否推荐
+          openSpec: false //是否开启规格
         },
         brandsOptions: [],
         //是否允许输入价格
@@ -861,6 +898,8 @@
           //再次获取富文本信息
           this.$refs.edit.putContent()
           this.goodInfo.defaultImage = this.goodInfo.imageList[0]
+          //检查规格设置
+          this.checkSpec()
           if (this.goodInfo.goodsId != undefined) { //编辑商品
             goodsUpdate(JSON.stringify(this.goodInfo)).then(response => {
               var res = response.data.data
@@ -903,6 +942,19 @@
           this.isSubmit = false
         }
       },
+      checkSpec() {
+        //未开启规格
+        if (!this.goodInfo.openSpec) {
+          var param = {
+            entityPn: this.singleForm.goodsPn,
+            entityPrice: this.singleForm.price,
+            entityStock: Number(this.singleForm.stock)
+          }
+          this.goodInfo.goodsEntities = []
+          this.goodInfo.goodsSpecs = ""
+          this.goodInfo.goodsEntities.push(param)
+        }
+      },
       trim(str) {
         return str.replace(/(^\s*)|(\s*$)/g, "");
       },
@@ -941,7 +993,7 @@
                 tent: ''
               }
               var specParam = {
-                specId:param.specId,
+                specId: param.specId,
                 specValue: this.tentSpecsRuleForm.specValues
               }
               param.specStringValues.push(specParam)
@@ -966,7 +1018,7 @@
                 tent: ''
               }
               var specParam = {
-                specId:param.specId,
+                specId: param.specId,
                 specValue: this.tentAttrRuleForm.specValues
               }
               param.specStringValues.push(specParam)
@@ -998,7 +1050,7 @@
       addValues(ind) {
         if (this.tentSpecList[ind].tent) {
           this.tentSpecList[ind].specStringValues.push({
-            specId:this.tentSpecList[ind].specId,
+            specId: this.tentSpecList[ind].specId,
             specValue: this.tentSpecList[ind].tent
           })
           this.tentSpecList[ind].tent = ''
@@ -1023,7 +1075,7 @@
       addAttrValues(ind) {
         if (this.tentAttrList[ind].tent) {
           this.tentAttrList[ind].specStringValues.push({
-            specId:this.tentAttrList[ind].specId,
+            specId: this.tentAttrList[ind].specId,
             specValue: this.tentAttrList[ind].tent
           })
           this.tentAttrList[ind].tent = ''
@@ -1141,7 +1193,10 @@
 
 
     .my-item:first-child {
-      margin-top: 30px;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      line-height: 12px;
     }
 
     .my-item {
@@ -1222,6 +1277,18 @@
 
       .select {
         border: 1px solid #1890FF;
+      }
+    }
+
+    .single-price-div {
+      /deep/.el-input {
+        width: 250px;
+      }
+
+      .single-stk {
+        /deep/.el-input {
+          width: 350px;
+        }
       }
     }
 
