@@ -56,7 +56,7 @@
             <el-button type="danger" class="my-batch-opt-btn" @click="batchDeleteGroup">从分组中移除</el-button>
           </div>
           <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange"
-            :page-sizes="[1,5,10, 15, 20, 25]" ::page-size="currentSize.pageSize" :background="false"
+            :page-sizes="[5,10, 20, 25,50]" ::page-size="currentSize.pageSize" :background="false"
             layout="total, sizes, prev, pager, next, jumper" :total="currentSize.total">
           </el-pagination>
         </div>

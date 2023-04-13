@@ -174,7 +174,8 @@
                 属性类型<span class="remark">（最多添加5种属性类型）</span>
               </span>
               <div class="tent-attr-box">
-                <draggable :list="tentAttrList" @start="dragging = true" @end="dragging = false" @update="immediatelyCreate" handle=".mover-div">
+                <draggable :list="tentAttrList" @start="dragging = true" @end="dragging = false"
+                  @update="immediatelyCreate" handle=".mover-div">
                   <transition-group>
                     <el-form-item label="" prop="" v-for="(sp,ind) in tentAttrList" :key="ind">
                       <div class="edit-spec-detail-box">
@@ -523,7 +524,7 @@
       this.getParams()
     },
     methods: {
-      changeSaleType(val){
+      changeSaleType(val) {
         this.goodInfo.saleType = val
         this.isEditPrice()
       },
@@ -723,7 +724,9 @@
             }
             //商品注册证
             this.registerCard = []
-            this.registerCard.push(this.goodInfo.registerCard)
+            if (this.goodInfo.registerCard) {
+              this.registerCard.push(this.goodInfo.registerCard)
+            }
             if (this.goodInfo.openSpecs) {
               //商品实体列表
               this.batchListData = this.goodInfo.goodsEntities
@@ -737,7 +740,6 @@
               this.singleForm.stock = this.goodInfo.goodsEntities[0].entityStock
               this.singleForm.goodsPn = this.goodInfo.goodsEntities[0].entityPn
             }
-
             //判断价格是否能输入
             this.isEditPrice()
           })
@@ -884,7 +886,7 @@
         //未开启规格
         if (!this.goodInfo.openSpecs) {
           var param = {
-            entityImage:this.goodInfo.defaultImage,
+            entityImage: this.goodInfo.defaultImage,
             entityPn: this.singleForm.goodsPn,
             entityPrice: this.singleForm.price,
             entityStock: Number(this.singleForm.stock)

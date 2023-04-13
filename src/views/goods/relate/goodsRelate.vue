@@ -26,7 +26,7 @@
       <group-list :tableData="tableData" @editGroup="editGroup" @updateData="getGoodsGroupList"></group-list>
       <div class="my-table-bottoms">
         <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange"
-          :page-sizes="[1,5,10, 15, 20, 25]" ::page-size="currentSize.pageSize" :background="false"
+          :page-sizes="[5, 10, 20, 25, 50]" :page-size="currentSize.pageSize" :background="false"
           layout="total, sizes, prev, pager, next, jumper" :total="currentSize.total">
         </el-pagination>
       </div>
