@@ -21,7 +21,7 @@
         <!-- 销售类型 -->
         <el-form-item label="销售类型：" class="item-name">
           <div class="sell-type-select">
-            <div :class="['sell-type-item',{'select':goodInfo.saleType == '2'}]" @click="goodInfo.saleType = '2'">
+            <div :class="['sell-type-item',{'select':goodInfo.saleType == '2'}]" @click="changeSaleType('2')">
               <span class="type-title">咨询议价</span>
               <span class="type-remark">无需填写价格</span>
               <div class="img-box">
@@ -29,7 +29,7 @@
                 <img src="../../assets/images/pic_yijia_sel.png" alt="" v-show="goodInfo.saleType == '2'">
               </div>
             </div>
-            <div :class="['sell-type-item',{'select':goodInfo.saleType == '1'}]" @click="goodInfo.saleType = '1'"
+            <div :class="['sell-type-item',{'select':goodInfo.saleType == '1'}]" @click="changeSaleType('1')"
               v-if="!this.roles.includes('personal')">
               <span class="type-title">线上销售</span>
               <span class="type-remark">需填写价格</span>
@@ -523,6 +523,10 @@
       this.getParams()
     },
     methods: {
+      changeSaleType(val){
+        this.goodInfo.saleType = val
+        this.isEditPrice()
+      },
       openChooseSpecsDialog() {
         this.chooseSpecsDialog = true
       },
@@ -880,6 +884,7 @@
         //未开启规格
         if (!this.goodInfo.openSpecs) {
           var param = {
+            entityImage:this.goodInfo.defaultImage,
             entityPn: this.singleForm.goodsPn,
             entityPrice: this.singleForm.price,
             entityStock: Number(this.singleForm.stock)
