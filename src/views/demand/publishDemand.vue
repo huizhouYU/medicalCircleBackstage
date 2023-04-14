@@ -283,15 +283,18 @@
               }
               this.isSubmit = false
             })
-          } else { //新建              await createDemand(JSON.stringify(this.demandInfo)).then(response => {
-            if (response.data.code == 10000) {
-              this.$message.success("发布成功！")
-              this.$router.replace({
-                path: 'demandManage'
-              })
-            } else {
-              this.$message.error(response.data.message)
-            }
+          } else { //新建
+            await createDemand(JSON.stringify(this.demandInfo)).then(response => {
+              if (response.data.code == 10000) {
+                this.$message.success("发布成功！")
+                this.$router.replace({
+                  path: 'demandManage'
+                })
+              } else {
+                this.$message.error(response.data.message)
+              }
+            })
+
             this.isSubmit = false
           }
         } catch (e) {
