@@ -46,7 +46,7 @@
           value: 'title',
           label: '信息标题'
         }, {
-          value: 'equipmentName',
+          value: 'equipment',
           label: '设备名称'
         }],
         keyType: '', //选择的搜索关键字类型
