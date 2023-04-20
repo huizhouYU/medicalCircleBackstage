@@ -17,13 +17,12 @@
       <el-table-column prop="goodsModel" label="商品型号" min-width="120"></el-table-column>
       <el-table-column prop="cateName" label="商品分类" min-width="200"></el-table-column>
       <el-table-column prop="brand" label="品牌" min-width="120"></el-table-column>
-      <el-table-column label="价格" min-width="100">
+     <!-- <el-table-column label="价格" min-width="100">
         <template slot-scope="scope">
           <span v-if="scope.row.saleType == 1">{{scope.row.price}}</span>
           <span v-else class="default-font">询价</span>
         </template>
-
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column prop="qty" label="库存" min-width="100"></el-table-column>
       <el-table-column label="上架" min-width="100">
         <template slot-scope="scope">

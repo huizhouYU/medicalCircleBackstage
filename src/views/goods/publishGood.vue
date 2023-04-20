@@ -19,7 +19,7 @@
           </span>
         </div>
         <!-- 销售类型 -->
-        <el-form-item label="销售类型：" class="item-name">
+      <!--  <el-form-item label="销售类型：" class="item-name">
           <div class="sell-type-select">
             <div :class="['sell-type-item',{'select':goodInfo.saleType == '2'}]" @click="changeSaleType('2')">
               <span class="type-title">咨询议价</span>
@@ -39,7 +39,7 @@
               </div>
             </div>
           </div>
-        </el-form-item>
+        </el-form-item> -->
         <!-- 产品名称 -->
         <el-form-item label="产品名称：" class="item-name">
           <el-input v-model="goodInfo.goodsName" placeholder="请输入商品名称" maxlength="40" show-word-limit></el-input>
@@ -104,17 +104,17 @@
           </el-switch>
         </div>
         <div v-show="!goodInfo.openSpecs" class="single-price-div">
-          <!-- 产品名称 -->
-          <el-form-item label="价格(元)：" class="">
+          <!--"价格(元) -->
+       <!--   <el-form-item label="价格(元)：" class="">
             <el-input v-model="singleForm.price" placeholder="请输入商品价格" oninput="value=value.replace(/[^0-9.]/g,'')"
               :disabled="!isEditPriceFlag"></el-input>
-          </el-form-item>
-          <!-- 产品名称 -->
+          </el-form-item> -->
+          <!-- 商品库存 -->
           <el-form-item label="商品库存：" class="">
             <el-input v-model="singleForm.stock" placeholder="请输入商品库存" oninput="value=value.replace(/[^\d]/g,'')">
             </el-input>
           </el-form-item>
-          <!-- 产品名称 -->
+          <!-- 商品编码 -->
           <el-form-item label="商品编码：" class="single-stk">
             <el-input v-model="singleForm.goodsPn" placeholder="请输入商品编码" maxlength="30" show-word-limit></el-input>
           </el-form-item>
@@ -219,14 +219,14 @@
                     <upload-one-img :imgList="batchForm.imgUrl" @imgObj="getImgObj($event,'-1')"></upload-one-img>
                   </template>
                 </el-table-column>
-                <el-table-column label="价格（元）">
+               <!-- <el-table-column label="价格（元）">
                   <template slot-scope="scope">
                     <el-form-item>
                       <el-input v-model="batchForm.price" oninput="value=value.replace(/[^0-9.]/g,'')"
                         :disabled="!isEditPriceFlag"></el-input>
                     </el-form-item>
                   </template>
-                </el-table-column>
+                </el-table-column> -->
                 <el-table-column label="编码">
                   <template slot-scope="scope">
                     <el-form-item>
@@ -268,7 +268,7 @@
                     </upload-one-img>
                   </template>
                 </el-table-column>
-                <el-table-column label="价格（元）" width="190">
+          <!--      <el-table-column label="价格（元）" width="190">
                   <template slot-scope="scope">
                     <el-form-item>
                       <el-input v-model="scope.row.entityPrice" oninput="value=value.replace(/[^0-9.]/g,'')"
@@ -276,7 +276,7 @@
                       </el-input>
                     </el-form-item>
                   </template>
-                </el-table-column>
+                </el-table-column> -->
                 <el-table-column label="编码" width="190">
                   <template slot-scope="scope">
                     <el-form-item>
@@ -497,7 +497,7 @@
           chosedData: [], //选择的类目
           cateId: '',
           cateName: '',
-          saleType: 1, //选择的销售方式
+          saleType: 2, //选择的销售方式
           defaultImage: '', //主图
           longImages: [], //长图
           registerCard: '', //注册证
