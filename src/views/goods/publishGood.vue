@@ -320,7 +320,7 @@
         <el-form-item label="注册证：" class="">
           <div label="图片可拖曳排序：" prop="" class="">
             <div class="">
-              <DragUpload @allList="registerCardImgs" :limit="1" :imgList="registerCard">
+              <DragUpload @allList="registerCardImgs" :limit="5" :imgList="goodInfo.registerCards">
               </DragUpload>
               <div class="gray-tip">请：图片支持jpg/png格式</div>
             </div>
@@ -483,7 +483,6 @@
         longImages: '',
         goodIfShow: false,
         goodRecommended: false,
-        registerCard: '',
         //商品信息
         goodInfo: {
           type: 'material', //商品类型 material-配件 equipment-设备器械
@@ -500,7 +499,7 @@
           saleType: 2, //选择的销售方式
           defaultImage: '', //主图
           longImages: [], //长图
-          registerCard: '', //注册证
+          registerCards: [], //注册证
           imageList: [],
           content: '', //产品详情
           tagList: [], //商品标签
@@ -723,9 +722,10 @@
               this.goodTag = this.goodInfo.tagList[0]
             }
             //商品注册证
-            this.registerCard = []
-            if (this.goodInfo.registerCard) {
-              this.registerCard.push(this.goodInfo.registerCard)
+            if(typeof this.goodInfo.registerCards == 'string'){
+              var registerCards = this.goodInfo.registerCards
+              this.goodInfo.registerCards = []
+              this.goodInfo.registerCards.push(registerCards)
             }
             if (this.goodInfo.openSpecs) {
               //商品实体列表
@@ -796,11 +796,11 @@
         })
       },
       //产品注册证
-      registerCardImgs(imgFile) {
-        this.registerCard = []
-        if (imgFile != null && imgFile.length > 0) {
-          this.registerCard.push(imgFile[0].imgUrl)
-        }
+      registerCardImgs(allList) {
+        this.goodInfo.registerCards = []
+        allList.forEach(res => {
+          this.goodInfo.registerCards.push(res.imgUrl)
+        })
       },
       getContentData(content) {
         this.goodInfo.content = content
@@ -832,9 +832,9 @@
             this.goodInfo.tagList.push(this.goodTag)
           }
           //注册证
-          if (this.registerCard != '' && this.registerCard.length > 0) {
-            this.goodInfo.registerCard = this.registerCard[0]
-          }
+          // if (this.registerCard != '' && this.registerCard.length > 0) {
+          //   // this.goodInfo.registerCard = this.registerCard[0]
+          // }
           //再次获取富文本信息
           this.$refs.edit.putContent()
           this.goodInfo.defaultImage = this.goodInfo.imageList[0]
