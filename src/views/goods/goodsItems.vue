@@ -1,63 +1,68 @@
 <template>
   <div class="app-container">
-    <el-table ref="multipleTable" :data="tableData" tooltip-effect="dark" style="width: 100%;min-height:200px"
-      @selection-change="handleSelectionChange" class="el-table-box">
-      <el-table-column type="selection" width="55">
-      </el-table-column>
-      <el-table-column label="商品图" min-width="100">
-        <template slot-scope="scope">
-          <img :src="scope.row.defaultImage" alt="图片加载失败" class="item-img">
-        </template>
-      </el-table-column>
-      <el-table-column label="商品名称" min-width="200">
-        <template slot-scope="scope">
-          <span class="goods-name-span" :title="scope.row.goodsName">{{scope.row.goodsName}} </span>
-        </template>
-      </el-table-column>
-      <el-table-column prop="goodsModel" label="商品型号" min-width="120"></el-table-column>
-      <el-table-column prop="cateName" label="商品分类" min-width="200"></el-table-column>
-      <el-table-column prop="brand" label="品牌" min-width="120"></el-table-column>
-     <!-- <el-table-column label="价格" min-width="100">
+    <div v-if="tableData && tableData.length>0">
+      <el-table ref="multipleTable" :data="tableData" tooltip-effect="dark" style="width: 100%;min-height:200px"
+        @selection-change="handleSelectionChange" class="el-table-box">
+        <el-table-column type="selection" width="55">
+        </el-table-column>
+        <el-table-column label="商品图" min-width="100">
+          <template slot-scope="scope">
+            <img :src="scope.row.defaultImage" alt="图片加载失败" class="item-img">
+          </template>
+        </el-table-column>
+        <el-table-column label="商品名称" min-width="200">
+          <template slot-scope="scope">
+            <span class="goods-name-span" :title="scope.row.goodsName">{{scope.row.goodsName}} </span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="goodsModel" label="商品型号" min-width="120"></el-table-column>
+        <el-table-column prop="cateName" label="商品分类" min-width="200"></el-table-column>
+        <el-table-column prop="brand" label="品牌" min-width="120"></el-table-column>
+        <!-- <el-table-column label="价格" min-width="100">
         <template slot-scope="scope">
           <span v-if="scope.row.saleType == 1">{{scope.row.price}}</span>
           <span v-else class="default-font">询价</span>
         </template>
       </el-table-column> -->
-      <el-table-column prop="qty" label="库存" min-width="100"></el-table-column>
-      <el-table-column label="上架" min-width="100">
-        <template slot-scope="scope">
-          <el-switch class="tableScopeSwitch" @change="changePutState(scope.$index, scope.row)" active-text="上架"
-            inactive-text="下架" v-model="scope.row.ifShow">
-          </el-switch>
-        </template>
-      </el-table-column>
-      <el-table-column label="推荐" min-width="100">
-        <template slot-scope="scope">
-          <el-switch class="tableScopeSwitch" @change="changeRecommendState(scope.$index, scope.row)" active-text="推荐"
-            inactive-text="推荐" v-model="scope.row.recommended">
-          </el-switch>
-        </template>
-      </el-table-column>
-      <el-table-column fixed="right" label="操作" min-width="120">
-        <template slot-scope="scope">
-          <el-button @click.native.prevent="editRow(scope.$index, scope.row)" type="text" size="small">
-            编辑
-          </el-button>
-          <el-button @click.native.prevent="deleteRow(scope.$index, scope.row)" type="text" size="small">
-            删除
-          </el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-    <div class="bottoms-box">
-      <div class="left">
-        <el-checkbox v-model="isAddAllTerminalStatus" @change="allSelectTerminal">全选</el-checkbox>
-        <el-button type="danger" class="public-el-btn" @click="deleteChoosed">删除</el-button>
+        <el-table-column prop="qty" label="库存" min-width="100"></el-table-column>
+        <el-table-column label="上架" min-width="100">
+          <template slot-scope="scope">
+            <el-switch class="tableScopeSwitch" @change="changePutState(scope.$index, scope.row)" active-text="上架"
+              inactive-text="下架" v-model="scope.row.ifShow">
+            </el-switch>
+          </template>
+        </el-table-column>
+        <el-table-column label="推荐" min-width="100">
+          <template slot-scope="scope">
+            <el-switch class="tableScopeSwitch" @change="changeRecommendState(scope.$index, scope.row)" active-text="推荐"
+              inactive-text="推荐" v-model="scope.row.recommended">
+            </el-switch>
+          </template>
+        </el-table-column>
+        <el-table-column fixed="right" label="操作" min-width="120">
+          <template slot-scope="scope">
+            <el-button @click.native.prevent="editRow(scope.$index, scope.row)" type="text" size="small">
+              编辑
+            </el-button>
+            <el-button @click.native.prevent="deleteRow(scope.$index, scope.row)" type="text" size="small">
+              删除
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <div class="bottoms-box">
+        <div class="left">
+          <el-checkbox v-model="isAddAllTerminalStatus" @change="allSelectTerminal">全选</el-checkbox>
+          <el-button type="danger" class="public-el-btn" @click="deleteChoosed">删除</el-button>
+        </div>
+        <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange"
+          :page-sizes="[5,10, 20, 40, 60]" :pager-count="5" :page-size="currentSize.pageSize" :background="false"
+          layout="total, sizes, prev, pager, next, jumper" :total="total">
+        </el-pagination>
       </div>
-      <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange"
-        :page-sizes="[5,10, 20, 40, 60]" :pager-count="5" :page-size="currentSize.pageSize" :background="false"
-        layout="total, sizes, prev, pager, next, jumper" :total="total">
-      </el-pagination>
+    </div>
+    <div v-else class="no-data-box">
+      暂无相关商品
     </div>
   </div>
 </template>
@@ -235,6 +240,16 @@
 
   .app-container {
     box-shadow: 0px 2px 10px 1px rgba(0, 0, 0, 0.06);
+  }
+
+  .no-data-box {
+    background-color: #fff;
+    width: 100%;
+    height: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 100px 0px;
   }
 
   .el-table {

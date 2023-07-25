@@ -12,6 +12,9 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+.icon-zhaopin:before {
+  content: "\e647";
+}
 .icon-iconzhengli_gengduo:before {
   content: "\e650";
 }

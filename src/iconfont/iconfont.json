@@ -6,6 +6,13 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "1079372",
+      "name": "招聘",
+      "font_class": "zhaopin",
+      "unicode": "e647",
+      "unicode_decimal": 58951
+    },
+    {
       "icon_id": "9242229",
       "name": "更多",
       "font_class": "iconzhengli_gengduo",

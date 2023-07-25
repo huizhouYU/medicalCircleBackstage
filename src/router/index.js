@@ -352,6 +352,38 @@ export const asyncRoutes = [{
       }
     ]
   },
+  {
+    path: '/recruit',
+    component: Layout,
+    redirect: '/recruit/recruitManage',
+    name: 'Recruit',
+    meta: {
+      title: '招聘管理',
+      icon: '&#recruit',
+      // icon: '&#xe647;',
+      roles: ['company', 'personal'] // you can set roles in root nav
+    },
+    children: [{
+        path: 'publishRecruit',
+        component: () => import('@/views/recruit/publishRecruit'),
+        name: 'PublishRecruit',
+        meta: {
+          title: '发布招聘',
+          // icon: 'edit'
+        }
+      },{
+        path: 'recruitManage',
+        component: () => import('@/views/recruit/recruitManage'),
+        name: 'RecruitManage',
+        meta: {
+          title: '招聘管理',
+          // icon: 'edit'
+        },
+        // hidden: true
+      },
+
+    ]
+  },
 
   // {
   //   path: '/permission',

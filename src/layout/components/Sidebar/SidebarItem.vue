@@ -32,6 +32,7 @@
     Commodity,
     TransactionOrder,
     MoreFour,
+	Recruit,
     VipOne
   } from '@icon-park/vue'
 
@@ -43,6 +44,7 @@
       Commodity,
       'transaction-order': TransactionOrder,
       'more-four': MoreFour,
+	  'recruit':Recruit,
       'setting-two': SettingTwo,
       'vip-one':VipOne
     },
